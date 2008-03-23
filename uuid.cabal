@@ -11,12 +11,12 @@ Library
  Build-Depends: base
 
  Exposed-Modules:
-   Data.UUID
+   Data.UUID,
+   Data.UUID.Internal
 
  Extensions: ForeignFunctionInterface
 
  extra-libraries: uuid
- c-sources: cbits.c
- includes: cbits.h
+
 
 
