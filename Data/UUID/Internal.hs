@@ -1,3 +1,17 @@
+-- |
+-- Module      : Data.UUID.Internal
+-- Copyright   : (c) 2008 Antoine Latter
+--
+-- License     : BSD-style
+--
+-- Maintainer  : aslatter@gmail.com
+-- Stability   : experimental
+-- Portability : portable
+-- 
+-- If the public interface in "Data.UUID" doesn't give you
+-- the flexibility you need, you should be able to find
+-- something here.
+
 module Data.UUID.Internal(UUID(..)
                          ,toBytes
                          ,fromBytes

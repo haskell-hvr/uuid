@@ -2,7 +2,17 @@
 {-# INCLUDE <string.h> #-}
 {-# LANGUAGE ForeignFunctionInterface #-}
 
--- |Haskell bindings to /libuuid/.
+-- |
+-- Module      : Data.UUID
+-- Copyright   : (c) 2008 Antoine Latter
+--
+-- License     : BSD-style
+--
+-- Maintainer  : aslatter@gmail.com
+-- Stability   : experimental
+-- Portability : portable
+-- 
+-- Haskell bindings to /libuuid/.
 -- The library /libuuid/ is available as a part of e2fsprogs:
 -- <http://e2fsprogs.sourceforge.net/>.
 --
@@ -28,6 +38,7 @@ import Foreign.ForeignPtr
 import Foreign
 
 import Data.Typeable
+import Data.Generics.Basics
 
 import Prelude hiding (null)
 
@@ -41,7 +52,7 @@ instance Ord UUID where
         withForeignPtr fp1 $ \p1 ->
         withForeignPtr fp2 $ \p2 ->
         case c_compare p1 p2 of
-           0 -> return EQ
+           0     -> return EQ
            n|n<0 -> return LT
             |n>0 -> return GT
 
@@ -68,6 +79,16 @@ instance Storable UUID where
 
     poke pdest (U fp) = withForeignPtr fp $ \psource ->
           memcpy pdest psource $ fromIntegral $ sizeOf (undefined :: UUID)
+
+
+-- My goal with this instance was to make it work just enough to do what
+-- I want when used with the HStringTemplate library.
+instance Data UUID where
+    toConstr uu  = mkConstr uuidType (show uu) [] (error "fixity")
+    gunfold _ _  = error "gunfold"
+    dataTypeOf _ = uuidType
+
+uuidType =  mkNorepType "Data.UUID.UUID"
 
 
 -- |Creates a new 'UUID'.  If \/dev\/urandom is available, it will be used.
@@ -113,7 +134,7 @@ null (U fp) = unsafePerformIO $
 fromString :: String -> Maybe UUID
 fromString s = unsafePerformIO $ do
   fp <- mallocForeignPtrArray 16
-  res <- withCString s $ \chars ->
+  res <- withCAString s $ \chars ->
       withForeignPtr fp $ \p ->
       c_read (castPtr chars) p
   case res of
@@ -127,7 +148,7 @@ toString :: UUID -> String
 toString (U fp) = unsafePerformIO $ do
   chars <- mallocBytes 37
   withForeignPtr fp $ \p -> c_show p chars
-  st <- peekCString chars
+  st <- peekCAString chars
   free chars
   return st
 
@@ -137,7 +158,7 @@ toStringLower :: UUID -> String
 toStringLower (U fp) = unsafePerformIO $ do
   chars <- mallocBytes 37
   withForeignPtr fp $ \p -> c_show_lower p chars
-  st <- peekCString chars
+  st <- peekCAString chars
   free chars
   return st
   
@@ -147,7 +168,7 @@ toStringUpper :: UUID -> String
 toStringUpper (U fp) = unsafePerformIO $ do
   chars <- mallocBytes 37
   withForeignPtr fp $ \p -> c_show_upper p chars
-  st <- peekCString chars
+  st <- peekCAString chars
   free chars
   return st
 
