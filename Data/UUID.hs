@@ -102,7 +102,7 @@ null (U fp) = unsafePerformIO $
               return $ c_null p == 1
 
 -- |If the passed in 'String' can be parsed as a 'UUID', it will be.
--- The hyphens may not be ommited.
+-- The hyphens may not be omitted.
 -- Example:
 --
 -- @
