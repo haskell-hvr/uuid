@@ -95,25 +95,22 @@ uuidType =  mkNorepType "Data.UUID.UUID"
 -- Otherwise a UUID will be generated based on the current time and the
 -- hardware MAC address, if available.
 generate :: IO UUID
-generate = do
-  fp <- mallocForeignPtrArray 16
-  withForeignPtr fp $ \p -> c_generate p
-  return $ U fp
+generate = generateWrap c_generate
 
 -- |Create a new 'UUID'.  If \/dev\/urandom is available, it will be used.
 -- Otherwise a psuedorandom generator will be used.
 generateRandom :: IO UUID
-generateRandom = do
-  fp <- mallocForeignPtrArray 16
-  withForeignPtr fp $ \p -> c_generate_random p
-  return $ U fp
+generateRandom = generateWrap c_generate_random
 
 -- |Create a new 'UUID'.  The UUID will be  generated based on the
 -- current time and the hardware MAC address, if available.
 generateTime :: IO UUID
-generateTime = do 
+generateTime = generateWrap c_generate_time
+
+generateWrap :: (C_UUID -> IO ()) -> IO UUID
+generateWrap gen = do
   fp <- mallocForeignPtrArray 16
-  withForeignPtr fp $ \p -> c_generate_time p
+  withForeignPtr fp $ \p -> gen p
   return $ U fp
 
 -- |Returns 'True' if the passed-in 'UUID' is the null UUID.
@@ -136,7 +133,7 @@ fromString s = unsafePerformIO $ do
   fp <- mallocForeignPtrArray 16
   res <- withCAString s $ \chars ->
       withForeignPtr fp $ \p ->
-      c_read (castPtr chars) p
+      c_read chars p
   case res of
     0 -> return . Just $ U fp
     _ -> return Nothing
@@ -145,33 +142,27 @@ fromString s = unsafePerformIO $ do
 -- Hex digits occuring in the output will be either upper or
 -- lower-case depending on system defaults and locale.
 toString :: UUID -> String
-toString (U fp) = unsafePerformIO $ do
-  chars <- mallocBytes 37
-  withForeignPtr fp $ \p -> c_show p chars
-  st <- peekCAString chars
-  free chars
-  return st
+toString = toStringWrap c_show
 
 -- |Returns a 'String' representation of the passed in 'UUID'.
 -- Hex digits occuring in the output will be lower-case.
 toStringLower :: UUID -> String
-toStringLower (U fp) = unsafePerformIO $ do
-  chars <- mallocBytes 37
-  withForeignPtr fp $ \p -> c_show_lower p chars
-  st <- peekCAString chars
-  free chars
-  return st
+toStringLower = toStringWrap c_show_lower
   
 -- |Returns a 'String' representation of the passed in 'UUID'.
 -- Hex digits occuring in the output will be upper-case.
 toStringUpper :: UUID -> String
-toStringUpper (U fp) = unsafePerformIO $ do
-  chars <- mallocBytes 37
-  withForeignPtr fp $ \p -> c_show_upper p chars
-  st <- peekCAString chars
-  free chars
-  return st
+toStringUpper = toStringWrap c_show_upper
 
+-- |The passed in function /f/ is given a the raw UUID data
+-- and a 37-byte buffer to fill with the textual representation
+-- of the UUID.  The buffer is expected to be null-terminated
+-- after /f/ is finished.
+toStringWrap :: (C_UUID -> CString -> IO ()) -> UUID -> String
+toStringWrap f (U fp) = unsafePerformIO $
+  allocaBytes 37 $ \chars -> do
+  withForeignPtr fp $ \p -> f p chars
+  peekCAString chars
 
 -- FFI calls to do the work
 
