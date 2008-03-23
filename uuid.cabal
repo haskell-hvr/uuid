@@ -15,6 +15,7 @@ Description:
  The library libuuid is available as a part of e2fsprogs:
  <http://e2fsprogs.sourceforge.net/>.
 
+
  This library is useful for creating, comparing, parsing and
  printing Universally Unique Identifiers.
  See <http://en.wikipedia.org/wiki/UUID> for the general idea. 
@@ -29,6 +30,3 @@ Library
  Extensions: ForeignFunctionInterface
 
  Extra-Libraries: uuid
-
-
-

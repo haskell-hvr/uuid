@@ -1,4 +1,5 @@
 {-# INCLUDE <uuid/uuid.h> #-}
+{-# INCLUDE <string.h> #-}
 {-# LANGUAGE ForeignFunctionInterface #-}
 
 -- |Haskell bindings to /libuuid/.
@@ -26,6 +27,8 @@ import Foreign.C
 import Foreign.ForeignPtr
 import Foreign
 
+import Data.Typeable
+
 import Prelude hiding (null)
 
 import Data.UUID.Internal
@@ -49,6 +52,23 @@ instance Read UUID where
     readsPrec _ str = case fromString (take 36 str) of
       Nothing -> []
       Just u  -> [(u,drop 36 str)]
+
+instance Typeable UUID where
+    typeOf _ = mkTyConApp (mkTyCon "Data.UUID.UUID") []
+
+instance Storable UUID where
+    sizeOf _ = (16 *) $ alignment (undefined :: CChar)
+    alignment _ = alignment (undefined :: CChar)
+
+    peek psource = do
+      fp <- mallocForeignPtrArray 16
+      withForeignPtr fp $ \pdest ->
+          memcpy pdest psource $ fromIntegral $ sizeOf (undefined :: UUID)
+      return $ U fp
+
+    poke pdest (U fp) = withForeignPtr fp $ \psource ->
+          memcpy pdest psource $ fromIntegral $ sizeOf (undefined :: UUID)
+
 
 -- |Creates a new 'UUID'.  If \/dev\/urandom is available, it will be used.
 -- Otherwise a UUID will be generated based on the current time and the
@@ -177,3 +197,8 @@ foreign import ccall unsafe "uuid_type"
 
 foreign import ccall unsafe "uuid_variant"
   c_variant :: C_UUID -> CInt
+
+-- Other
+
+foreign import ccall unsafe "memcpy"
+  memcpy :: Ptr a -> Ptr b -> CSize -> IO ()
