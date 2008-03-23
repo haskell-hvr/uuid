@@ -1,11 +1,23 @@
 Name: uuid
-Version: 0.0.0
+Version: 0.1.0
 Copyright: 2008, Antoine Latter
 Author: Antoine Latter
 Maintainer: aslatter@gmail.com
+License: BSD3
+License-file: LICENSE
 
 Category: Data
 Build-Type: Simple
+Cabal-Version: >= 1.2
+
+Description:
+ Haskell bindings to libuuid.
+ The library libuuid is available as a part of e2fsprogs:
+ <http://e2fsprogs.sourceforge.net/>.
+
+ This library is useful for creating, comparing, parsing and
+ printing Universally Unique Identifiers.
+ See <http://en.wikipedia.org/wiki/UUID> for the general idea. 
 
 Library
  Build-Depends: base
@@ -16,7 +28,7 @@ Library
 
  Extensions: ForeignFunctionInterface
 
- extra-libraries: uuid
+ Extra-Libraries: uuid
 
 
 

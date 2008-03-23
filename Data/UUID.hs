@@ -100,7 +100,7 @@ fromString s = unsafePerformIO $ do
     0 -> return . Just $ U fp
     _ -> return Nothing
 
--- |Returns a 'String' representation of the passed in UUID.
+-- |Returns a 'String' representation of the passed in 'UUID'.
 -- Hex digits occuring in the output will be either upper or
 -- lower-case depending on system defaults and locale.
 toString :: UUID -> String
@@ -111,7 +111,7 @@ toString (U fp) = unsafePerformIO $ do
   free chars
   return st
 
--- |Returns a 'String' representation of the passed in UUID.
+-- |Returns a 'String' representation of the passed in 'UUID'.
 -- Hex digits occuring in the output will be lower-case.
 toStringLower :: UUID -> String
 toStringLower (U fp) = unsafePerformIO $ do
@@ -121,7 +121,7 @@ toStringLower (U fp) = unsafePerformIO $ do
   free chars
   return st
   
--- |Returns a 'String' representation of the passed in UUID.
+-- |Returns a 'String' representation of the passed in 'UUID'.
 -- Hex digits occuring in the output will be upper-case.
 toStringUpper :: UUID -> String
 toStringUpper (U fp) = unsafePerformIO $ do
