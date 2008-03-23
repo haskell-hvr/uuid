@@ -40,7 +40,7 @@ fromBytes  xs = if length xs == 16
  else error "Data.UUID.Internal.fromBytes: passed in list of bytes must be of length 16."
 
 -- |Creates a UUID out of a list of bytes.
--- Does not perform a length check.
+-- Does not perform a length check on the passed in list.
 -- Behavior is undefined for lists not of length 16.
 unsafeFromBytes :: [Word8] -> UUID
 unsafeFromBytes xs = U $ castForeignPtr $ unsafePerformIO $ do
@@ -48,12 +48,16 @@ unsafeFromBytes xs = U $ castForeignPtr $ unsafePerformIO $ do
    withForeignPtr p $ flip pokeArray xs
    return p
 
--- |Given a UUID, returns a pointer to the 16 bytes
+-- |Unsafe.
+--
+-- Given a UUID, returns a pointer to the 16 bytes
 -- of memory that make up the UUID.
 toForeignPtr :: UUID -> ForeignPtr CChar
 toForeignPtr (U p) = p
 
--- |The passed in pointer is treated as if it were a pointer
--- to 16 bytes of memory.  You're in trouble if it isn't.
+-- |Unsafe.
+--
+-- The passed in pointer is treated as if it were a pointer
+-- to 16 bytes of memory, which is then returned as a UUID.
 fromForeignPtr :: ForeignPtr CChar -> UUID
 fromForeignPtr = U

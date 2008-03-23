@@ -156,7 +156,7 @@ toStringUpper = toStringWrap c_show_upper
 
 -- |The passed in function /f/ is given a the raw UUID data
 -- and a 37-byte buffer to fill with the textual representation
--- of the UUID.  The buffer is expected to be null-terminated
+-- of the UUID.  The buffer is expected to contain a null-terminator
 -- after /f/ is finished.
 toStringWrap :: (C_UUID -> CString -> IO ()) -> UUID -> String
 toStringWrap f (U fp) = unsafePerformIO $
