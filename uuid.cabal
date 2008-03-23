@@ -1,0 +1,22 @@
+Name: uuid
+Version: 0.0.0
+Copyright: 2008, Antoine Latter
+Author: Antoine Latter
+Maintainer: aslatter@gmail.com
+
+Category: Data
+Build-Type: Simple
+
+Library
+ Build-Depends: base
+
+ Exposed-Modules:
+   Data.UUID
+
+ Extensions: ForeignFunctionInterface
+
+ extra-libraries: uuid
+ c-sources: cbits.c
+ includes: cbits.h
+
+
