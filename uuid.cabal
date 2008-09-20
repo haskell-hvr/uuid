@@ -29,4 +29,5 @@ Library
 
  Extensions: ForeignFunctionInterface
 
- Extra-Libraries: uuid
+ if !os(darwin)
+  Extra-Libraries: uuid
