@@ -68,11 +68,11 @@ instance Typeable UUID where
     typeOf _ = mkTyConApp (mkTyCon "Data.UUID.UUID") []
 
 instance Storable UUID where
-    sizeOf _ = (16 *) $ alignment (undefined :: CChar)
+    sizeOf _ = (16 *) $ sizeOf (undefined :: CChar)
     alignment _ = alignment (undefined :: CChar)
 
     peek psource = do
-      fp <- mallocForeignPtrArray 16
+      fp <- mallocForeignPtrArray $ sizeOf (undefined :: UUID)
       withForeignPtr fp $ \pdest ->
           memcpy pdest psource $ fromIntegral $ sizeOf (undefined :: UUID)
       return $ U fp
