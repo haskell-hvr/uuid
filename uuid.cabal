@@ -23,6 +23,8 @@ Description:
 
 Synopsis: For creating, comparing, parsing and printing Universally Unique Identifiers
 
+Homepage: http://community.haskell.org/~aslatter/code/uuid/
+
 Library
  Build-Depends: base
 
