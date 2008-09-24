@@ -26,13 +26,10 @@ Synopsis: For creating, comparing, parsing and printing Universally Unique Ident
 Homepage: http://community.haskell.org/~aslatter/code/uuid/
 
 Library
- Build-Depends: base
+ Build-Depends: base, random
 
  Exposed-Modules:
-   Data.UUID,
-   Data.UUID.Internal
+   Data.UUID
 
- Extensions: ForeignFunctionInterface
+ Extensions: DeriveDataTypeable
 
- if !os(darwin)
-  Extra-Libraries: uuid
