@@ -20,9 +20,14 @@ module Data.UUID(UUID
                 ,toString
                 ,toStringUpper
                 ,toStringLower
-                 ,generate
+                ,generate
                 ,generateRandom
                 ,generateTime
+                ,generateNamed
+                ,namespaceDNS
+                ,namespaceURL
+                ,namespaceOID
+                ,namespaceX500
                 ,null
                 )
 where
@@ -48,6 +53,14 @@ import Data.List (splitAt, foldl', unfoldr)
 import Foreign.Ptr
 import Foreign.Storable
 
+import Data.Binary
+import Data.Binary.Put
+import Data.Binary.Get
+
+import qualified Data.ByteString.Lazy as BS
+import Data.ByteString.Lazy (ByteString)
+
+import qualified Data.Digest.SHA1 as SHA1
 
 data UUID = UUID
     {uuid_timeLow  :: {-# UNPACK #-} !Word32
@@ -77,6 +90,9 @@ versionMask = 0x0FFF
 versionRandom :: Word16
 versionRandom = shiftL 12 4
 
+versionSHA :: Word16
+versionSHA = shiftL 12 5
+
 reservedMask :: Word8 -- 0011 1111
 reservedMask = 0x3F
 
@@ -101,6 +117,7 @@ instance Random Node where
                    (w6, g6) = random g5
                in (Node w1 w2 w3 w4 w5 w6, g6)
     randomR _ = random -- neglect range
+
 
 nodeToList :: Node -> [Word8]
 nodeToList (Node w1 w2 w3 w4 w5 w6) = [w1, w2, w3, w4, w5, w6]
@@ -160,6 +177,44 @@ instance Storable Node where
       pokeByteOff p 4 w5
       pokeByteOff p 5 w6
 
+-- Binary instance in network byte-order
+instance Binary UUID where
+    put (UUID tl tm th ch cl n) = do
+                       putWord32be tl
+                       putWord16be tm
+                       putWord16be th
+                       putWord8 ch
+                       putWord8 cl
+                       put n
+
+    get = do
+      tl <- getWord32be
+      tm <- getWord16be
+      th <- getWord16be
+      ch <- getWord8
+      cl <- getWord8
+      node <- get
+      return $ UUID tl tm th ch cl node
+
+instance Binary Node where
+    put (Node w1 w2 w3 w4 w5 w6) = do
+                       putWord8 w1
+                       putWord8 w2
+                       putWord8 w3
+                       putWord8 w4
+                       putWord8 w5
+                       putWord8 w6
+
+    get = do
+      w1 <- getWord8
+      w2 <- getWord8
+      w3 <- getWord8
+      w4 <- getWord8
+      w5 <- getWord8
+      w6 <- getWord8
+      return $ Node w1 w2 w3 w4 w5 w6
+
+
 -- My goal with this instance was to make it work just enough to do what
 -- I want when used with the HStringTemplate library.
 instance Data UUID where
@@ -185,6 +240,73 @@ generateRandom = randomIO  -- not a good solution, as someone could have changed
 -- current time and the hardware MAC address, if available.
 generateTime :: IO UUID
 generateTime = error "Data.UUID.generateTime: not yet implemented"
+
+-- |Generate a 'UUID' within the specified namespace out of the given
+-- object.
+--
+-- Uses a SHA1 hash.
+generateNamed :: UUID    -- ^Namespace
+              -> [Word8] -- ^Object
+              -> UUID
+generateNamed namespace object =
+    let chunk = BS.unpack (encode namespace) ++ object
+        SHA1.Word160 w1 w2 w3 w4 w5 = SHA1.hash chunk
+
+        tl = w1
+        tm = low16 w2
+        th = (versionSHA .|.) $ (versionMask .&.) $ high16 w2
+        ch = (reserved .|.) $ (reservedMask .&.) $ high8 $ high16 w3
+        cl = low8  $ high16 w3
+        node = Node (high8 (low16 w3))
+                    (low8  (low16 w3))
+                    (high8 (high16 w4))
+                    (low8 (high16 w4))
+                    (high8 (low16 w4))
+                    (low8 (low16 w4))
+    in UUID tl tm th ch cl node
+
+-- HASH 0  1  - 2  3  : w1
+--      4  5  - 6  7  : w2
+--      8  9  - 10 11 : w3
+--      12 13 - 14 15 : w4
+--      16 17 - 18 19 : w5
+
+low16 :: Word32 -> Word16
+low16 = fromIntegral . (.&. 0x0000FFFF)
+
+high16 :: Word32 -> Word16
+high16 = fromIntegral . flip shiftR 16
+
+low8 :: Word16 -> Word8
+low8 = fromIntegral . (.&. 0x00FF)
+
+high8 :: Word16 -> Word8
+high8 = fromIntegral . flip shiftR 4
+
+-- this may be overkill ...
+{-# RULES
+  "low8/low16"    forall x . low8  (low16 x)  = fromIntegral (x .&. 0x000000FF)
+  "high8/low16"   forall x . high8 (low16 x)  = fromIntegral (shiftR (x .&. 0x0000FF00) 4)
+  "low8/high16"   forall x . low8  (high16 x) = fromIntegral (shiftR (x .&. 0x00FF0000) 8)
+  "high8/high16"  forall x . high8 (high16 x) = fromIntegral (shiftR x 12)
+  #-}
+
+unsafeFromString :: String -> UUID
+unsafeFromString = fromJust . fromString
+
+-- |The namespace for DNS addresses
+namespaceDNS :: UUID
+namespaceDNS = unsafeFromString "6ba7b810-9dad-11d1-80b4-00c04fd430c8"
+
+-- |The namespace for URLs
+namespaceURL :: UUID
+namespaceURL = unsafeFromString "6ba7b811-9dad-11d1-80b4-00c04fd430c8"
+
+namespaceOID :: UUID
+namespaceOID = unsafeFromString "6ba7b812-9dad-11d1-80b4-00c04fd430c8"
+
+namespaceX500 :: UUID
+namespaceX500 = unsafeFromString "6ba7b814-9dad-11d1-80b4-00c04fd430c8"
 
 -- |Returns 'True' if the passed-in 'UUID' is the null UUID.
 null :: UUID -> Bool
@@ -252,9 +374,8 @@ splitList c xs = let ys = dropWhile (== c) xs
 
 unfoldUntil :: (b -> Bool) -> (b -> (a, b)) -> b -> [a]
 unfoldUntil p f n = unfoldr g n
- where g m = case p m of
-               True -> Nothing
-               False -> Just $ f m
+ where g m | p m       = Nothing
+           | otherwise = Just $ f m
 
 -- I'm not sure how fast these instances are, but they'll do for now.
 

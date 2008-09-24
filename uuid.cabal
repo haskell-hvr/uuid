@@ -26,7 +26,7 @@ Synopsis: For creating, comparing, parsing and printing Universally Unique Ident
 Homepage: http://community.haskell.org/~aslatter/code/uuid/
 
 Library
- Build-Depends: base, random
+ Build-Depends: base, random, binary, bytestring, Crypto
 
  Exposed-Modules:
    Data.UUID
