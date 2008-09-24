@@ -20,7 +20,7 @@ module Data.UUID(UUID
                 ,toString
                 ,toStringUpper
                 ,toStringLower
-                ,generate
+                 ,generate
                 ,generateRandom
                 ,generateTime
                 ,null
@@ -124,20 +124,20 @@ instance Storable UUID where
 
     peek p = do
       tl   <- peek $ castPtr p
-      tm   <- peekByteOff (castPtr p) 4
-      th   <- peekByteOff (castPtr p) 6
-      ch   <- peekByteOff (castPtr p) 8
-      cl   <- peekByteOff (castPtr p) 9
-      node <- peekByteOff (castPtr p) 10
+      tm   <- peekByteOff p 4
+      th   <- peekByteOff p 6
+      ch   <- peekByteOff p 8
+      cl   <- peekByteOff p 9
+      node <- peekByteOff p 10
       return $ UUID tl tm th ch cl node
 
     poke p (UUID tl tm th ch cl node) = do
       poke (castPtr p) tl
-      pokeByteOff (castPtr p) 4 tm
-      pokeByteOff (castPtr p) 6 th
-      pokeByteOff (castPtr p) 8 ch
-      pokeByteOff (castPtr p) 9 cl
-      pokeByteOff (castPtr p) 10 node
+      pokeByteOff p 4 tm
+      pokeByteOff p 6 th
+      pokeByteOff p 8 ch
+      pokeByteOff p 9 cl
+      pokeByteOff p 10 node
 
 instance Storable Node where
     sizeOf _ = 6
@@ -145,20 +145,20 @@ instance Storable Node where
 
     peek p = do
       w1 <- peek $ castPtr p
-      w2 <- peekByteOff (castPtr p) 1
-      w3 <- peekByteOff (castPtr p) 2
-      w4 <- peekByteOff (castPtr p) 3
-      w5 <- peekByteOff (castPtr p) 4
-      w6 <- peekByteOff (castPtr p) 5
+      w2 <- peekByteOff p 1
+      w3 <- peekByteOff p 2
+      w4 <- peekByteOff p 3
+      w5 <- peekByteOff p 4
+      w6 <- peekByteOff p 5
       return $ Node w1 w2 w3 w4 w5 w6
 
     poke p (Node w1 w2 w3 w4 w5 w6) = do
       poke (castPtr p) w1
-      pokeByteOff (castPtr p) 1 w2
-      pokeByteOff (castPtr p) 2 w3
-      pokeByteOff (castPtr p) 3 w4
-      pokeByteOff (castPtr p) 4 w5
-      pokeByteOff (castPtr p) 5 w6
+      pokeByteOff p 1 w2
+      pokeByteOff p 2 w3
+      pokeByteOff p 3 w4
+      pokeByteOff p 4 w5
+      pokeByteOff p 5 w6
 
 -- My goal with this instance was to make it work just enough to do what
 -- I want when used with the HStringTemplate library.
