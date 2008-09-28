@@ -284,12 +284,12 @@ high8 :: Word16 -> Word8
 high8 = fromIntegral . flip shiftR 4
 
 -- this may be overkill ...
-{-# RULES
+{- RULES
   "low8/low16"    forall x . low8  (low16 x)  = fromIntegral (x .&. 0x000000FF)
-  "high8/low16"   forall x . high8 (low16 x)  = fromIntegral (shiftR (x .&. 0x0000FF00) 4)
-  "low8/high16"   forall x . low8  (high16 x) = fromIntegral (shiftR (x .&. 0x00FF0000) 8)
-  "high8/high16"  forall x . high8 (high16 x) = fromIntegral (shiftR x 12)
-  #-}
+  "high8/low16"   forall x . high8 (low16 x)  = fromIntegral (shiftR (x .&. 0x0000FF00) 8)
+  "low8/high16"   forall x . low8  (high16 x) = fromIntegral (shiftR (x .&. 0x00FF0000) 16)
+  "high8/high16"  forall x . high8 (high16 x) = fromIntegral (shiftR x 24)
+  -}
 
 unsafeFromString :: String -> UUID
 unsafeFromString = fromJust . fromString
