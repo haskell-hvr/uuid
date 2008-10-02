@@ -56,7 +56,7 @@ word64ToTimePieces :: Word64 -> (Word32, Word16, Word16)
 word64ToTimePieces w = (lo, mi, hi) 
  where
   lo = fromIntegral $ (w `shiftL` 32) `shiftR` 32
-  mi = fromIntegral $ (w `shiftL` 16) `shiftR` 32
+  mi = fromIntegral $ (w `shiftL` 16) `shiftR` 48
   hi = (fromIntegral $ w `shiftR` 48) `setBit` 15 
 
 
