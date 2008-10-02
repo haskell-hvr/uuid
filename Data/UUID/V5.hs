@@ -51,8 +51,8 @@ generateNamed namespace object =
         SHA1.Word160 w1 w2 w3 w4 w5 = SHA1.hash chunk
 
         tl = w1
-        tm = low16 w2
-        th = (versionSHA .|.) $ (versionMask .&.) $ high16 w2
+        tm = high16 w2
+        th = (versionSHA .|.) $ (versionMask .&.) $ low16 w2
         ch = (reserved .|.) $ (reservedMask .&.) $ high8 $ high16 w3
         cl = low8  $ high16 w3
         node = Node (high8 (low16 w3))
@@ -79,7 +79,7 @@ low8 :: Word16 -> Word8
 low8 = fromIntegral . (.&. 0x00FF)
 
 high8 :: Word16 -> Word8
-high8 = fromIntegral . flip shiftR 4
+high8 = fromIntegral . flip shiftR 8
 
 versionSHA = shiftL 12 5
 
