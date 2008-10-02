@@ -14,13 +14,15 @@
 -- See <http://en.wikipedia.org/wiki/UUID> for the general idea.
 
 module Data.UUID(UUID
+                ,module Data.UUID.V1
+                ,module Data.UUID.V5
                 ,toString
                 ,fromString
                 ,null
-                ,module Data.UUID.V5
                 ) where
 
 import Data.UUID.Internal
+import Data.UUID.V1
 import Data.UUID.V5
 
 import Prelude hiding (null)
