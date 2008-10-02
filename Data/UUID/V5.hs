@@ -1,5 +1,5 @@
 -- |
--- Module      : Data.UUID
+-- Module      : Data.UUID.V5
 -- Copyright   : (c) 2008 Antoine Latter
 --
 -- License     : BSD-style
