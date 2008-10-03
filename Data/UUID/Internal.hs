@@ -1,4 +1,4 @@
-{-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE DeriveDataTypeable, CPP #-}
 
 -- |
 -- Module      : Data.UUID
@@ -42,17 +42,23 @@ import System.Random
 
 import Text.Printf
 
+#ifndef STRICT
+#define SLOT(x) x
+#else
+#define SLOT(x) {-# UNPACK #-} !x
+#endif
+
 -- |The UUID type.  A 'Random' instance is provided which produces
 -- version 3 UUIDs as specified in RFC 4122.  The 'Storable' and 
 -- 'Binary' instances are compatable with RFC 4122.  The 'Binary'
 -- instance serializes to network byte order.
 data UUID = UUID
-    {uuid_timeLow  :: {-# UNPACK #-} !Word32
-    ,uuid_timeMid  :: {-# UNPACK #-} !Word16
-    ,uuid_timeHigh :: {-# UNPACK #-} !Word16 -- includes version number
-    ,uuid_clockSeqHi :: {-# UNPACK #-} !Word8 -- includes reserved field
-    ,uuid_clokcSeqLow :: {-# UNPACK #-} !Word8
-    ,uuid_node :: {-# UNPACK #-} !Node
+    {uuid_timeLow  :: SLOT(Word32)
+    ,uuid_timeMid  :: SLOT(Word16)
+    ,uuid_timeHigh :: SLOT(Word16) -- includes version number
+    ,uuid_clockSeqHi :: SLOT(Word8) -- includes reserved field
+    ,uuid_clokcSeqLow :: SLOT(Word8)
+    ,uuid_node :: SLOT(Node)
     } deriving (Eq, Ord, Typeable)
 
 instance Random UUID where
@@ -81,12 +87,12 @@ reserved :: Word8
 reserved = bit 7
 
 data Node = Node
-    {-# UNPACK #-} !Word8
-    {-# UNPACK #-} !Word8
-    {-# UNPACK #-} !Word8
-    {-# UNPACK #-} !Word8
-    {-# UNPACK #-} !Word8
-    {-# UNPACK #-} !Word8
+    SLOT(Word8)
+    SLOT(Word8)
+    SLOT(Word8)
+    SLOT(Word8)
+    SLOT(Word8)
+    SLOT(Word8)
  deriving (Eq, Ord, Typeable)
 
 instance Random Node where
