@@ -81,7 +81,7 @@ low8 = fromIntegral . (.&. 0x00FF)
 high8 :: Word16 -> Word8
 high8 = fromIntegral . flip shiftR 8
 
-versionSHA = shiftL 12 5
+versionSHA = 5 `shiftL` 12
 
 unsafeFromString :: String -> UUID
 unsafeFromString = fromJust . fromString

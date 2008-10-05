@@ -78,7 +78,7 @@ versionMask :: Word16 -- 0000 1111 1111 1111
 versionMask = 0x0FFF
 
 versionRandom :: Word16
-versionRandom = shiftL 12 4
+versionRandom = 4 `shiftL` 12
 
 reservedMask :: Word8 -- 0011 1111
 reservedMask = 0x3F
