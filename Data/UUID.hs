@@ -12,22 +12,18 @@
 -- This library is useful for comparing, parsing and
 -- printing Universally Unique Identifiers.
 -- See <http://en.wikipedia.org/wiki/UUID> for the general idea.
+--
+-- For generating UUIDs, check out 'Data.UUID.V1', 'Data.UUID.V5' and
+-- 'System.Random'.
 
 module Data.UUID(UUID
-                ,module Data.UUID.V1
-                ,module Data.UUID.V5
                 ,toString
                 ,fromString
                 ,null
                 ) where
 
 import Data.UUID.Internal
-import Data.UUID.V1
-import Data.UUID.V5
 
-import Prelude hiding (null)
-
--- |Returns 'True' if the passed-in 'UUID' is the null UUID.
-null :: UUID -> Bool
-null = (== nullUuid)
- where nullUuid = UUID 0 0 0 0 0 $ Node 0 0 0 0 0 0
+-- Everything is really implemented in Data.UUID.Internal,
+-- but I don't want to export the constructors out of the
+-- package.

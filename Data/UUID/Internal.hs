@@ -257,13 +257,14 @@ toString (UUID tl tm th ch cl n) = printf "%08x-%04x-%04x-%02x%02x-%s" tl tm th 
 
 
 -- remove all occurances of the input element in the inpt list.
--- non of the sub-lists are empty.
+-- none of the sub-lists are empty.
 splitList :: Eq a => a -> [a] -> [[a]]
 splitList c xs = let ys = dropWhile (== c) xs
                  in case span (/= c) ys of
                       ([],_) -> []
                       (sub,rest) -> sub : splitList c rest
 
+-- the passed-in predicate signals when to stop unfolding
 unfoldUntil :: (b -> Bool) -> (b -> (a, b)) -> b -> [a]
 unfoldUntil p f n = unfoldr g n
  where g m | p m       = Nothing
@@ -274,10 +275,11 @@ unfoldUntil p f n = unfoldr g n
 -- this will work, though
 
 randomBoundedIntegral :: (RandomGen g, Bounded a, Integral a) => g -> (a, g)
-randomBoundedIntegral g = let (n, g1) = randomR (fromIntegral l, fromIntegral u) g
-                              _ = n :: Integer
-                              retVal = fromIntegral n `asTypeOf` (l `asTypeOf` u)
-                              u = maxBound
-                              l = minBound
-                          in (retVal, g1)
+randomBoundedIntegral g =
+    let (n, g1) = randomR (fromIntegral l, fromIntegral u) g
+        _ = n :: Integer
+        retVal = fromIntegral n `asTypeOf` (l `asTypeOf` u)
+        u = maxBound
+        l = minBound
+    in (retVal, g1)
 
