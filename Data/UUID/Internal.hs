@@ -29,7 +29,12 @@ import Data.Bits
 import Data.List (splitAt, foldl', unfoldr)
 
 import Data.Typeable
+
+#if __GLASGOW_HASKELL__ >= 610
+import Data.Data
+#else
 import Data.Generics.Basics
+#endif
 
 import Foreign.Ptr
 import Foreign.Storable
