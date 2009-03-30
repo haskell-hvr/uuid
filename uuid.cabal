@@ -8,7 +8,7 @@ License-file: LICENSE
 
 Category: Data
 Build-Type: Simple
-Cabal-Version: >= 1.2
+Cabal-Version: >= 1.2.3
 
 Description:
  This library is useful for creating, comparing, parsing and
