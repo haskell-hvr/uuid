@@ -19,9 +19,19 @@ Synopsis: For creating, comparing, parsing and printing Universally Unique Ident
 
 Homepage: http://community.haskell.org/~aslatter/code/uuid/
 
+Flag Base3
+  Default: False
+  Description: Set when support for base package version 3 is required.
+
 Library
- Build-Depends: base, random, binary, bytestring, Crypto, maccatcher,
+ Build-Depends: random, binary, bytestring, Crypto, maccatcher,
                 time
+
+ if flag(Base3)
+   Build-Depends: base >= 3, base < 4
+   CPP-Options: -DBASE_3_SUPPORT
+ else
+   Build-Depends: base >=4, base < 5
 
  Exposed-Modules:
    Data.UUID

@@ -30,10 +30,10 @@ import Data.List (splitAt, foldl', unfoldr)
 
 import Data.Typeable
 
-#if __GLASGOW_HASKELL__ >= 610
-import Data.Data
-#else
+#ifdef BASE_3_SUPPORT 
 import Data.Generics.Basics
+#else
+import Data.Data
 #endif
 
 import Foreign.Ptr
