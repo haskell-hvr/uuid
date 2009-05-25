@@ -12,7 +12,9 @@
 
 module Data.UUID.Internal
     (UUID(..)
+    ,null
     ,Node(..)
+    ,nullNode
     ,nodeToList
     ,listToNode
     ,fromString
@@ -21,6 +23,9 @@ module Data.UUID.Internal
     ,reservedMask
     ,reserved
     ) where
+
+import Prelude hiding (null)
+import qualified Prelude
 
 import Data.Word
 import Data.Char
@@ -66,6 +71,11 @@ data UUID = UUID
     ,uuid_node :: SLOT(Node)
     } deriving (Eq, Ord, Typeable)
 
+-- |Returns true if the passed-in UUID is the null UUID.
+null :: UUID -> Bool
+null (UUID 0 0 0 0 0 node) | nullNode node = True
+null _ = False
+
 instance Random UUID where
     random g = let (timeLow, g1)  = randomBoundedIntegral g
                    (timeMid, g2)  = randomBoundedIntegral g1
@@ -110,6 +120,9 @@ instance Random Node where
                in (Node w1 w2 w3 w4 w5 w6, g6)
     randomR _ = random -- neglect range
 
+nullNode :: Node -> Bool
+nullNode (Node 0 0 0 0 0 0) = True
+nullNode _ = False
 
 nodeToList :: Node -> [Word8]
 nodeToList (Node w1 w2 w3 w4 w5 w6) = [w1, w2, w3, w4, w5, w6]

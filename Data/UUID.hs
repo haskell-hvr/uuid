@@ -22,6 +22,7 @@ module Data.UUID(UUID
                 ,null
                 ) where
 
+import Prelude hiding (null)
 import Data.UUID.Internal
 
 -- Everything is really implemented in Data.UUID.Internal,
