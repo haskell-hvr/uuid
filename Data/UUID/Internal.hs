@@ -59,7 +59,7 @@ import Text.Printf
 #endif
 
 -- |The UUID type.  A 'Random' instance is provided which produces
--- version 3 UUIDs as specified in RFC 4122.  The 'Storable' and 
+-- version 4 UUIDs as specified in RFC 4122.  The 'Storable' and 
 -- 'Binary' instances are compatable with RFC 4122.  The 'Binary'
 -- instance serializes to network byte order.
 data UUID = UUID
