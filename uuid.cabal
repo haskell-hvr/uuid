@@ -18,6 +18,10 @@ Description:
 Synopsis: For creating, comparing, parsing and printing Universally Unique Identifiers
 
 Homepage: http://community.haskell.org/~aslatter/code/uuid/
+Bug-Reports: mailto:aslatter@gmail.com
+
+Extra-Source-Files:
+     CHANGES
 
 Library
  Build-Depends: random, binary, bytestring, Crypto, maccatcher,

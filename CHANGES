@@ -1,0 +1,8 @@
+
+- added CHANGES file
+
+1.1.1
+
+- no longer exporting 'null' from the prelude
+- add 'null' predicate on UUIDs
+- documentation fix (thanks Mark Lentczner)
