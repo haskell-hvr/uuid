@@ -35,10 +35,10 @@ import Data.List (splitAt, foldl', unfoldr)
 
 import Data.Typeable
 
-#ifdef BASE_3_SUPPORT 
-import Data.Generics.Basics
-#else
+#if MIN_VERSION_base(4,0,0)
 import Data.Data
+#else
+import Data.Generics.Basics
 #endif
 
 import Foreign.Ptr
