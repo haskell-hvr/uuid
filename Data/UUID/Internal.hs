@@ -13,10 +13,13 @@
 module Data.UUID.Internal
     (UUID(..)
     ,null
+    ,nil
     ,Node(..)
     ,nullNode
     ,nodeToList
     ,listToNode
+    ,fromByteString
+    ,toByteString
     ,fromString
     ,toString
     ,versionMask
@@ -47,6 +50,7 @@ import Foreign.Storable
 import Data.Binary
 import Data.Binary.Put
 import Data.Binary.Get
+import qualified Data.ByteString.Lazy as Lazy
 
 import System.Random
 
@@ -71,10 +75,15 @@ data UUID = UUID
     ,uuid_node :: SLOT(Node)
     } deriving (Eq, Ord, Typeable)
 
--- |Returns true if the passed-in UUID is the null UUID.
+-- |Returns true if the passed-in UUID is the 'nil' UUID.
 null :: UUID -> Bool
 null (UUID 0 0 0 0 0 node) | nullNode node = True
 null _ = False
+
+-- |The nil UUID, as defined in RFC 4122.
+-- It is a UUID of all zeros. @'null' u@ iff @'u' == 'nil'@.
+nil :: UUID
+nil = UUID 0 0 0 0 0 (Node 0 0 0 0 0 0)
 
 instance Random UUID where
     random g = let (timeLow, g1)  = randomBoundedIntegral g
@@ -219,6 +228,16 @@ instance Binary Node where
       w6 <- getWord8
       return $ Node w1 w2 w3 w4 w5 w6
 
+
+-- |Extract a UUID from a 'ByteString'.
+-- The argument must be 16 bytes long, otherwise 'nil' is returned.
+fromByteString :: Lazy.ByteString -> UUID
+fromByteString bs | Lazy.length bs == 16 = decode bs
+                  | otherwise            = nil
+
+-- |Encode a UUID into a 'ByteString' in network order.
+toByteString :: UUID -> Lazy.ByteString
+toByteString uu = encode uu
 
 -- My goal with this instance was to make it work just enough to do what
 -- I want when used with the HStringTemplate library.
