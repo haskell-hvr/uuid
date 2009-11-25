@@ -229,11 +229,11 @@ instance Binary Node where
       return $ Node w1 w2 w3 w4 w5 w6
 
 
--- |Extract a UUID from a 'ByteString'.
--- The argument must be 16 bytes long, otherwise 'nil' is returned.
-fromByteString :: Lazy.ByteString -> UUID
-fromByteString bs | Lazy.length bs == 16 = decode bs
-                  | otherwise            = nil
+-- |Extract a UUID from a 'ByteString' in network byte order.
+-- The argument must be 16 bytes long, otherwise 'Nothing' is returned.
+fromByteString :: Lazy.ByteString -> Maybe UUID
+fromByteString bs | Lazy.length bs == 16 = Just $ decode bs
+                  | otherwise            = Nothing
 
 -- |Encode a UUID into a 'ByteString' in network order.
 toByteString :: UUID -> Lazy.ByteString
