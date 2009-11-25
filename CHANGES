@@ -1,5 +1,7 @@
 
 - added CHANGES file
+- added functions toByteString and fromByteString (Mark Lentczner)
+- added 'nil' UUID (Mark Lentczner)
 
 1.1.1
 
