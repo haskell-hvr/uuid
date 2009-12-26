@@ -33,5 +33,5 @@ main = do
             bench "fromString"     $ B (rnf . U.fromString) s1,
             bench "toByteString"   $ B (rnf . U.toByteString) u1,
             bench "fromByteString" $ B (rnf . U.fromByteString) b1,
-            bench "random gen"     $ (randomIO :: IO U.UUID)
+            bench "random gen"     $ rnf `fmap` (randomIO :: IO U.UUID)
             ]
