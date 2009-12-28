@@ -65,15 +65,15 @@ stepTime = do
   h1 <- fmap hundredsOfNanosSinceGregorianReform getCurrentTime
   if h1 > h0 
     then  do
-      writeIORef state $ State 0 h1
+      writeIORef state $ State c0 h1
       return $ Just (c0, h1)
     else  do
       let
         c1 = succ c0
       if c1 < 2^14
         then  do
-          writeIORef state $ State c1 h0
-          return $ Just (c1, h0)
+          writeIORef state $ State c1 h1
+          return $ Just (c1, h1)
         else  do
           return Nothing
 
@@ -81,7 +81,7 @@ stepTime = do
 {-# NOINLINE state #-}
 state = unsafePerformIO $ do
   h0 <- fmap hundredsOfNanosSinceGregorianReform getCurrentTime
-  newIORef $ State 0 h0 
+  newIORef $ State 0 h0 -- the 0 should be a random number
 
 
 data State = State
