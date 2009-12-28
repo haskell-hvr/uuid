@@ -246,10 +246,12 @@ instance Data UUID where
     gunfold _ _  = error "gunfold"
     dataTypeOf _ = uuidType
 
-uuidType =  mkNorepType "Data.UUID.UUID"
+uuidType =  mkNoRepType "Data.UUID.UUID"
 
-
-
+#if !(MIN_VERSION_base(4,2,0))
+mkNoRepType :: String -> DataType
+mkNoRepType = mkNorepType
+#endif
 
 -- |If the passed in 'String' can be parsed as a 'UUID', it will be.
 -- The hyphens may not be omitted.
