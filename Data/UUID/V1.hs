@@ -55,9 +55,9 @@ nextUUID = do
 word64ToTimePieces :: Word64 -> (Word32, Word16, Word16) 
 word64ToTimePieces w = (lo, mi, hi) 
  where
-  lo = fromIntegral $ (w `shiftL` 32) `shiftR` 32
-  mi = fromIntegral $ (w `shiftL` 16) `shiftR` 48
-  hi = (fromIntegral $ w `shiftR` 48) `setBit` 15 
+  lo = fromIntegral $ (w)
+  mi = fromIntegral $ (w `shiftR` 32)
+  hi = fromIntegral $ (w `shiftR` 48 .&. 0x0fff .|. 0x1000)
 
 
 stepTime = do
@@ -66,7 +66,7 @@ stepTime = do
   if h1 > h0 
     then  do
       writeIORef state $ State 0 h1
-      return $ Just (0, h1)
+      return $ Just (c0, h1)
     else  do
       let
         c1 = succ c0

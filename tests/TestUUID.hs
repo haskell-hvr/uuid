@@ -1,9 +1,12 @@
+import Control.Monad (replicateM)
 import Data.Bits
 import qualified Data.ByteString.Lazy as B
 import Data.Char (ord)
+import Data.List (nub, (\\))
 import Data.Maybe
 import Data.Word
 import qualified Data.UUID as U
+import qualified Data.UUID.V1 as U
 import qualified Data.UUID.V5 as U
 import Test.HUnit
 import Test.QuickCheck
@@ -46,6 +49,14 @@ test_conv = TestList [
     ]
     where b16 = B.pack [1..16]
           s16 = "01020304-0506-0708-090a-0b0c0d0e0f10"
+
+test_v1 v1s = TestList [
+    "V1 unique" ~: nub (v1s \\ nub v1s) @?= [],
+    "V1 not null" ~: TestList $ map (testUUID (not . U.null))  v1s,
+    "V1 valid"    ~: TestList $ map (testUUID (isValidVersion 1)) v1s
+    ]
+    where testUUID :: (U.UUID -> Bool) -> Maybe U.UUID -> Test
+          testUUID p u = maybe False p u ~? show u
 
 test_v5 = TestList [
     "V5 computation" ~:
@@ -100,10 +111,12 @@ prop_v5Valid = label "V5 valid" v5Valid
 
 main :: IO ()
 main = do
+    v1s <- replicateM 100 U.nextUUID
     runTestText (putTextToHandle stderr False) (TestList [
         test_null,
         test_nil,
         test_conv,
+        test_v1 v1s,
         test_v5
         ])
     mapM_ quickCheck $ [
