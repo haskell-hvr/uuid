@@ -35,18 +35,27 @@ main = do
             n1 = (map (fromIntegral . ord) "http://www.haskell.org/") :: [Word8]
         defaultMain [
             bgroup "null" [
-                bench "null"           $ B U.null u1,
-                bench "null nil"       $ B U.null U.nil
+                bench "null"           $ whnf U.null u1,
+                bench "null nil"       $ whnf U.null U.nil
                 ],
             bgroup "conversion" [
-                bench "toString"       $ B (rnf . U.toString) u1,
-                bench "fromString"     $ B (rnf . U.fromString) s1,
-                bench "toByteString"   $ B (rnf . U.toByteString) u1,
-                bench "fromByteString" $ B (rnf . U.fromByteString) b1
+                bench "toString"       $ nf U.toString u1,
+                bench "fromString"     $ nf U.fromString s1,
+                bench "toByteString"   $ nf U.toByteString u1,
+                bench "fromByteString" $ nf U.fromByteString b1
                 ],
             bgroup "generation" [
-                bench "V1" $ rnf `fmap` U.nextUUID,
-                bench "V4" $ rnf `fmap` (randomIO :: IO U.UUID),
-                bench "V5" $ B (rnf  . U.generateNamed U.namespaceURL) n1
+                bench "V1" $ nfIO U.nextUUID,
+                bench "V4" $ nfIO (randomIO :: IO U.UUID),
+                bench "V5" $ nf   (U.generateNamed U.namespaceURL) n1
                 ]
             ]
+
+#if !(MIN_VERSION_criterion(0,4,0))
+nf f arg = B ( rnf . f) arg
+whnf f arg = B f arg
+#endif
+
+#if !(MIN_VERSION_criterion(0,4,1))
+nfIO act = rnf `fmap` act
+#endif
