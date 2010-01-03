@@ -2,6 +2,10 @@
 - added CHANGES file
 - added functions toByteString and fromByteString (Mark Lentczner)
 - added 'nil' UUID (Mark Lentczner)
+- added test-suite and benchmarks (Mark Lentczner)
+- drop module Data.UUID.V1
+  users of this module are encouraged to use
+  System.UUID.V1 from the system-uuid package
 
 1.1.1
 
