@@ -34,10 +34,17 @@ main = do
         let s1 = U.toString u1
             b1 = U.toByteString u1
             n1 = (map (fromIntegral . ord) "http://www.haskell.org/") :: [Word8]
+            nil2 = fromJust $
+                        U.fromString "00000000-0000-0000-0000-000000000000"
+            u2a = fromJust $ U.fromString "169a5a43-c051-4a16-98f4-08447ddd5dc0"
+            u2b = fromJust $ U.fromByteString $
+                        BL.pack [0x16, 0x9a, 0x5a, 0x43, 0xc0, 0x51, 0x4a, 0x16,
+                                 0x98, 0xf4, 0x08, 0x44, 0x7d, 0xdd, 0x5d, 0xc0]
+            u3  = fromJust $ U.fromString "dea6f619-1038-438b-b4af-f1cdec1e6e23"
         defaultMain [
             bgroup "null" [
-                bench "null"           $ whnf U.null u1,
-                bench "null nil"       $ whnf U.null U.nil
+                bench "null"           $ B U.null u1,
+                bench "null nil"       $ B U.null U.nil
                 ],
             bgroup "conversion" [
                 bench "toString"       $ nf U.toString u1,
