@@ -43,11 +43,11 @@ main = do
             u3  = fromJust $ U.fromString "dea6f619-1038-438b-b4af-f1cdec1e6e23"
         defaultMain [
             bgroup "testing" [
-                bench "null non-nil"   $ B U.null u1,
-                bench "null nil"       $ B U.null U.nil,
-                bench "null nil2"      $ B U.null nil2,
-                bench "eq same"        $ B (==u2a) u2b,
-                bench "eq differ"      $ B (==u2a) u3
+                bench "null non-nil"   $ whnf U.null u1,
+                bench "null nil"       $ whnf U.null U.nil,
+                bench "null nil2"      $ whnf U.null nil2,
+                bench "eq same"        $ whnf (==u2a) u2b,
+                bench "eq differ"      $ whnf (==u2a) u3
                 ],
             bgroup "conversion" [
                 bench "toString"       $ nf U.toString u1,
