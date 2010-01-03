@@ -49,7 +49,7 @@ Executable benchuuid
  If flag(test)
   Buildable: True
   Build-Depends: random, binary, bytestring, Crypto, maccatcher,
-                 time, base >=3, base < 5,
+                 time, base >=3, base < 5, containers,
                  criterion >= 0.3 && < 0.5, parallel >= 2.1 && < 2.3
  Else
   Buildable: False
