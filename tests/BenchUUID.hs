@@ -1,4 +1,3 @@
-import Control.Monad (replicateM)
 import Control.Parallel.Strategies
 import Criterion.Main
 import Data.Char (ord)
@@ -7,7 +6,6 @@ import Data.Word
 import qualified Data.Set as Set
 import qualified Data.ByteString.Lazy as BL
 import qualified Data.ByteString.Lazy.Internal as BL
-import qualified Data.UUID as U
 import qualified Data.UUID.Internal as U
 import qualified Data.UUID.V1 as U
 import qualified Data.UUID.V5 as U
@@ -19,12 +17,8 @@ instance NFData BL.ByteString where
     rnf (BL.Chunk _ ts) = rnf ts
 
 instance NFData U.UUID where
-    rnf (U.UUID tl tm th ch cl node) =
-        rnf tl `seq` rnf tm `seq` rnf th `seq` rnf ch `seq` rnf cl `seq` rnf node
+    rnf u = ()
 
-instance NFData U.Node where
-    rnf (U.Node w1 w2 w3 w4 w5 w6) =
-        rnf w1 `seq` rnf w2 `seq` rnf w3 `seq` rnf w4 `seq` rnf w5 `seq` rnf w6
 
 
 

@@ -38,9 +38,13 @@ Library
    Data.UUID.V5
 
  Other-Modules:
+   Data.UUID.Builder
    Data.UUID.Internal
 
  Extensions: DeriveDataTypeable
+ Ghc-Prof-Options:   -auto-all -caf-all
+ Ghc-Shared-Options:
+ Ghc-Options:        -Wall
 
 Executable benchuuid
  Main-Is: BenchUUID.hs
@@ -58,6 +62,10 @@ Executable testuuid
  Main-Is: TestUUID.hs
  HS-Source-Dirs: tests .
  Extensions: DeriveDataTypeable
+ Ghc-Prof-Options:   -auto-all -caf-all
+ Ghc-Shared-Options:
+ Ghc-Options:        -Wall -fno-warn-orphans
+
  If flag(test)
   Buildable: True
   Build-Depends: random, binary, bytestring, Crypto, maccatcher,

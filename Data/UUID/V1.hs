@@ -1,4 +1,5 @@
 {-# OPTIONS_GHC -fno-cse #-}
+{-# LANGUAGE TypeFamilies #-}
 
 -- |
 -- Module      : Data.UUID.V1
@@ -19,15 +20,15 @@ import Data.Time
 
 import Data.Bits
 import Data.Word
-import Data.Binary
 
 import Data.IORef
 import System.IO
 import System.IO.Unsafe
 
-import System.Info.MAC
+import qualified System.Info.MAC as SysMAC
 import Data.MAC
 
+import Data.UUID.Builder
 import Data.UUID.Internal
 
 -- | Returns a new UUID derived from the local hardware MAC
@@ -40,37 +41,41 @@ import Data.UUID.Internal
 nextUUID :: IO (Maybe UUID)
 nextUUID = do
   res <- stepTime
-  mac <- mac
+  mac <- SysMAC.mac
   case (res, mac) of
-    (Just (c, t), Just (MAC a' b' c' d' e' f')) -> do
-      let
-        (tL, tM, tH) = word64ToTimePieces t
-        (cL, cH) = word16ToClockSeqPieces c
-      return $ Just $ UUID tL tM tH cH cL $ Node a' b' c' d' e' f'
+    (Just (c, t), Just m) -> return $ Just $ makeUUID t c m
     _ -> return Nothing
 
 
--- |The bit layout and version number here used are described in clause 13 of
---  ITU X.667, from September 2004.
-word64ToTimePieces :: Word64 -> (Word32, Word16, Word16) 
-word64ToTimePieces w = (lo, mi, hi) 
- where
-  lo = fromIntegral $ (w)
-  mi = fromIntegral $ (w `shiftR` 32)
-  hi = fromIntegral $ (w `shiftR` 48 .&. 0x0fff .|. 0x1000)
+makeUUID :: Word64 -> Word16 -> MAC -> UUID
+makeUUID time clock mac =
+    buildFromBytes 1 /-/ tLow /-/ tMid /-/ tHigh /-/ clock /-/ (MACSource mac)
+    where tLow = (fromIntegral time) :: Word32
+          tMid = (fromIntegral (time `shiftR` 32)) :: Word16
+          tHigh = (fromIntegral (time `shiftR` 48)) :: Word16  
+
+newtype MACSource = MACSource MAC
+instance ByteSource MACSource where
+    z /-/ (MACSource (MAC a b c d e f)) = z a b c d e f
+type instance ByteSink MACSource g = Takes3Bytes (Takes3Bytes g)
 
 
+-- |Approximates the clock algorithm in RFC 4122, section 4.2
+-- Isn't system wide or thread safe, nor does it properly randomize
+-- the clock value on initialization.
+stepTime :: IO (Maybe (Word16, Word64))
 stepTime = do
   State c0 h0 <- readIORef state
   h1 <- fmap hundredsOfNanosSinceGregorianReform getCurrentTime
-  if h1 > h0 
+  if h1 > h0
     then  do
       writeIORef state $ State c0 h1
       return $ Just (c0, h1)
     else  do
       let
         c1 = succ c0
-      if c1 < 2^14
+      if c1 <= 0x3fff -- when clock is initially randomized,
+                      -- then this test will need to change
         then  do
           writeIORef state $ State c1 h1
           return $ Just (c1, h1)
@@ -79,6 +84,7 @@ stepTime = do
 
 
 {-# NOINLINE state #-}
+state :: IORef State
 state = unsafePerformIO $ do
   h0 <- fmap hundredsOfNanosSinceGregorianReform getCurrentTime
   newIORef $ State 0 h0 -- the 0 should be a random number
@@ -97,12 +103,5 @@ hundredsOfNanosSinceGregorianReform t = floor $ 10000000 * dt
   gregorianReform = UTCTime (fromGregorian 1582 10 15) 0
   dt = t `diffUTCTime` gregorianReform
 
-
--- |Per clause 13 of ITU X.667, from September 2004.
-word16ToClockSeqPieces :: Word16 -> (Word8, Word8)
-word16ToClockSeqPieces w = (lo, hi)
- where
-  lo = fromIntegral $ (w `shiftL` 8) `shiftR` 8
-  hi = (fromIntegral $ w `shiftR` 8) `setBit` 7 
 
 

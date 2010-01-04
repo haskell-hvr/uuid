@@ -7,8 +7,8 @@
 -- Maintainer  : aslatter@gmail.com
 -- Stability   : experimental
 -- Portability : portable
--- 
--- 
+--
+--
 -- This module implements Version 5 UUIDs as specified
 -- in RFC 4122.
 --
@@ -25,16 +25,13 @@ module Data.UUID.V5
     ,namespaceOID
     ,namespaceX500
     ) where
-                    
 
 import Data.UUID.Internal
 
 import Data.Binary
-import Data.Bits
 import Data.Maybe
 
 import qualified Data.ByteString.Lazy as BS
-import Data.ByteString.Lazy (ByteString)
 
 import qualified Data.Digest.SHA1 as SHA1
 
@@ -42,46 +39,17 @@ import qualified Data.Digest.SHA1 as SHA1
 -- |Generate a 'UUID' within the specified namespace out of the given
 -- object.
 --
--- Uses a SHA1 hash.
+-- Uses a SHA1 hash. The UUID is built from first 128 bits of the hash of
+-- the namespace UUID and the name (as a series of Word8).
 generateNamed :: UUID    -- ^Namespace
               -> [Word8] -- ^Object
               -> UUID
 generateNamed namespace object =
-    let chunk = BS.unpack (encode namespace) ++ object
-        SHA1.Word160 w1 w2 w3 w4 w5 = SHA1.hash chunk
+    let chunk = BS.unpack (toByteString namespace) ++ object
+        SHA1.Word160 w1 w2 w3 w4 _w5 = SHA1.hash chunk
+    in buildFromWords 5 w1 w2 w3 w4
 
-        tl = w1
-        tm = high16 w2
-        th = (versionSHA .|.) $ (versionMask .&.) $ low16 w2
-        ch = (reserved .|.) $ (reservedMask .&.) $ high8 $ high16 w3
-        cl = low8  $ high16 w3
-        node = Node (high8 (low16 w3))
-                    (low8  (low16 w3))
-                    (high8 (high16 w4))
-                    (low8 (high16 w4))
-                    (high8 (low16 w4))
-                    (low8 (low16 w4))
-    in UUID tl tm th ch cl node
 
--- HASH 0  1  - 2  3  : w1
---      4  5  - 6  7  : w2
---      8  9  - 10 11 : w3
---      12 13 - 14 15 : w4
---      16 17 - 18 19 : w5
-
-low16 :: Word32 -> Word16
-low16 = fromIntegral . (.&. 0x0000FFFF)
-
-high16 :: Word32 -> Word16
-high16 = fromIntegral . flip shiftR 16
-
-low8 :: Word16 -> Word8
-low8 = fromIntegral . (.&. 0x00FF)
-
-high8 :: Word16 -> Word8
-high8 = fromIntegral . flip shiftR 8
-
-versionSHA = 5 `shiftL` 12
 
 unsafeFromString :: String -> UUID
 unsafeFromString = fromJust . fromString
@@ -94,8 +62,10 @@ namespaceDNS = unsafeFromString "6ba7b810-9dad-11d1-80b4-00c04fd430c8"
 namespaceURL :: UUID
 namespaceURL = unsafeFromString "6ba7b811-9dad-11d1-80b4-00c04fd430c8"
 
+-- |The namespace for ISO OIDs
 namespaceOID :: UUID
 namespaceOID = unsafeFromString "6ba7b812-9dad-11d1-80b4-00c04fd430c8"
 
+-- |The namespace for X.500 DNs
 namespaceX500 :: UUID
 namespaceX500 = unsafeFromString "6ba7b814-9dad-11d1-80b4-00c04fd430c8"
