@@ -8,7 +8,8 @@ import qualified Data.ByteString.Lazy as BL
 import qualified Data.ByteString.Lazy.Internal as BL
 import qualified Data.UUID.Internal as U
 import qualified Data.UUID.V1 as U
-import qualified Data.UUID.V5 as U
+import qualified Data.UUID.V3 as U3
+import qualified Data.UUID.V5 as U5
 import System.Random
 
 
@@ -52,7 +53,8 @@ main = do
             bgroup "generation" [
                 bench "V1" $ nfIO U.nextUUID,
                 bench "V4" $ nfIO (randomIO :: IO U.UUID),
-                bench "V5" $ nf   (U.generateNamed U.namespaceURL) n1
+                bench "V3" $ nf   (U3.generateNamed U3.namespaceURL) n1,
+                bench "V5" $ nf   (U5.generateNamed U5.namespaceURL) n1
                 ],
             bench "set making" $ nf Set.fromList uuids
             ]

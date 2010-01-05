@@ -114,9 +114,9 @@ buildFromBytes v b0 b1 b2 b3 b4 b5 b6 b7 b8 b9 ba bb bc bd be bf =
           b8' = b8 .&. 0x3f .|. 0x80
 
 -- |Build a UUID of a given version from Word32 values.
-buildFromWords :: Word32 -> Word32 -> Word32 -> Word32 -> Word32 -> UUID
+buildFromWords :: Word8 -> Word32 -> Word32 -> Word32 -> Word32 -> UUID
 buildFromWords v w0 w1 w2 w3 = makeFromWords w0 w1' w2' w3
-    where w1' = w1 .&. 0xffff0fff .|. (v `shiftL` 12)
+    where w1' = w1 .&. 0xffff0fff .|. ((fromIntegral v) `shiftL` 12)
           w2' = w2 .&. 0x3fffffff .|. 0x80000000
 
 

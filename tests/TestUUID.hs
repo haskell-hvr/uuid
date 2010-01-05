@@ -7,7 +7,8 @@ import Data.Maybe
 import Data.Word
 import qualified Data.UUID as U
 import qualified Data.UUID.V1 as U
-import qualified Data.UUID.V5 as U
+import qualified Data.UUID.V3 as U3
+import qualified Data.UUID.V5 as U5
 import Test.HUnit
 import Test.QuickCheck
 import System.IO
@@ -34,7 +35,7 @@ instance Arbitrary Word8 where
 test_null :: Test
 test_null = TestList [
     "nil is null"              ~: assertBool "" (U.null U.nil),
-    "namespaceDNS is not null" ~: assertBool "" (not $ U.null U.namespaceDNS)
+    "namespaceDNS is not null" ~: assertBool "" (not $ U.null U3.namespaceDNS)
     ]
 
 test_nil :: Test
@@ -62,13 +63,20 @@ test_v1 v1s = TestList [
     where testUUID :: (U.UUID -> Bool) -> Maybe U.UUID -> Test
           testUUID p u = maybe False p u ~? show u
 
+test_v3 :: Test
+test_v3 = TestList [
+    "V3 computation" ~:
+          U3.generateNamed U3.namespaceDNS name @?= uV3
+    ]
+    where name = map (fromIntegral . ord) "www.widgets.com" :: [Word8]
+          uV3 = fromJust $ U.fromString "3d813cbb-47fb-32ba-91df-831e1593ac29"
+
 test_v5 :: Test
 test_v5 = TestList [
     "V5 computation" ~:
-          U.generateNamed U.namespaceDNS name @?= uV5
+          U5.generateNamed U5.namespaceDNS name @?= uV5
     ]
     where name = map (fromIntegral . ord) "www.widgets.com" :: [Word8]
-    --    uV3 = fromJust $ U.fromString "3d813cbb-47fb-32ba-91df-831e1593ac29"
           uV5 = fromJust $ U.fromString "21f7f8de-8051-5b89-8680-0195ef798b6a"
 
 prop_stringRoundTrip :: Property
@@ -107,15 +115,25 @@ prop_randomsValid = label "Random valid" randomsValid
     where randomsValid :: U.UUID -> Bool
           randomsValid = isValidVersion 4
 
+prop_v3NotNull :: Property
+prop_v3NotNull = label "V3 not null" v3NotNull
+    where v3NotNull :: [Word8] -> Bool
+          v3NotNull = not . U.null . U3.generateNamed U3.namespaceDNS
+
+prop_v3Valid :: Property
+prop_v3Valid = label "V3 valid" v3Valid
+    where v3Valid :: [Word8] -> Bool
+          v3Valid = isValidVersion 3 . U3.generateNamed U3.namespaceDNS
+
 prop_v5NotNull :: Property
 prop_v5NotNull = label "V5 not null" v5NotNull
     where v5NotNull :: [Word8] -> Bool
-          v5NotNull = not . U.null . U.generateNamed U.namespaceDNS
+          v5NotNull = not . U.null . U5.generateNamed U5.namespaceDNS
 
 prop_v5Valid :: Property
 prop_v5Valid = label "V5 valid" v5Valid
     where v5Valid :: [Word8] -> Bool
-          v5Valid = isValidVersion 5 . U.generateNamed U.namespaceDNS
+          v5Valid = isValidVersion 5 . U5.generateNamed U5.namespaceDNS
 
 
 main :: IO ()
@@ -126,6 +144,7 @@ main = do
         test_nil,
         test_conv,
         test_v1 v1s,
+        test_v3,
         test_v5
         ])
     mapM_ quickCheck $ [
@@ -136,6 +155,8 @@ main = do
         prop_randomsDiffer,
         prop_randomNotNull,
         prop_randomsValid,
+        prop_v3NotNull,
+        prop_v3Valid,
         prop_v5NotNull,
         prop_v5Valid
         ]

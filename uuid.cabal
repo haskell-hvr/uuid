@@ -35,11 +35,13 @@ Library
  Exposed-Modules:
    Data.UUID
    Data.UUID.V1
+   Data.UUID.V3
    Data.UUID.V5
 
  Other-Modules:
    Data.UUID.Builder
    Data.UUID.Internal
+   Data.UUID.Named
 
  Extensions: DeriveDataTypeable
  Ghc-Prof-Options:   -auto-all -caf-all

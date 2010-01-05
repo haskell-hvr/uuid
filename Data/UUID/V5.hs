@@ -20,19 +20,16 @@
 
 module Data.UUID.V5
     (generateNamed
-    ,namespaceDNS
-    ,namespaceURL
-    ,namespaceOID
-    ,namespaceX500
+    ,Shared.namespaceDNS
+    ,Shared.namespaceURL
+    ,Shared.namespaceOID
+    ,Shared.namespaceX500
     ) where
 
+import Data.Word
+
 import Data.UUID.Internal
-
-import Data.Binary
-import Data.Maybe
-
-import qualified Data.ByteString.Lazy as BS
-
+import qualified Data.UUID.Named as Shared
 import qualified Data.Digest.SHA1 as SHA1
 
 
@@ -44,28 +41,7 @@ import qualified Data.Digest.SHA1 as SHA1
 generateNamed :: UUID    -- ^Namespace
               -> [Word8] -- ^Object
               -> UUID
-generateNamed namespace object =
-    let chunk = BS.unpack (toByteString namespace) ++ object
-        SHA1.Word160 w1 w2 w3 w4 _w5 = SHA1.hash chunk
-    in buildFromWords 5 w1 w2 w3 w4
-
-
-
-unsafeFromString :: String -> UUID
-unsafeFromString = fromJust . fromString
-
--- |The namespace for DNS addresses
-namespaceDNS :: UUID
-namespaceDNS = unsafeFromString "6ba7b810-9dad-11d1-80b4-00c04fd430c8"
-
--- |The namespace for URLs
-namespaceURL :: UUID
-namespaceURL = unsafeFromString "6ba7b811-9dad-11d1-80b4-00c04fd430c8"
-
--- |The namespace for ISO OIDs
-namespaceOID :: UUID
-namespaceOID = unsafeFromString "6ba7b812-9dad-11d1-80b4-00c04fd430c8"
-
--- |The namespace for X.500 DNs
-namespaceX500 :: UUID
-namespaceX500 = unsafeFromString "6ba7b814-9dad-11d1-80b4-00c04fd430c8"
+generateNamed = Shared.generateNamed hash 5
+ where hash bytes
+           = case SHA1.hash bytes of
+               SHA1.Word160 w1 w2 w3 w4 _w5 -> (w1, w2, w3, w4)
