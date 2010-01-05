@@ -48,6 +48,7 @@ hash :: [Word8] -> (Word32, Word32, Word32, Word32)
 hash bytes
     = case map f $ chunk 4 $ MD5.hash bytes of
         w1:w2:w3:w4:_ -> (w1, w2, w3, w4)
+        _ -> error "Data.UUID.V3.hash: fatal error"
 
  where f [b1, b2, b3, b4]
            = sum
@@ -56,9 +57,10 @@ hash bytes
              , fromIntegral b2 `shiftL` 16
              , fromIntegral b1 `shiftL` 24
              ]
+       f _ = error "Data.UUID.V3.hash: fatal error"
 
 chunk :: Int -> [a] -> [[a]]
-chunk n xs = go n [] xs
+chunk n = go n []
  where go _ [] [] = []
        go _ ys [] = reverse ys:[]
        go 0 ys xs = reverse ys:go n [] xs

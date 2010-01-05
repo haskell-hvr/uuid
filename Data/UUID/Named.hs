@@ -33,9 +33,6 @@ import Data.Maybe
 
 import qualified Data.ByteString.Lazy as BS
 
-import qualified Data.Digest.SHA1 as SHA1
-
-
 -- |Generate a 'UUID' within the specified namespace out of the given
 -- object.
 generateNamed :: ([Word8] -> (Word32, Word32, Word32, Word32)) -- ^Hash
