@@ -1,11 +1,20 @@
+1.2.0
+  (Contributors: Antoine Latter & Mark Lentczner)
 
+- added functions toByteString and fromByteString
+- added 'nil' UUID
+- added unit tests and benchmarks, built when configured -ftest
+- major speed up of to/from functions (as well as in general)
+- added version-3 generation (deterministic based on MD5)
+- major changes to internal representation
+	- now uses four strict Word32 values
+	- internal ByteSource classes for easy construction (see Builder.hs)
+- Storable instance now stores in memory as system libraries in C do:
+    16 bytes derived from the network order of the fields, no matter what
+    the host native endianess is.
+- fixed bugs in V1 time and clock stepping, and V1 generated values
+- builds cleanly under GHC's -Wall
 - added CHANGES file
-- added functions toByteString and fromByteString (Mark Lentczner)
-- added 'nil' UUID (Mark Lentczner)
-- added test-suite and benchmarks (Mark Lentczner)
-- drop module Data.UUID.V1
-  users of this module are encouraged to use
-  System.UUID.V1 from the system-uuid package
 
 1.1.1
 
