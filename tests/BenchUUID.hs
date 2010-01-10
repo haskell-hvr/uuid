@@ -19,9 +19,6 @@ instance NFData BL.ByteString where
     rnf (BL.Chunk _ ts) = rnf ts
 
 instance NFData U.UUID where
-    rnf u = ()
-
-
 
 
 main :: IO ()
