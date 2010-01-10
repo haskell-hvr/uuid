@@ -12,8 +12,12 @@
 -- Portability : portable
 --
 -- RFC 4122 Version 1 UUID state machine.
+--
+-- Currently this is more useful as a reference. For
+-- true machine-unique UUID generation see the
+-- system-uuid package.
 
-module Data.UUID.V1(nextUUID)
+module Data.UUID.V1(nextUUID, MAC(..))
 where
 
 import Data.Time
@@ -25,9 +29,6 @@ import Data.IORef
 import System.IO
 import System.IO.Unsafe
 
-import qualified System.Info.MAC as SysMAC
-import Data.MAC
-
 import Data.UUID.Builder
 import Data.UUID.Internal
 
@@ -36,14 +37,12 @@ import Data.UUID.Internal
 -- Is generated according to the Version 1 UUID sepcified in
 -- RFC 4122.
 --
--- Returns nothing if the hardware MAC address could not
--- be discovered.
-nextUUID :: IO (Maybe UUID)
-nextUUID = do
+-- Returns nothing if UUIDs are generated to quickly
+nextUUID :: MAC -> IO (Maybe UUID)
+nextUUID m = do
   res <- stepTime
-  mac <- SysMAC.mac
-  case (res, mac) of
-    (Just (c, t), Just m) -> return $ Just $ makeUUID t c m
+  case res of
+    Just (c, t) -> return $ Just $ makeUUID t c m
     _ -> return Nothing
 
 
@@ -59,6 +58,9 @@ instance ByteSource MACSource where
     z /-/ (MACSource (MAC a b c d e f)) = z a b c d e f
 type instance ByteSink MACSource g = Takes3Bytes (Takes3Bytes g)
 
+-- | Machine address of computer generating UUIDs.
+data MAC = MAC !Word8 !Word8 !Word8
+               !Word8 !Word8 !Word8
 
 -- |Approximates the clock algorithm in RFC 4122, section 4.2
 -- Isn't system wide or thread safe, nor does it properly randomize

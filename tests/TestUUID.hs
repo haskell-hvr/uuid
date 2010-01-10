@@ -138,7 +138,7 @@ prop_v5Valid = label "V5 valid" v5Valid
 
 main :: IO ()
 main = do
-    v1s <- replicateM 100 U.nextUUID
+    v1s <- replicateM 100 $ U.nextUUID $ U.MAC 0 0 0 0 0 0
     runTestText (putTextToHandle stderr False) (TestList [
         test_null,
         test_nil,
