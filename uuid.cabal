@@ -56,7 +56,8 @@ Executable benchuuid
   Buildable: True
   Build-Depends: random, binary, bytestring, Crypto, maccatcher,
                  time, base >=3, base < 5, containers,
-                 criterion >= 0.3 && < 0.5, parallel >= 2.1 && < 2.3
+                 criterion >= 0.3 && < 0.5, parallel >= 2.1 && < 2.3,
+                 mersenne-random-pure64 >= 0.2 && < 0.3
  Else
   Buildable: False
 

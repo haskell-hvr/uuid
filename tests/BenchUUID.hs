@@ -1,6 +1,7 @@
 import Control.Parallel.Strategies
 import Criterion.Main
 import Data.Char (ord)
+import Data.IORef
 import Data.Maybe (fromJust)
 import Data.Word
 import qualified Data.Set as Set
@@ -11,7 +12,7 @@ import qualified Data.UUID.V1 as U
 import qualified Data.UUID.V3 as U3
 import qualified Data.UUID.V5 as U5
 import System.Random
-
+import System.Random.Mersenne.Pure64
 
 instance NFData BL.ByteString where
     rnf BL.Empty        = ()
@@ -36,6 +37,15 @@ main = do
                         BL.pack [0x16, 0x9a, 0x5a, 0x43, 0xc0, 0x51, 0x4a, 0x16,
                                  0x98, 0xf4, 0x08, 0x44, 0x7d, 0xdd, 0x5d, 0xc0]
             u3  = fromJust $ U.fromString "dea6f619-1038-438b-b4af-f1cdec1e6e23"
+
+        -- setup for random generation
+        randomState <- newPureMT >>= newIORef
+        let randomUUID = do
+              state <- readIORef randomState
+              let (uuid, state') = random state
+              writeIORef randomState state'
+              return uuid
+
         defaultMain [
             bgroup "testing" [
                 bench "null non-nil"   $ whnf U.null u1,
@@ -52,7 +62,7 @@ main = do
                 ],
             bgroup "generation" [
                 bench "V1" $ nfIO U.nextUUID,
-                bench "V4" $ nfIO (randomIO :: IO U.UUID),
+                bench "V4" $ nfIO (randomUUID :: IO U.UUID),
                 bench "V3" $ nf   (U3.generateNamed U3.namespaceURL) n1,
                 bench "V5" $ nf   (U5.generateNamed U5.namespaceURL) n1
                 ],
