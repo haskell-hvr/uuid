@@ -1,3 +1,8 @@
+1.2.1
+
+- Fix concurrency bug in Data.UUID.V1 (thanks to Neil Mitchell for reporting
+and a test case)
+
 1.2.0
   (Contributors: Antoine Latter & Mark Lentczner)
 
