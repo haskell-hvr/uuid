@@ -21,7 +21,7 @@ import Data.Time
 import Data.Bits
 import Data.Word
 
-import Data.IORef
+import Control.Concurrent.MVar
 import System.IO
 import System.IO.Unsafe
 
@@ -65,29 +65,27 @@ type instance ByteSink MACSource g = Takes3Bytes (Takes3Bytes g)
 -- the clock value on initialization.
 stepTime :: IO (Maybe (Word16, Word64))
 stepTime = do
-  State c0 h0 <- readIORef state
   h1 <- fmap hundredsOfNanosSinceGregorianReform getCurrentTime
-  if h1 > h0
-    then  do
-      writeIORef state $ State c0 h1
-      return $ Just (c0, h1)
-    else  do
+  modifyMVar state $ \s@(State c0 h0) ->
+   if h1 > h0
+    then
+      return (State c0 h1, Just (c0, h1))
+    else
       let
         c1 = succ c0
-      if c1 <= 0x3fff -- when clock is initially randomized,
+      in if c1 <= 0x3fff -- when clock is initially randomized,
                       -- then this test will need to change
-        then  do
-          writeIORef state $ State c1 h1
-          return $ Just (c1, h1)
-        else  do
-          return Nothing
+         then
+          return (State c1 h1, Just (c1, h1))
+        else
+          return (s, Nothing)
 
 
 {-# NOINLINE state #-}
-state :: IORef State
+state :: MVar State
 state = unsafePerformIO $ do
   h0 <- fmap hundredsOfNanosSinceGregorianReform getCurrentTime
-  newIORef $ State 0 h0 -- the 0 should be a random number
+  newMVar $ State 0 h0 -- the 0 should be a random number
 
 
 data State = State
