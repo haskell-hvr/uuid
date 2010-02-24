@@ -58,17 +58,13 @@ main = do
                 bench "fromByteString" $ nf U.fromByteString b1
                 ],
             bgroup "generation" [
-                bench "V1" $ nfIO (U.nextUUID testMAC),
+                bench "V1" $ nfIO U.nextUUID,
                 bench "V4" $ nfIO (randomUUID :: IO U.UUID),
                 bench "V3" $ nf   (U3.generateNamed U3.namespaceURL) n1,
                 bench "V5" $ nf   (U5.generateNamed U5.namespaceURL) n1
                 ],
             bench "set making" $ nf Set.fromList uuids
             ]
-
--- | MAC address to use in testing
-testMAC :: U.MAC
-testMAC = U.MAC 0 0 0 0 0 0
 
 -- 50 uuids, so tests can be repeatable
 uuids :: [U.UUID]
