@@ -3,6 +3,7 @@
 -- |
 -- Module      : Data.UUID
 -- Copyright   : (c) 2008-2009 Antoine Latter
+--               (c) 2009 Mark Lentczner
 --
 -- License     : BSD-style
 --

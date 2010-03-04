@@ -4,6 +4,8 @@
 -- |
 -- Module      : Data.UUID.V1
 -- Copyright   : (c) 2008 Jason Dusek
+--               (c) 2009 Mark Lentczner
+--               (c) 2009-2010 Antoine Latter
 --
 -- License     : BSD-style
 --
