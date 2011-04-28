@@ -19,6 +19,8 @@ module Data.UUID.Internal
     ,toByteString
     ,fromString
     ,toString
+    ,fromWords
+    ,toWords
     ,buildFromBytes
     ,buildFromWords
     ) where
@@ -68,6 +70,16 @@ data UUID = UUID !Word32 !Word32 !Word32 !Word32
     None was as fast, overall, as the representation used here.
 -}
 
+-- | Covert a 'UUID' into a sequence of 'Word32' values.
+-- Usefull for when you need to serialize a UUID and
+-- neither 'Storable' nor 'Binary' are appropriate. 
+toWords :: UUID -> (Word32, Word32, Word32, Word32)
+toWords (UUID w1 w2 w3 w4) = (w1, w2, w3, w4)
+
+-- | Create a 'UUID' from a sequence of 'Word32'. The
+-- opposite of 'toWords'.
+fromWords :: Word32 -> Word32 -> Word32 -> Word32 -> UUID
+fromWords = UUID
 
 --
 -- UTILITIES

@@ -22,6 +22,8 @@ module Data.UUID(UUID
                 ,fromString
                 ,toByteString
                 ,fromByteString
+                ,toWords
+                ,fromWords
                 ,null
                 ,nil
                 ) where
