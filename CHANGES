@@ -1,3 +1,17 @@
+1.2.3
+
+- The Read instance now drops leading spaces in the string to be parsed.
+Thanks to Marc Ziegert for reporting this bug.
+
+- The tests have moved over to the new Cabal test running framework.
+
+1.2.2
+
+- Add functions fromWords/toWords
+
+The goal was to have a total function that can be used to construct
+a UUID, primarily for use by uuid-th.
+
 1.2.1
 
 - Fix concurrency bug in Data.UUID.V1 (thanks to Neil Mitchell for reporting
