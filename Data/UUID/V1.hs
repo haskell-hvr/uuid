@@ -24,7 +24,6 @@ import Data.Bits
 import Data.Word
 
 import Control.Concurrent.MVar
-import System.IO
 import System.IO.Unsafe
 
 import qualified System.Info.MAC as SysMAC

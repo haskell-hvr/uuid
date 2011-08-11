@@ -26,7 +26,6 @@ module Data.UUID.Internal
     ) where
 
 import Prelude hiding (null)
-import qualified Prelude
 
 import Control.Monad (liftM4)
 import Data.Char
