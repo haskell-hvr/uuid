@@ -45,6 +45,10 @@ Library
  Ghc-Shared-Options:
  Ghc-Options:        -Wall
 
+source-repository   head
+  type:             darcs
+  location:         http://code.haskell.org/uuid
+
 -- not strictly a test, but we want it to error if
 -- it can't build
 Test-Suite benchmark
