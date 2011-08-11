@@ -269,9 +269,11 @@ instance Show UUID where
     show = toString
 
 instance Read UUID where
-    readsPrec _ str = case fromString (take 36 str) of
-      Nothing -> []
-      Just u  -> [(u,drop 36 str)]
+    readsPrec _ str =
+        let noSpaces = dropWhile isSpace str
+        in case fromString (take 36 noSpaces) of
+          Nothing -> []
+          Just u  -> [(u,drop 36 noSpaces)]
 
 
 instance Storable UUID where
