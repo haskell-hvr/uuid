@@ -135,6 +135,12 @@ prop_v5Valid = label "V5 valid" v5Valid
     where v5Valid :: [Word8] -> Bool
           v5Valid = isValidVersion 5 . U5.generateNamed U5.namespaceDNS
 
+prop_readShowRoundTrip :: Property
+prop_readShowRoundTrip = label "Read/Show round-trip" prop
+    where -- we're using 'Maybe UUID' to add a bit of
+          -- real-world complexity.
+          prop :: U.UUID -> Bool
+          prop uuid = read (show (Just uuid)) == Just uuid
 
 main :: IO ()
 main = do
@@ -149,6 +155,7 @@ main = do
         ])
     mapM_ quickCheck $ [
         prop_stringRoundTrip,
+        prop_readShowRoundTrip,
         prop_byteStringRoundTrip,
         prop_stringLength,
         prop_byteStringLength,
