@@ -1,4 +1,4 @@
-import Control.Parallel.Strategies
+import Control.DeepSeq
 import Criterion.Main
 import Data.Char (ord)
 import Data.IORef
@@ -7,7 +7,7 @@ import Data.Word
 import qualified Data.Set as Set
 import qualified Data.ByteString.Lazy as BL
 import qualified Data.ByteString.Lazy.Internal as BL
-import qualified Data.UUID.Internal as U
+import qualified Data.UUID as U
 import qualified Data.UUID.V1 as U
 import qualified Data.UUID.V3 as U3
 import qualified Data.UUID.V5 as U5
@@ -123,11 +123,3 @@ uuids
          "2a0e2efb-a11c-4a44-81ee-3efc37379b48"
         ]
 
-#if !(MIN_VERSION_criterion(0,4,0))
-nf f arg = B ( rnf . f) arg
-whnf f arg = B f arg
-#endif
-
-#if !(MIN_VERSION_criterion(0,4,1))
-nfIO act = rnf `fmap` act
-#endif
