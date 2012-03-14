@@ -10,7 +10,7 @@ import qualified Data.UUID.V1 as U
 import qualified Data.UUID.V3 as U3
 import qualified Data.UUID.V5 as U5
 import Test.HUnit
-import Test.QuickCheck
+import Test.QuickCheck hiding ((.&.))
 import System.IO
 import System.Random
 
@@ -24,12 +24,11 @@ isValidVersion v u = lenOK && variantOK && versionOK
 
 
 instance Arbitrary U.UUID where
-    arbitrary = (fst . random) `fmap` rand
-    coarbitrary = undefined
+    -- the UUID random instance ignores bounds
+    arbitrary = choose (U.nil, U.nil)
 
-instance Arbitrary Word8 where
-    arbitrary = (fromIntegral . fst . randomR (0,255::Int)) `fmap` rand
-    coarbitrary = undefined
+-- instance Arbitrary Word8 where
+--     arbitrary = (fromIntegral . fst . randomR (0,255::Int)) `fmap` rand
 
 
 test_null :: Test

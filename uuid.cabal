@@ -1,6 +1,6 @@
 Name: uuid
 Version: 1.2.3
-Copyright: (c) 2008-2011 Antoine Latter
+Copyright: (c) 2008-2012 Antoine Latter
 Author: Antoine Latter
 Maintainer: aslatter@gmail.com
 License: BSD3
@@ -56,8 +56,8 @@ Test-Suite benchmark
     Main-is:           BenchUUID.hs
     Hs-source-dirs:    tests
     Extensions:        DeriveDataTypeable, CPP
-    Build-depends:     base == 4.*, uuid, random, criterion >= 0.4 && < 0.6, mersenne-random-pure64,
-                       bytestring == 0.9.*, containers == 0.4.*, deepseq == 1.1.*
+    Build-depends:     base == 4.*, uuid, random, criterion >= 0.4 && < 0.7, mersenne-random-pure64,
+                       bytestring == 0.9.*, containers == 0.4.*, deepseq >= 1.1 && < 1.4
 
 Test-Suite testuuid
     Type:              exitcode-stdio-1.0
@@ -66,4 +66,4 @@ Test-Suite testuuid
     Extensions:        DeriveDataTypeable
     Ghc-Options:       -Wall -fno-warn-orphans
     Build-Depends:     random, bytestring, base >=3, base < 5, uuid,
-                       HUnit >=1.2 && < 1.3, QuickCheck >=1.2 && < 1.3
+                       HUnit >=1.2 && < 1.3, QuickCheck >=2.4 && < 2.5
