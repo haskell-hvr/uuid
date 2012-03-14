@@ -1,3 +1,11 @@
+1.2.4
+
+- Unpack Word32 values into UUID constructor.
+
+- Update test suite to QuickCheck 2
+
+- Bump other dependencies in tests/benchmarks
+
 1.2.3
 
 - The Read instance now drops leading spaces in the string to be parsed.
