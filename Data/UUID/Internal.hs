@@ -2,7 +2,7 @@
 
 -- |
 -- Module      : Data.UUID
--- Copyright   : (c) 2008-2009 Antoine Latter
+-- Copyright   : (c) 2008-2009, 2012 Antoine Latter
 --               (c) 2009 Mark Lentczner
 --
 -- License     : BSD-style
@@ -55,7 +55,12 @@ import System.Random
 -- version 4 UUIDs as specified in RFC 4122.  The 'Storable' and
 -- 'Binary' instances are compatible with RFC 4122, storing the fields
 -- in network order as 16 bytes.
-data UUID = UUID !Word32 !Word32 !Word32 !Word32
+data UUID
+    = UUID
+         {-# UNPACK #-} !Word32
+         {-# UNPACK #-} !Word32
+         {-# UNPACK #-} !Word32
+         {-# UNPACK #-} !Word32
     deriving (Eq, Ord, Typeable)
 {-
     Other representations that we tried are:
