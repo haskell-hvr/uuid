@@ -27,10 +27,12 @@ module Data.UUID.V5
     ) where
 
 import Data.Word
+import Data.Bits
+import qualified Data.ByteString as B
 
 import Data.UUID.Internal
 import qualified Data.UUID.Named as Shared
-import qualified Data.Digest.SHA1 as SHA1
+import qualified Crypto.Hash.SHA1 as SHA1
 
 
 -- |Generate a 'UUID' within the specified namespace out of the given
@@ -43,5 +45,17 @@ generateNamed :: UUID    -- ^Namespace
               -> UUID
 generateNamed = Shared.generateNamed hash 5
  where hash bytes
-           = case SHA1.hash bytes of
-               SHA1.Word160 w1 w2 w3 w4 _w5 -> (w1, w2, w3, w4)
+           = case B.unpack $ SHA1.hash $ B.pack bytes of
+               a1:b1:c1:d1: a2:b2:c2:d2: a3:b3:c3:d3: a4:b4:c4:d4:_ ->
+                   ( toWord a1 b1 c1 d1
+                   , toWord a2 b2 c2 d2
+                   , toWord a3 b3 c3 d3
+                   , toWord a4 b4 c4 d4
+                   )
+               _ -> error "Data.UUID.V5.hash: fatal error"
+
+toWord :: Word8 -> Word8 -> Word8 -> Word8 -> Word32
+toWord a b c d =     fromIntegral a `shiftL` 24
+                 .|. fromIntegral b `shiftL` 16
+                 .|. fromIntegral c `shiftL` 8
+                 .|. fromIntegral d

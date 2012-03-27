@@ -13,7 +13,7 @@ Cabal-Version: >= 1.8
 Description:
  This library is useful for creating, comparing, parsing and
  printing Universally Unique Identifiers.
- See <http://en.wikipedia.org/wiki/UUID> for the general idea. 
+ See <http://en.wikipedia.org/wiki/UUID> for the general idea.
 
 Synopsis: For creating, comparing, parsing and printing Universally Unique Identifiers
 
@@ -26,7 +26,7 @@ Extra-Source-Files:
 
 
 Library
- Build-Depends: random, binary, bytestring, Crypto, maccatcher,
+ Build-Depends: random, binary, bytestring, cryptohash, maccatcher,
                 time, base >=3, base < 5
 
  Exposed-Modules:

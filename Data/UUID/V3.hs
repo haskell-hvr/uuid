@@ -28,10 +28,11 @@ module Data.UUID.V3
 
 import Data.Word
 import Data.Bits
+import qualified Data.ByteString as B
 
 import Data.UUID.Internal
 import qualified Data.UUID.Named as Shared
-import qualified Data.Digest.MD5 as MD5
+import qualified Crypto.Hash.MD5 as MD5
 
 
 -- |Generate a 'UUID' within the specified namespace out of the given
@@ -46,7 +47,7 @@ generateNamed = Shared.generateNamed hash 3
 
 hash :: [Word8] -> (Word32, Word32, Word32, Word32)
 hash bytes
-    = case map f $ chunk 4 $ MD5.hash bytes of
+    = case map f $ chunk 4 $ B.unpack $ MD5.hash $ B.pack bytes of
         w1:w2:w3:w4:_ -> (w1, w2, w3, w4)
         _ -> error "Data.UUID.V3.hash: fatal error"
 
