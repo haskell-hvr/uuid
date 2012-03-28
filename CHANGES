@@ -1,3 +1,7 @@
+1.2.5
+
+- Use 'cryptohash' package for MD5 and SHA1 instead of 'Crypto'
+
 1.2.4
 
 - Unpack Word32 values into UUID constructor.
