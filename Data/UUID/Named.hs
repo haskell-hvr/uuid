@@ -28,23 +28,28 @@ module Data.UUID.Named
 
 import Data.UUID.Internal
 
-import Data.Binary
+import Control.Applicative ((<*>),(<$>))
+import Data.Binary.Get (runGet, getWord32be)
 import Data.Maybe
+import Data.Word (Word8)
 
-import qualified Data.ByteString.Lazy as BS
+import qualified Data.ByteString as B
+import qualified Data.ByteString.Lazy as BL
 
 -- |Generate a 'UUID' within the specified namespace out of the given
 -- object.
-generateNamed :: ([Word8] -> (Word32, Word32, Word32, Word32)) -- ^Hash
+generateNamed :: (B.ByteString -> B.ByteString) -- ^Hash
               -> Word8   -- ^Version
               ->  UUID   -- ^Namespace
               -> [Word8] -- ^Object
               -> UUID
 generateNamed hash version namespace object =
-    let chunk = BS.unpack (toByteString namespace) ++ object
-        (w1, w2, w3, w4) = hash chunk
-    in buildFromWords version w1 w2 w3 w4
-
+    let chunk = B.pack $ toList namespace ++ object
+        bytes = BL.fromChunks . (:[]) $ hash chunk
+        w = getWord32be
+        unpackBytes = runGet $
+         buildFromWords version <$> w <*> w <*> w <*> w
+    in unpackBytes bytes
 
 
 unsafeFromString :: String -> UUID

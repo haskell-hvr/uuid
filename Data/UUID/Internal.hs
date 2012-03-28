@@ -21,6 +21,7 @@ module Data.UUID.Internal
     ,toString
     ,fromWords
     ,toWords
+    ,toList
     ,buildFromBytes
     ,buildFromWords
     ) where
