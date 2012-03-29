@@ -26,8 +26,8 @@ Extra-Source-Files:
 
 
 Library
- Build-Depends: random, binary, bytestring, cryptohash, maccatcher,
-                time, base >=3, base < 5
+ Build-Depends: random, binary, bytestring, cryptohash >= 0.7 && < 0.8, maccatcher,
+                time, base >=3 && < 5
 
  Exposed-Modules:
    Data.UUID
