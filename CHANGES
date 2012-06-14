@@ -2,6 +2,9 @@
 
 - Add module 'V4' to direct attention to our Random instance
 
+- In module 'V1' seed the generator with a random number
+  if the hardware MAC address could not be discovered.
+
 - Fix and cleanup various haddocks.
 
 - In module docs, warn about MD5 use in Data.UUID.V3 and
