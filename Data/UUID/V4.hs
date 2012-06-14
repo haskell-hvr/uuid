@@ -15,7 +15,7 @@
    We use the System.Random 'R.StdGen' as our random source.
 
    All of the logic is encapsulated in the 'R.Random' instance
-   for the UUID type, so you are free to use the random generator
+   for the UUID type, so you are also free to use the random generator
    of your choice.
 -}
 module Data.UUID.V4 (nextRandom) where
