@@ -5,7 +5,7 @@
 -- Module      : Data.UUID.V1
 -- Copyright   : (c) 2008 Jason Dusek
 --               (c) 2009 Mark Lentczner
---               (c) 2009-2010 Antoine Latter
+--               (c) 2009-2010,2012 Antoine Latter
 --
 -- License     : BSD-style
 --
@@ -23,8 +23,11 @@ import Data.Time
 import Data.Bits
 import Data.Word
 
+import Control.Applicative ((<$>),(<*>))
 import Control.Concurrent.MVar
 import System.IO.Unsafe
+
+import qualified System.Random as R
 
 import qualified System.Info.MAC as SysMAC
 import Data.MAC
@@ -42,9 +45,8 @@ import Data.UUID.Internal
 nextUUID :: IO (Maybe UUID)
 nextUUID = do
   res <- stepTime
-  mac <- SysMAC.mac
-  case (res, mac) of
-    (Just (c, t), Just m) -> return $ Just $ makeUUID t c m
+  case res of
+    Just (mac, c, t) -> return $ Just $ makeUUID t c mac
     _ -> return Nothing
 
 
@@ -64,20 +66,20 @@ type instance ByteSink MACSource g = Takes3Bytes (Takes3Bytes g)
 -- |Approximates the clock algorithm in RFC 4122, section 4.2
 -- Isn't system wide or thread safe, nor does it properly randomize
 -- the clock value on initialization.
-stepTime :: IO (Maybe (Word16, Word64))
+stepTime :: IO (Maybe (MAC, Word16, Word64))
 stepTime = do
   h1 <- fmap hundredsOfNanosSinceGregorianReform getCurrentTime
-  modifyMVar state $ \s@(State c0 h0) ->
+  modifyMVar state $ \s@(State mac c0 h0) ->
    if h1 > h0
     then
-      return (State c0 h1, Just (c0, h1))
+      return (State mac c0 h1, Just (mac, c0, h1))
     else
       let
         c1 = succ c0
       in if c1 <= 0x3fff -- when clock is initially randomized,
                       -- then this test will need to change
          then
-          return (State c1 h1, Just (c1, h1))
+          return (State mac c1 h1, Just (mac, c1, h1))
         else
           return (s, Nothing)
 
@@ -86,10 +88,33 @@ stepTime = do
 state :: MVar State
 state = unsafePerformIO $ do
   h0 <- fmap hundredsOfNanosSinceGregorianReform getCurrentTime
-  newMVar $ State 0 h0 -- the 0 should be a random number
+  mac <- getMac
+  newMVar $ State mac 0 h0 -- the 0 should be a random number
 
+-- SysMAC.mac can fail on some machines.
+-- In those cases we fake it with a random
+-- 6 bytes seed.
+getMac :: IO MAC
+getMac =
+    SysMAC.mac >>= \macM ->
+    case macM of
+      Just m -> return m
+      Nothing -> randomMac
+
+randomMac :: IO MAC
+randomMac =
+    -- I'm too lazy to thread through
+    -- the random state ...
+    MAC
+     <$> R.randomIO
+     <*> R.randomIO
+     <*> R.randomIO
+     <*> R.randomIO
+     <*> R.randomIO
+     <*> R.randomIO
 
 data State = State
+    {-# UNPACK #-} !MAC
     {-# UNPACK #-} !Word16
     {-# UNPACK #-} !Word64
  deriving (Show)
