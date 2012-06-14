@@ -1,19 +1,26 @@
 {-# OPTIONS_GHC -fno-cse #-}
 {-# LANGUAGE TypeFamilies #-}
 
--- |
--- Module      : Data.UUID.V1
--- Copyright   : (c) 2008 Jason Dusek
---               (c) 2009 Mark Lentczner
---               (c) 2009-2010,2012 Antoine Latter
---
--- License     : BSD-style
---
--- Maintainer  : aslatter@gmail.com
--- Stability   : experimental
--- Portability : portable
---
--- RFC 4122 Version 1 UUID state machine.
+{- |
+Module      : Data.UUID.V1
+Copyright   : (c) 2008 Jason Dusek
+              (c) 2009 Mark Lentczner
+              (c) 2009-2010,2012 Antoine Latter
+
+License     : BSD-style
+
+Maintainer  : aslatter@gmail.com
+Stability   : experimental
+Portability : portable
+
+RFC 4122 Version 1 UUID state machine.
+
+The generated UUID is based on the hardware MAC
+address and the system clock.
+
+If we cannot lookup the MAC address we seed the
+generator with a psuedo-random number.
+-}
 
 module Data.UUID.V1(nextUUID)
 where
@@ -40,8 +47,7 @@ import Data.UUID.Internal
 -- Is generated according to the Version 1 UUID sepcified in
 -- RFC 4122.
 --
--- Returns nothing if the hardware MAC address could not
--- be discovered.
+-- Returns 'Nothing' if you request UUIDs too quickly.
 nextUUID :: IO (Maybe UUID)
 nextUUID = do
   res <- stepTime
