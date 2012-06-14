@@ -42,8 +42,6 @@ Library
    Data.UUID.Named
 
  Extensions: DeriveDataTypeable
- Ghc-Prof-Options:   -auto-all -caf-all
- Ghc-Shared-Options:
  Ghc-Options:        -Wall
 
 source-repository   head
