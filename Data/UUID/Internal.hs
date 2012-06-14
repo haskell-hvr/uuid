@@ -77,12 +77,15 @@ data UUID
 
 -- | Covert a 'UUID' into a sequence of 'Word32' values.
 -- Usefull for when you need to serialize a UUID and
--- neither 'Storable' nor 'Binary' are appropriate. 
+-- neither 'Storable' nor 'Binary' are appropriate.
+-- Introduced in version 1.2.2.
 toWords :: UUID -> (Word32, Word32, Word32, Word32)
 toWords (UUID w1 w2 w3 w4) = (w1, w2, w3, w4)
 
 -- | Create a 'UUID' from a sequence of 'Word32'. The
--- opposite of 'toWords'.
+-- opposite of 'toWords'. Useful when you need a total
+-- function for constructing 'UUID' values.
+-- Introduced in version 1.2.2.
 fromWords :: Word32 -> Word32 -> Word32 -> Word32 -> UUID
 fromWords = UUID
 
