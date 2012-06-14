@@ -1,3 +1,12 @@
+1.2.6
+
+- Add module 'V4' to direct attention to our Random instance
+
+- Fix and cleanup various haddocks.
+
+- In module docs, warn about MD5 use in Data.UUID.V3 and
+  encourage the reader to use Data.UUID.V5 instead.
+
 1.2.5
 
 - Use 'cryptohash' package for MD5 and SHA1 instead of 'Crypto'
