@@ -33,6 +33,7 @@ Library
    Data.UUID
    Data.UUID.V1
    Data.UUID.V3
+   Data.UUID.V4
    Data.UUID.V5
 
  Other-Modules:
