@@ -26,8 +26,13 @@ Extra-Source-Files:
 
 
 Library
- Build-Depends: random >= 1.0.1 && < 1.1, binary, bytestring, cryptohash >= 0.7 && < 0.8, maccatcher,
-                time, base >=3 && < 5
+ Build-Depends: base >=3 && < 5,
+                binary >= 0.4 && < 0.7,
+                bytestring >= 0.9 && < 1.1,
+                cryptohash >= 0.7 && < 0.8,
+                maccatcher >= 1.0 && < 2.2,
+                random >= 1.0.1 && < 1.1,
+                time >= 1.1 && < 1.5
 
  Exposed-Modules:
    Data.UUID
@@ -55,8 +60,14 @@ Test-Suite benchmark
     Main-is:           BenchUUID.hs
     Hs-source-dirs:    tests
     Extensions:        DeriveDataTypeable, CPP
-    Build-depends:     base == 4.*, uuid, random, criterion >= 0.4 && < 0.7, mersenne-random-pure64,
-                       bytestring == 0.9.*, containers == 0.4.*, deepseq >= 1.1 && < 1.4
+    Build-depends:     base == 4.*,
+                       uuid,
+                       bytestring >= 0.9 && < 1.1,
+                       containers >= 0.4 && < 0.6,
+                       criterion >= 0.4 && < 0.7,
+                       deepseq >= 1.1 && < 1.4,
+                       mersenne-random-pure64,
+                       random >= 1.0.1 && < 1.1
 
 Test-Suite testuuid
     Type:              exitcode-stdio-1.0
@@ -64,5 +75,9 @@ Test-Suite testuuid
     Hs-source-dirs:    tests
     Extensions:        DeriveDataTypeable
     Ghc-Options:       -Wall -fno-warn-orphans
-    Build-Depends:     random, bytestring, base >=3, base < 5, uuid,
-                       HUnit >=1.2 && < 1.3, QuickCheck >=2.4 && < 2.5
+    Build-Depends:     base >= 3 && < 5,
+                       uuid,
+                       bytestring >= 0.9 && < 1.1,
+                       HUnit >=1.2 && < 1.3,
+                       QuickCheck >=2.4 && < 2.6,
+                       random >= 1.0.1 && < 1.1

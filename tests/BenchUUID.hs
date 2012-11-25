@@ -1,3 +1,5 @@
+{-# LANGUAGE CPP #-}
+
 import Control.DeepSeq
 import Criterion.Main
 import Data.Char (ord)
@@ -14,9 +16,11 @@ import qualified Data.UUID.V5 as U5
 import System.Random
 import System.Random.Mersenne.Pure64
 
+#if !(MIN_VERSION_bytestring(0,10,0))
 instance NFData BL.ByteString where
     rnf BL.Empty        = ()
     rnf (BL.Chunk _ ts) = rnf ts
+#endif
 
 instance NFData U.UUID where
 
