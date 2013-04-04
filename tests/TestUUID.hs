@@ -12,7 +12,6 @@ import qualified Data.UUID.V5 as U5
 import Test.HUnit
 import Test.QuickCheck hiding ((.&.))
 import System.IO
-import System.Random
 
 
 isValidVersion :: Int -> U.UUID -> Bool
@@ -26,9 +25,6 @@ isValidVersion v u = lenOK && variantOK && versionOK
 instance Arbitrary U.UUID where
     -- the UUID random instance ignores bounds
     arbitrary = choose (U.nil, U.nil)
-
--- instance Arbitrary Word8 where
---     arbitrary = (fromIntegral . fst . randomR (0,255::Int)) `fmap` rand
 
 
 test_null :: Test
@@ -144,7 +140,7 @@ prop_readShowRoundTrip = label "Read/Show round-trip" prop
 main :: IO ()
 main = do
     v1s <- replicateM 100 U.nextUUID
-    runTestText (putTextToHandle stderr False) (TestList [
+    _ <- runTestText (putTextToHandle stderr False) (TestList [
         test_null,
         test_nil,
         test_conv,
