@@ -1,5 +1,5 @@
 Name: uuid
-Version: 1.2.10
+Version: 1.2.11
 Copyright: (c) 2008-2012 Antoine Latter
 Author: Antoine Latter
 Maintainer: aslatter@gmail.com
@@ -27,7 +27,7 @@ Extra-Source-Files:
 
 Library
  Build-Depends: base >=3 && < 5,
-                binary >= 0.4 && < 0.7,
+                binary >= 0.4 && < 0.8,
                 bytestring >= 0.9 && < 1.1,
                 cryptohash >= 0.7 && < 0.10,
                 maccatcher >= 1.0 && < 2.2,
