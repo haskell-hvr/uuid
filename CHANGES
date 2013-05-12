@@ -1,3 +1,9 @@
+1.2.13
+
+Benchmark only changes:
+
+- Allow criterion 0.8.*
+
 1.2.12
 
 Test only changes:
