@@ -64,7 +64,7 @@ Test-Suite benchmark
                        uuid,
                        bytestring >= 0.9 && < 1.1,
                        containers >= 0.4 && < 0.6,
-                       criterion >= 0.4 && < 0.7,
+                       criterion >= 0.4 && < 0.9,
                        deepseq >= 1.1 && < 1.4,
                        mersenne-random-pure64,
                        random >= 1.0.1 && < 1.1
