@@ -29,7 +29,7 @@ Library
  Build-Depends: base >=3 && < 5,
                 binary >= 0.4 && < 0.8,
                 bytestring >= 0.9 && < 1.1,
-                cryptohash >= 0.7 && < 0.10,
+                cryptohash >= 0.7 && < 0.11,
                 maccatcher >= 1.0 && < 2.2,
                 random >= 1.0.1 && < 1.1,
                 time >= 1.1 && < 1.5
