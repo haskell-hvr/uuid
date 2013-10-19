@@ -233,7 +233,7 @@ fromString' s0 = do
 -- Example:
 --
 -- @
---  toString $ fromString \"550e8400-e29b-41d4-a716-446655440000\"
+--  toString \<$\> fromString \"550e8400-e29b-41d4-a716-446655440000\"
 -- @
 toString :: UUID -> String
 toString (UUID w0 w1 w2 w3) = hexw w0 $ hexw' w1 $ hexw' w2 $ hexw w3 ""
@@ -248,6 +248,104 @@ toString (UUID w0 w1 w2 w3) = hexw w0 $ hexw' w1 $ hexw' w2 $ hexw w3 ""
           hexn :: Word32 -> Int -> Char
           hexn w r = intToDigit $ fromIntegral ((w `shiftR` r) .&. 0xf)
 
+-- | Convert a UUID into a hyphentated string using lower-case letters, packed
+--   as ASCII bytes into `B.ByteString`.
+--
+--   This should be equivalent to `toString` with `Data.ByteString.Char8.pack`.
+toASCIIBytes :: UUID -> B.ByteString
+toASCIIBytes uuid = BI.unsafeCreate 36 (pokeASCII uuid)
+
+-- | Helper function for `toASCIIBytes`
+pokeASCII :: UUID -> Ptr Word8 -> IO ()
+pokeASCII uuid ptr = do
+    pokeDash 8
+    pokeDash 13
+    pokeDash 18
+    pokeDash 23
+    pokeSingle 0  w0
+    pokeDouble 9  w1
+    pokeDouble 19 w2
+    pokeSingle 28 w3
+  where
+    (w0, w1, w2, w3) = toWords uuid
+
+    -- ord '-' ==> 45
+    pokeDash ix = pokeElemOff ptr ix 45
+
+    pokeSingle ix w = do
+        pokeWord ix       w 28
+        pokeWord (ix + 1) w 24
+        pokeWord (ix + 2) w 20
+        pokeWord (ix + 3) w 16
+        pokeWord (ix + 4) w 12
+        pokeWord (ix + 5) w 8
+        pokeWord (ix + 6) w 4
+        pokeWord (ix + 7) w 0
+
+    -- We skip the dash in the middle
+    pokeDouble ix w = do
+        pokeWord ix       w 28
+        pokeWord (ix + 1) w 24
+        pokeWord (ix + 2) w 20
+        pokeWord (ix + 3) w 16
+        pokeWord (ix + 5) w 12
+        pokeWord (ix + 6) w 8
+        pokeWord (ix + 7) w 4
+        pokeWord (ix + 8) w 0
+
+    pokeWord ix w r =
+        pokeElemOff ptr ix (fromIntegral (toDigit ((w `shiftR` r) .&. 0xf)))
+
+    toDigit :: Word32 -> Word32
+    toDigit w = if w < 10 then 48 + w else 97 + w - 10
+
+-- | If the passed in `B.ByteString` can be parsed as an ASCII representation of
+--   a `UUID`, it will be. The hyphens may not be omitted.
+--
+--   This should be equivalent to `fromString` with `Data.ByteString.Char8.unpack`.
+fromASCIIBytes :: B.ByteString -> Maybe UUID
+fromASCIIBytes bs = do
+    guard wellFormed
+    fromWords <$> single 0 <*> double 9 14 <*> double 19 24 <*> single 28
+  where
+    -- ord '-' ==> 45
+    dashIx bs' ix = BU.unsafeIndex bs' ix == 45
+
+    -- Important: check the length first, given the `unsafeIndex` later.
+    wellFormed =
+        B.length bs == 36 && dashIx bs 8 && dashIx bs 13 &&
+        dashIx bs 18 && dashIx bs 23
+
+    single ix      = combine <$> octet ix       <*> octet (ix + 2)
+                             <*> octet (ix + 4) <*> octet (ix + 6)
+    double ix0 ix1 = combine <$> octet ix0 <*> octet (ix0 + 2)
+                             <*> octet ix1 <*> octet (ix1 + 2)
+
+    combine o0 o1 o2 o3 = shiftL o0 24 .|. shiftL o1 16 .|. shiftL o2 8 .|. o3
+
+    octet ix = do
+        hi <- fromIntegral <$> toDigit (BU.unsafeIndex bs ix)
+        lo <- fromIntegral <$> toDigit (BU.unsafeIndex bs (ix + 1))
+        return (16 * hi + lo)
+
+    toDigit :: Word8 -> Maybe Word8
+    toDigit w
+        -- Digit
+        | w >= 48 && w <= 57  = Just (w - 48)
+        -- Uppercase
+        | w >= 65 && w <= 70  = Just (10 + w - 65)
+        -- Lowercase
+        | w >= 97 && w <= 102 = Just (10 + w - 97)
+        | otherwise           = Nothing
+
+-- | Similar to `toASCIIBytes` except we produce a lazy `BL.ByteString`.
+toLazyASCIIBytes :: UUID -> BL.ByteString
+toLazyASCIIBytes = BL.fromStrict . toASCIIBytes
+
+-- | Similar to `fromASCIIBytes` except parses from a lazy `BL.ByteString`.
+fromLazyASCIIBytes :: BL.ByteString -> Maybe UUID
+fromLazyASCIIBytes bs =
+    if BL.length bs == 36 then fromASCIIBytes (BL.toStrict bs) else Nothing
 
 --
 -- Class Instances
@@ -284,6 +382,9 @@ instance ByteSource ThreeByte where
         where b1 = fromIntegral (w `shiftR` 16)
               b2 = fromIntegral (w `shiftR` 8)
               b3 = fromIntegral w
+
+instance NFData UUID where
+    rnf = rnf . toWords
 
 instance Hashable UUID where
     hash (UUID w0 w1 w2 w3) =
@@ -339,93 +440,3 @@ mkNoRepType :: String -> DataType
 mkNoRepType = mkNorepType
 #endif
 
-fromASCIIBytes :: B.ByteString -> Maybe UUID
-fromASCIIBytes bs = do
-    guard wellFormed
-    fromWords <$> single 0 <*> double 9 14 <*> double 19 24 <*> single 28
-  where
-    -- ord '-' ==> 45
-    dashIx bs' ix = BU.unsafeIndex bs' ix == 45
-
-    -- Important: check the length first, given the `unsafeIndex` later.
-    wellFormed =
-        B.length bs == 36 && dashIx bs 8 && dashIx bs 13 &&
-        dashIx bs 18 && dashIx bs 23
-
-    single ix      = combine <$> octet ix       <*> octet (ix + 2)
-                             <*> octet (ix + 4) <*> octet (ix + 6)
-    double ix0 ix1 = combine <$> octet ix0 <*> octet (ix0 + 2)
-                             <*> octet ix1 <*> octet (ix1 + 2)
-
-    combine o0 o1 o2 o3 = shiftL o0 24 .|. shiftL o1 16 .|. shiftL o2 8 .|. o3
-
-    octet ix = do
-        hi <- fromIntegral <$> toDigit (BU.unsafeIndex bs ix)
-        lo <- fromIntegral <$> toDigit (BU.unsafeIndex bs (ix + 1))
-        return (16 * hi + lo)
-
-    toDigit :: Word8 -> Maybe Word8
-    toDigit w
-        -- Digit
-        | w >= 48 && w <= 57  = Just (w - 48)
-        -- Uppercase
-        | w >= 65 && w <= 70  = Just (10 + w - 65)
-        -- Lowercase
-        | w >= 97 && w <= 102 = Just (10 + w - 97)
-        | otherwise           = Nothing
-
-toASCIIBytes :: UUID -> B.ByteString
-toASCIIBytes uuid = BI.unsafeCreate 36 (pokeASCII uuid)
-
-pokeASCII :: UUID -> Ptr Word8 -> IO ()
-pokeASCII uuid ptr = do
-    pokeDash 8
-    pokeDash 13
-    pokeDash 18
-    pokeDash 23
-    pokeSingle 0  w0
-    pokeDouble 9  w1
-    pokeDouble 19 w2
-    pokeSingle 28 w3
-  where
-    (w0, w1, w2, w3) = toWords uuid
-
-    -- ord '-' ==> 45
-    pokeDash ix = pokeElemOff ptr ix 45
-
-    pokeSingle ix w = do
-        pokeWord ix       w 28
-        pokeWord (ix + 1) w 24
-        pokeWord (ix + 2) w 20
-        pokeWord (ix + 3) w 16
-        pokeWord (ix + 4) w 12
-        pokeWord (ix + 5) w 8
-        pokeWord (ix + 6) w 4
-        pokeWord (ix + 7) w 0
-
-    -- We skip the dash in the middle
-    pokeDouble ix w = do
-        pokeWord ix       w 28
-        pokeWord (ix + 1) w 24
-        pokeWord (ix + 2) w 20
-        pokeWord (ix + 3) w 16
-        pokeWord (ix + 5) w 12
-        pokeWord (ix + 6) w 8
-        pokeWord (ix + 7) w 4
-        pokeWord (ix + 8) w 0
-
-    pokeWord ix w r =
-        pokeElemOff ptr ix (fromIntegral (toDigit ((w `shiftR` r) .&. 0xf)))
-
-    toDigit :: Word32 -> Word32
-    toDigit w = if w < 10 then 48 + w else 97 + w - 10
-
-fromLazyASCIIBytes :: BL.ByteString -> Maybe UUID
-fromLazyASCIIBytes bs =
-    if BL.length bs == 36 then fromASCIIBytes (BL.toStrict bs) else Nothing
-
-toLazyASCIIBytes :: UUID -> BL.ByteString
-toLazyASCIIBytes = BL.fromStrict . toASCIIBytes
-
-instance NFData UUID where
-    rnf = rnf . toWords

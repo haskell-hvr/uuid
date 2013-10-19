@@ -27,16 +27,16 @@ MAC address and current system time in "Data.UUID.V1".
 module Data.UUID(UUID
                 ,toString
                 ,fromString
+                ,toASCIIBytes
+                ,fromASCIIBytes
+                ,toLazyASCIIBytes
+                ,fromLazyASCIIBytes
                 ,toByteString
                 ,fromByteString
                 ,toWords
                 ,fromWords
                 ,null
                 ,nil
-                ,fromASCIIBytes
-                ,toASCIIBytes
-                ,fromLazyASCIIBytes
-                ,toLazyASCIIBytes
                 ) where
 
 import Prelude () -- we need to hide Prelude.null
