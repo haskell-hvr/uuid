@@ -28,6 +28,9 @@ module Data.UUID.Internal
     ,toASCIIBytes
     ,fromLazyASCIIBytes
     ,toLazyASCIIBytes
+    ,UnpackedUUID(..)
+    ,pack
+    ,unpack
     ) where
 
 import Prelude hiding (null)
@@ -60,6 +63,7 @@ import qualified Data.ByteString.Lazy as BL
 import qualified Data.ByteString.Unsafe as BU
 
 import Data.UUID.Builder
+import Data.Word.Util
 
 import System.Random
 
@@ -100,6 +104,54 @@ toWords (UUID w1 w2 w3 w4) = (w1, w2, w3, w4)
 -- Introduced in version 1.2.2.
 fromWords :: Word32 -> Word32 -> Word32 -> Word32 -> UUID
 fromWords = UUID
+
+data UnpackedUUID =
+    UnpackedUUID {
+        time_low :: Word32 -- 0-3
+      , time_mid :: Word16 -- 4-5
+      , time_hi_and_version :: Word16 -- 6-7
+      , clock_seq_hi_res :: Word8 -- 8
+      , clock_seq_low :: Word8 -- 9
+      , node_0 :: Word8
+      , node_1 :: Word8
+      , node_2 :: Word8
+      , node_3 :: Word8
+      , node_4 :: Word8
+      , node_5 :: Word8
+      }
+    deriving (Read, Show, Eq, Ord)
+
+unpack :: UUID -> UnpackedUUID
+unpack (UUID w0 w1 w2 w3) =
+    build /-/ w0 /-/ w1 /-/ w2 /-/ w3
+
+ where
+    build x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 xA xB xC xD xE xF =
+     UnpackedUUID {
+        time_low = word x0 x1 x2 x3
+      , time_mid = w8to16 x4 x5
+      , time_hi_and_version = w8to16 x6 x7
+      , clock_seq_hi_res = x8
+      , clock_seq_low = x9
+      , node_0 = xA
+      , node_1 = xB
+      , node_2 = xC
+      , node_3 = xD
+      , node_4 = xE
+      , node_5 = xF
+      }
+
+pack :: UnpackedUUID -> UUID
+pack unpacked =
+  makeFromBytes /-/ (time_low unpacked) 
+                /-/ (time_mid unpacked) 
+                /-/ (time_hi_and_version unpacked) 
+                /-/ (clock_seq_hi_res unpacked) 
+                /-/ (clock_seq_low unpacked)
+                /-/ (node_0 unpacked) /-/ (node_1 unpacked) 
+                /-/ (node_2 unpacked) /-/ (node_3 unpacked) 
+                /-/ (node_4 unpacked) /-/ (node_5 unpacked)
+
 
 --
 -- UTILITIES

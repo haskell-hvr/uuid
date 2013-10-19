@@ -38,6 +38,7 @@ Library
 
  Exposed-Modules:
    Data.UUID
+   Data.UUID.Util
    Data.UUID.V1
    Data.UUID.V3
    Data.UUID.V4
@@ -47,6 +48,7 @@ Library
    Data.UUID.Builder
    Data.UUID.Internal
    Data.UUID.Named
+   Data.Word.Util
 
  Extensions: DeriveDataTypeable
  Ghc-Options:        -Wall
