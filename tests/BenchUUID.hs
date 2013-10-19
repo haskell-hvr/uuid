@@ -1,6 +1,10 @@
 {-# LANGUAGE CPP #-}
 
+#if !(MIN_VERSION_bytestring(0,10,0))
+-- Needed for NFData instance
 import Control.DeepSeq
+import qualified Data.ByteString.Lazy.Internal as BL
+#endif
 import Criterion.Main
 import Data.Char (ord)
 import Data.IORef
@@ -8,7 +12,6 @@ import Data.Maybe (fromJust)
 import Data.Word
 import qualified Data.Set as Set
 import qualified Data.ByteString.Lazy as BL
-import qualified Data.ByteString.Lazy.Internal as BL
 import qualified Data.UUID as U
 import qualified Data.UUID.V1 as U
 import qualified Data.UUID.V3 as U3

@@ -15,10 +15,9 @@ import qualified Data.UUID.V5 as U5
 import qualified Test.HUnit as H
 import Test.HUnit hiding (Test)
 import Test.QuickCheck hiding ((.&.))
-import Test.Framework (defaultMain, Test(..))
+import Test.Framework (defaultMain, Test)
 import Test.Framework.Providers.HUnit (hUnitTestToTests)
 import Test.Framework.Providers.QuickCheck2 (testProperty)
-import System.IO
 
 
 isValidVersion :: Int -> U.UUID -> Bool
