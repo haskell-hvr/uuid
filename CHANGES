@@ -1,3 +1,12 @@
+1.3.0
+
+- New functions for parsing and printing UUIDs to and from ASCII BytesStrings
+- New module Data.UUID.Util. This module includes the type 'UnpackedUUID',
+  whose fields correspond to the UUID fields described in RFC 4122.
+- The Storable instance now stores a UUID in host byte-order instead of
+  big endian.
+- There is now an instance for 'Hashable UUID'.
+
 1.2.13
 
 Benchmark only changes:
