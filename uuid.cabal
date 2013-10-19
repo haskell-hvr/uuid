@@ -86,3 +86,15 @@ Test-Suite testuuid
                        test-framework == 0.8.*,
                        test-framework-hunit == 0.3.*,
                        test-framework-quickcheck2 == 0.3.*
+
+benchmark benchbytestring
+  type:              exitcode-stdio-1.0
+  hs-source-dirs:    tests
+  main-is:           BenchByteString.hs
+  build-depends:     base                 >= 4       && < 5
+                   , uuid                 >= 1.2
+                   , bytestring           >= 0.10
+                   , criterion            >= 0.8
+                   , random               >= 1.0
+                   , QuickCheck           >= 2
+  ghc-options:       -threaded -rtsopts -Wall -O2
