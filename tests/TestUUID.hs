@@ -1,7 +1,10 @@
+{-# LANGUAGE ViewPatterns #-}
 import Control.Monad (replicateM)
 import Data.Bits
-import qualified Data.ByteString.Lazy as B
+import qualified Data.ByteString.Lazy as BL
+import qualified Data.ByteString.Char8 as BC8
 import Data.Char (ord)
+import Data.Functor ((<$>))
 import Data.List (nub, (\\))
 import Data.Maybe
 import Data.Word
@@ -21,9 +24,9 @@ import System.IO
 isValidVersion :: Int -> U.UUID -> Bool
 isValidVersion v u = lenOK && variantOK && versionOK
     where bs = U.toByteString u
-          lenOK = B.length bs == 16
-          variantOK = (B.index bs 8) .&. 0xc0 == 0x80
-          versionOK = (B.index bs 6) .&. 0xf0 == fromIntegral (v `shiftL` 4)
+          lenOK = BL.length bs == 16
+          variantOK = (BL.index bs 8) .&. 0xc0 == 0x80
+          versionOK = (BL.index bs 6) .&. 0xf0 == fromIntegral (v `shiftL` 4)
 
 
 instance Arbitrary U.UUID where
@@ -40,7 +43,7 @@ test_null = H.TestList [
 test_nil :: H.Test
 test_nil = H.TestList [
     "nil string" ~: U.toString U.nil @?= "00000000-0000-0000-0000-000000000000",
-    "nil bytes"  ~: U.toByteString U.nil @?= B.pack (replicate 16 0)
+    "nil bytes"  ~: U.toByteString U.nil @?= BL.pack (replicate 16 0)
     ]
 
 test_conv :: H.Test
@@ -48,9 +51,9 @@ test_conv = H.TestList [
     "conv bytes to string" ~:
         maybe "" (U.toString) (U.fromByteString b16) @?= s16,
     "conv string to bytes" ~:
-        maybe B.empty (U.toByteString) (U.fromString s16) @?= b16
+        maybe BL.empty (U.toByteString) (U.fromString s16) @?= b16
     ]
-    where b16 = B.pack [1..16]
+    where b16 = BL.pack [1..16]
           s16 = "01020304-0506-0708-090a-0b0c0d0e0f10"
 
 test_v1 :: [Maybe U.UUID] -> H.Test
@@ -97,7 +100,7 @@ prop_stringLength = testProperty "String length" stringLength
 prop_byteStringLength :: Test
 prop_byteStringLength = testProperty "ByteString length" byteStringLength
     where byteStringLength :: U.UUID -> Bool
-          byteStringLength u = B.length (U.toByteString u) == 16
+          byteStringLength u = BL.length (U.toByteString u) == 16
 
 prop_randomsDiffer :: Test
 prop_randomsDiffer = testProperty "Randoms differ" randomsDiffer
@@ -141,6 +144,29 @@ prop_readShowRoundTrip = testProperty "Read/Show round-trip" prop
           prop :: U.UUID -> Bool
           prop uuid = read (show (Just uuid)) == Just uuid
 
+-- Mostly going to test for wrong UUIDs
+fromASCIIBytes_fromString1 :: String -> Bool
+fromASCIIBytes_fromString1 s =
+    if all (\c -> ord c < 256) s
+    then U.fromString s == U.fromASCIIBytes (BC8.pack s)
+    else True
+
+fromASCIIBytes_fromString2 :: U.UUID -> Bool
+fromASCIIBytes_fromString2 (U.toString -> s) =
+    U.fromString s == U.fromASCIIBytes (BC8.pack s)
+
+toASCIIBytes_toString :: U.UUID -> Bool
+toASCIIBytes_toString uuid =
+    U.toString uuid == BC8.unpack (U.toASCIIBytes uuid)
+
+fromASCIIBytes_toASCIIBytes :: U.UUID -> Bool
+fromASCIIBytes_toASCIIBytes (BC8.pack . U.toString -> bs) =
+    Just bs == (U.toASCIIBytes <$> U.fromASCIIBytes bs)
+
+toASCIIBytes_fromASCIIBytes :: U.UUID -> Bool
+toASCIIBytes_fromASCIIBytes uuid =
+    Just uuid == U.fromASCIIBytes (U.toASCIIBytes uuid)
+
 main :: IO ()
 main = do
     v1s <- replicateM 100 U.nextUUID
@@ -167,4 +193,10 @@ main = do
          prop_v5NotNull,
          prop_v5Valid
          ]
-        ]
+     , [ testProperty "fromASCIIBytes_fromString1"  fromASCIIBytes_fromString1
+       , testProperty "fromASCIIBytes_fromString2"  fromASCIIBytes_fromString2
+       , testProperty "fromASCIIBytes_toString"     toASCIIBytes_toString
+       , testProperty "fromASCIIBytes_toASCIIBytes" fromASCIIBytes_toASCIIBytes
+       , testProperty "toASCIIBytes_fromASCIIBytes" toASCIIBytes_fromASCIIBytes
+       ]
+     ]
