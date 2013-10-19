@@ -55,22 +55,6 @@ source-repository   head
   type:             darcs
   location:         http://code.haskell.org/uuid
 
--- not strictly a test, but we want it to error if
--- it can't build
-Test-Suite benchmark
-    Type:              exitcode-stdio-1.0
-    Main-is:           BenchUUID.hs
-    Hs-source-dirs:    tests
-    Extensions:        DeriveDataTypeable, CPP
-    Build-depends:     base == 4.*,
-                       uuid,
-                       bytestring >= 0.9 && < 1.1,
-                       containers >= 0.4 && < 0.6,
-                       criterion >= 0.4 && < 0.9,
-                       deepseq >= 1.1 && < 1.4,
-                       mersenne-random-pure64,
-                       random >= 1.0.1 && < 1.1
-
 Test-Suite testuuid
     Type:              exitcode-stdio-1.0
     Main-is:           TestUUID.hs
@@ -87,14 +71,30 @@ Test-Suite testuuid
                        test-framework-hunit == 0.3.*,
                        test-framework-quickcheck2 == 0.3.*
 
+benchmark benchmark
+    Type:              exitcode-stdio-1.0
+    Main-is:           BenchUUID.hs
+    Hs-source-dirs:    tests
+    Extensions:        DeriveDataTypeable, CPP
+    Ghc-Options:       -Wall -fno-warn-orphans
+    Build-depends:     base == 4.*,
+                       uuid,
+                       bytestring >= 0.9 && < 1.1,
+                       containers >= 0.4 && < 0.6,
+                       criterion >= 0.4 && < 0.9,
+                       deepseq >= 1.1 && < 1.4,
+                       mersenne-random-pure64,
+                       random >= 1.0.1 && < 1.1
+
 benchmark benchbytestring
-  type:              exitcode-stdio-1.0
-  hs-source-dirs:    tests
-  main-is:           BenchByteString.hs
-  build-depends:     base                 >= 4       && < 5
+  Type:              exitcode-stdio-1.0
+  Hs-Source-Dirs:    tests
+  Main-Is:           BenchByteString.hs
+  Ghc-Options:       -threaded -rtsopts -Wall -O2 -fno-warn-orphans
+  Build-Depends:     base                 >= 4       && < 5
                    , uuid
                    , bytestring           >= 0.10
                    , criterion            >= 0.8
                    , random               >= 1.0
                    , QuickCheck           >= 2
-  ghc-options:       -threaded -rtsopts -Wall -O2
+
