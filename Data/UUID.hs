@@ -33,6 +33,10 @@ module Data.UUID(UUID
                 ,fromWords
                 ,null
                 ,nil
+                ,fromASCIIBytes
+                ,toASCIIBytes
+                ,fromLazyASCIIBytes
+                ,toLazyASCIIBytes
                 ) where
 
 import Prelude () -- we need to hide Prelude.null

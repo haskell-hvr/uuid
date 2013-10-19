@@ -24,16 +24,24 @@ module Data.UUID.Internal
     ,toList
     ,buildFromBytes
     ,buildFromWords
+    ,fromASCIIBytes
+    ,toASCIIBytes
+    ,fromLazyASCIIBytes
+    ,toLazyASCIIBytes
     ) where
 
 import Prelude hiding (null)
 
-import Control.Monad (liftM4)
+import Control.Applicative ((<*>))
+import Control.DeepSeq (NFData(..))
+import Control.Monad (liftM4, guard)
+import Data.Functor ((<$>))
 import Data.Char
 import Data.Bits
 import Data.Hashable
 import Data.Maybe
 import Data.List (elemIndices)
+import Foreign.Ptr (Ptr)
 
 #if MIN_VERSION_base(4,0,0)
 import Data.Data
@@ -46,7 +54,10 @@ import Foreign.Storable
 import Data.Binary
 import Data.Binary.Put
 import Data.Binary.Get
-import qualified Data.ByteString.Lazy as Lazy
+import qualified Data.ByteString as B
+import qualified Data.ByteString.Internal as BI
+import qualified Data.ByteString.Lazy as BL
+import qualified Data.ByteString.Unsafe as BU
 
 import Data.UUID.Builder
 
@@ -176,12 +187,12 @@ nil = UUID 0 0 0 0
 
 -- |Extract a UUID from a 'ByteString' in network byte order.
 -- The argument must be 16 bytes long, otherwise 'Nothing' is returned.
-fromByteString :: Lazy.ByteString -> Maybe UUID
-fromByteString = fromList . Lazy.unpack
+fromByteString :: BL.ByteString -> Maybe UUID
+fromByteString = fromList . BL.unpack
 
 -- |Encode a UUID into a 'ByteString' in network order.
-toByteString :: UUID -> Lazy.ByteString
-toByteString = Lazy.pack . toList
+toByteString :: UUID -> BL.ByteString
+toByteString = BL.pack . toList
 
 -- |If the passed in 'String' can be parsed as a 'UUID', it will be.
 -- The hyphens may not be omitted.
@@ -328,3 +339,93 @@ mkNoRepType :: String -> DataType
 mkNoRepType = mkNorepType
 #endif
 
+fromASCIIBytes :: B.ByteString -> Maybe UUID
+fromASCIIBytes bs = do
+    guard wellFormed
+    fromWords <$> single 0 <*> double 9 14 <*> double 19 24 <*> single 28
+  where
+    -- ord '-' ==> 45
+    dashIx bs' ix = BU.unsafeIndex bs' ix == 45
+
+    -- Important: check the length first, given the `unsafeIndex` later.
+    wellFormed =
+        B.length bs == 36 && dashIx bs 8 && dashIx bs 13 &&
+        dashIx bs 18 && dashIx bs 23
+
+    single ix      = combine <$> octet ix       <*> octet (ix + 2)
+                             <*> octet (ix + 4) <*> octet (ix + 6)
+    double ix0 ix1 = combine <$> octet ix0 <*> octet (ix0 + 2)
+                             <*> octet ix1 <*> octet (ix1 + 2)
+
+    combine o0 o1 o2 o3 = shiftL o0 24 .|. shiftL o1 16 .|. shiftL o2 8 .|. o3
+
+    octet ix = do
+        hi <- fromIntegral <$> toDigit (BU.unsafeIndex bs ix)
+        lo <- fromIntegral <$> toDigit (BU.unsafeIndex bs (ix + 1))
+        return (16 * hi + lo)
+
+    toDigit :: Word8 -> Maybe Word8
+    toDigit w
+        -- Digit
+        | w >= 48 && w <= 57  = Just (w - 48)
+        -- Uppercase
+        | w >= 65 && w <= 70  = Just (10 + w - 65)
+        -- Lowercase
+        | w >= 97 && w <= 102 = Just (10 + w - 97)
+        | otherwise           = Nothing
+
+toASCIIBytes :: UUID -> B.ByteString
+toASCIIBytes uuid = BI.unsafeCreate 36 (pokeASCII uuid)
+
+pokeASCII :: UUID -> Ptr Word8 -> IO ()
+pokeASCII uuid ptr = do
+    pokeDash 8
+    pokeDash 13
+    pokeDash 18
+    pokeDash 23
+    pokeSingle 0  w0
+    pokeDouble 9  w1
+    pokeDouble 19 w2
+    pokeSingle 28 w3
+  where
+    (w0, w1, w2, w3) = toWords uuid
+
+    -- ord '-' ==> 45
+    pokeDash ix = pokeElemOff ptr ix 45
+
+    pokeSingle ix w = do
+        pokeWord ix       w 28
+        pokeWord (ix + 1) w 24
+        pokeWord (ix + 2) w 20
+        pokeWord (ix + 3) w 16
+        pokeWord (ix + 4) w 12
+        pokeWord (ix + 5) w 8
+        pokeWord (ix + 6) w 4
+        pokeWord (ix + 7) w 0
+
+    -- We skip the dash in the middle
+    pokeDouble ix w = do
+        pokeWord ix       w 28
+        pokeWord (ix + 1) w 24
+        pokeWord (ix + 2) w 20
+        pokeWord (ix + 3) w 16
+        pokeWord (ix + 5) w 12
+        pokeWord (ix + 6) w 8
+        pokeWord (ix + 7) w 4
+        pokeWord (ix + 8) w 0
+
+    pokeWord ix w r =
+        pokeElemOff ptr ix (fromIntegral (toDigit ((w `shiftR` r) .&. 0xf)))
+
+    toDigit :: Word32 -> Word32
+    toDigit w = if w < 10 then 48 + w else 97 + w - 10
+
+fromLazyASCIIBytes :: BL.ByteString -> Maybe UUID
+fromLazyASCIIBytes bs =
+    if BL.length bs == 36 then fromASCIIBytes (BL.toStrict bs) else Nothing
+
+toLazyASCIIBytes :: UUID -> BL.ByteString
+toLazyASCIIBytes = BL.fromStrict . toASCIIBytes
+
+instance NFData UUID where
+    rnf = rnf . toWords

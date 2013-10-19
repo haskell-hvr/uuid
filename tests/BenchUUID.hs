@@ -22,9 +22,6 @@ instance NFData BL.ByteString where
     rnf (BL.Chunk _ ts) = rnf ts
 #endif
 
-instance NFData U.UUID where
-
-
 main :: IO ()
 main = do
         u1 <- randomIO
