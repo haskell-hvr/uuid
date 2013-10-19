@@ -12,6 +12,8 @@ import qualified Data.UUID as U
 import qualified Data.UUID.V1 as U
 import qualified Data.UUID.V3 as U3
 import qualified Data.UUID.V5 as U5
+import Foreign (alloca, peek, poke)
+import System.IO.Unsafe (unsafePerformIO)
 import qualified Test.HUnit as H
 import Test.HUnit hiding (Test)
 import Test.QuickCheck hiding ((.&.))
@@ -166,6 +168,17 @@ toASCIIBytes_fromASCIIBytes :: U.UUID -> Bool
 toASCIIBytes_fromASCIIBytes uuid =
     Just uuid == U.fromASCIIBytes (U.toASCIIBytes uuid)
 
+prop_storableRoundTrip :: Test
+prop_storableRoundTrip =
+    testProperty "Storeable round-trip" $ unsafePerformIO . prop
+  where
+    prop :: U.UUID -> IO Bool
+    prop uuid =
+        alloca $ \ptr -> do
+          poke ptr uuid
+          uuid2 <- peek ptr
+          return $ uuid == uuid2
+
 main :: IO ()
 main = do
     v1s <- replicateM 100 U.nextUUID
@@ -182,6 +195,7 @@ main = do
      , [ prop_stringRoundTrip,
          prop_readShowRoundTrip,
          prop_byteStringRoundTrip,
+         prop_storableRoundTrip,
          prop_stringLength,
          prop_byteStringLength,
          prop_randomsDiffer,
