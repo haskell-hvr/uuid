@@ -16,6 +16,7 @@ import qualified Data.UUID as U
 import qualified Data.UUID.V1 as U
 import qualified Data.UUID.V3 as U3
 import qualified Data.UUID.V5 as U5
+import Foreign (alloca, peek, poke)
 import System.Random
 import System.Random.Mersenne.Pure64
 
@@ -47,6 +48,11 @@ main = do
               writeIORef randomState state'
               return uuid
 
+        -- setup for Storable benchmark
+        alloca $ \ uuidPtr -> do
+
+        poke uuidPtr u1
+
         defaultMain [
             bgroup "testing" [
                 bench "null non-nil"   $ whnf U.null u1,
@@ -67,7 +73,12 @@ main = do
                 bench "V3" $ nf   (U3.generateNamed U3.namespaceURL) n1,
                 bench "V5" $ nf   (U5.generateNamed U5.namespaceURL) n1
                 ],
-            bench "set making" $ nf Set.fromList uuids
+            bench "set making" $ nf Set.fromList uuids,
+            
+            bgroup "storable" [
+                bench "peek" $ nfIO (peek uuidPtr),
+                bench "poke" $ poke uuidPtr u1
+                ]
             ]
 
 -- 50 uuids, so tests can be repeatable
