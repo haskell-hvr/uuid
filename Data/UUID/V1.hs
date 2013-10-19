@@ -25,9 +25,10 @@ generator with a psuedo-random number.
 module Data.UUID.V1(nextUUID)
 where
 
-import Data.Time
 
 import Data.Bits
+import Data.Maybe
+import Data.Time
 import Data.Word
 
 import Control.Applicative ((<$>),(<*>))
@@ -36,8 +37,7 @@ import System.IO.Unsafe
 
 import qualified System.Random as R
 
-import qualified System.Info.MAC as SysMAC
-import Data.MAC
+import Network.Info
 
 import Data.UUID.Builder
 import Data.UUID.Internal
@@ -52,13 +52,13 @@ nextUUID :: IO (Maybe UUID)
 nextUUID = do
   res <- stepTime
   case res of
-    Just (mac, c, t) -> return $ Just $ makeUUID t c mac
+    Just (mac', c, t) -> return $ Just $ makeUUID t c mac'
     _ -> return Nothing
 
 
 makeUUID :: Word64 -> Word16 -> MAC -> UUID
-makeUUID time clock mac =
-    buildFromBytes 1 /-/ tLow /-/ tMid /-/ tHigh /-/ clock /-/ (MACSource mac)
+makeUUID time clock mac' =
+    buildFromBytes 1 /-/ tLow /-/ tMid /-/ tHigh /-/ clock /-/ (MACSource mac')
     where tLow = (fromIntegral time) :: Word32
           tMid = (fromIntegral (time `shiftR` 32)) :: Word16
           tHigh = (fromIntegral (time `shiftR` 48)) :: Word16  
@@ -75,17 +75,17 @@ type instance ByteSink MACSource g = Takes3Bytes (Takes3Bytes g)
 stepTime :: IO (Maybe (MAC, Word16, Word64))
 stepTime = do
   h1 <- fmap hundredsOfNanosSinceGregorianReform getCurrentTime
-  modifyMVar state $ \s@(State mac c0 h0) ->
+  modifyMVar state $ \s@(State mac' c0 h0) ->
    if h1 > h0
     then
-      return (State mac c0 h1, Just (mac, c0, h1))
+      return (State mac' c0 h1, Just (mac', c0, h1))
     else
       let
         c1 = succ c0
       in if c1 <= 0x3fff -- when clock is initially randomized,
                       -- then this test will need to change
          then
-          return (State mac c1 h1, Just (mac, c1, h1))
+          return (State mac' c1 h1, Just (mac', c1, h1))
         else
           return (s, Nothing)
 
@@ -94,16 +94,17 @@ stepTime = do
 state :: MVar State
 state = unsafePerformIO $ do
   h0 <- fmap hundredsOfNanosSinceGregorianReform getCurrentTime
-  mac <- getMac
-  newMVar $ State mac 0 h0 -- the 0 should be a random number
+  mac' <- getMac
+  newMVar $ State mac' 0 h0 -- the 0 should be a random number
 
 -- SysMAC.mac can fail on some machines.
 -- In those cases we fake it with a random
 -- 6 bytes seed.
 getMac :: IO MAC
 getMac =
-    SysMAC.mac >>= \macM ->
-    case macM of
+    getNetworkInterfaces >>=
+    return . listToMaybe . filter (minBound /=) . map mac >>=
+    \macM -> case macM of
       Just m -> return m
       Nothing -> randomMac
 
@@ -112,7 +113,7 @@ randomMac =
     -- I'm too lazy to thread through
     -- the random state ...
     MAC
-     <$> R.randomIO
+     <$> (R.randomIO >>= return . (1 .|.)) -- We must set the multicast bit to True. See section 4.5 of the RFC.
      <*> R.randomIO
      <*> R.randomIO
      <*> R.randomIO

@@ -30,8 +30,9 @@ import Prelude hiding (null)
 
 import Control.Monad (liftM4)
 import Data.Char
-import Data.Maybe
 import Data.Bits
+import Data.Hashable
+import Data.Maybe
 import Data.List (elemIndices)
 
 #if MIN_VERSION_base(4,0,0)
@@ -273,6 +274,16 @@ instance ByteSource ThreeByte where
               b2 = fromIntegral (w `shiftR` 8)
               b3 = fromIntegral w
 
+instance Hashable UUID where
+    hash (UUID w0 w1 w2 w3) =
+        hash w0 `hashWithSalt` w1
+                `hashWithSalt` w2
+                `hashWithSalt` w3
+    hashWithSalt s (UUID w0 w1 w2 w3) =
+        s `hashWithSalt` w0
+          `hashWithSalt` w1
+          `hashWithSalt` w2
+          `hashWithSalt` w3
 
 instance Show UUID where
     show = toString
