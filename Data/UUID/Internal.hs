@@ -42,7 +42,6 @@ import Data.Functor ((<$>))
 import Data.Char
 import Data.Bits
 import Data.Hashable
-import Data.Maybe
 import Data.List (elemIndices)
 import Foreign.Ptr (Ptr)
 
