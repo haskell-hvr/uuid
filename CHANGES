@@ -1,3 +1,7 @@
+1.3.1
+
+- Allow building against 'hashable' 1.1.* in addition to 1.2.*
+
 1.3.0
 
 - New functions for parsing and printing UUIDs to and from ASCII BytesStrings
