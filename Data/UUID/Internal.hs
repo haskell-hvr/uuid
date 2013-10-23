@@ -391,12 +391,24 @@ fromASCIIBytes bs = do
 
 -- | Similar to `toASCIIBytes` except we produce a lazy `BL.ByteString`.
 toLazyASCIIBytes :: UUID -> BL.ByteString
-toLazyASCIIBytes = BL.fromStrict . toASCIIBytes
+toLazyASCIIBytes =
+#if MIN_VERSION_bytestring(0,10,0)
+    BL.fromStrict
+#else
+    BL.fromChunks . return
+#endif
+    . toASCIIBytes
 
 -- | Similar to `fromASCIIBytes` except parses from a lazy `BL.ByteString`.
 fromLazyASCIIBytes :: BL.ByteString -> Maybe UUID
 fromLazyASCIIBytes bs =
-    if BL.length bs == 36 then fromASCIIBytes (BL.toStrict bs) else Nothing
+    if BL.length bs == 36 then fromASCIIBytes (
+#if MIN_VERSION_bytestring(0,10,0)
+        BL.toStrict bs
+#else
+        B.concat $ BL.toChunks bs
+#endif
+        ) else Nothing
 
 --
 -- Class Instances
