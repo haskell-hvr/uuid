@@ -33,7 +33,7 @@ Library
                 deepseq == 1.3.*,
                 hashable (>= 1.1.1.0 && < 1.2.0) || (>= 1.2.1 && < 1.3),
                 network-info == 0.2.*,
-                random >= 1.0.1 && < 1.1,
+                random >= 1.0.1 && < 1.2,
                 time >= 1.1 && < 1.5
 
  Exposed-Modules:
@@ -68,7 +68,7 @@ Test-Suite testuuid
                        bytestring >= 0.9 && < 1.1,
                        HUnit >=1.2 && < 1.3,
                        QuickCheck >=2.4 && < 2.8,
-                       random >= 1.0.1 && < 1.1,
+                       random >= 1.0.1 && < 1.2,
                        test-framework == 0.8.*,
                        test-framework-hunit == 0.3.*,
                        test-framework-quickcheck2 == 0.3.*
@@ -86,7 +86,7 @@ benchmark benchmark
                        criterion >= 0.4 && < 0.9,
                        deepseq >= 1.1 && < 1.4,
                        mersenne-random-pure64,
-                       random >= 1.0.1 && < 1.1
+                       random >= 1.0.1 && < 1.2
 
 benchmark benchbytestring
   Type:              exitcode-stdio-1.0
