@@ -168,6 +168,17 @@ toASCIIBytes_fromASCIIBytes :: U.UUID -> Bool
 toASCIIBytes_fromASCIIBytes uuid =
     Just uuid == U.fromASCIIBytes (U.toASCIIBytes uuid)
 
+toWords_fromWords :: U.UUID -> Bool
+toWords_fromWords uuid =
+    uuid == myUncurry4 U.fromWords (U.toWords uuid)
+
+fromWords_toWords :: (Word32, Word32, Word32, Word32) -> Bool
+fromWords_toWords wds =
+    wds == U.toWords (myUncurry4 U.fromWords wds)
+
+myUncurry4 :: (x1 -> x2 -> x3 -> x4 -> y) -> (x1, x2, x3, x4) -> y
+myUncurry4 f (a,b,c,d) = f a b c d
+
 prop_storableRoundTrip :: Test
 prop_storableRoundTrip =
     testProperty "Storeable round-trip" $ unsafePerformIO . prop
@@ -211,5 +222,7 @@ main = do
        , testProperty "fromASCIIBytes_toString"     toASCIIBytes_toString
        , testProperty "fromASCIIBytes_toASCIIBytes" fromASCIIBytes_toASCIIBytes
        , testProperty "toASCIIBytes_fromASCIIBytes" toASCIIBytes_fromASCIIBytes
+       , testProperty "toWords_fromWords" toWords_fromWords
+       , testProperty "fromWords_toWords" fromWords_toWords
        ]
      ]
