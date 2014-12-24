@@ -5,4 +5,5 @@
 
 # Cabal stuff
 /dist/
+/cabal.config
 
