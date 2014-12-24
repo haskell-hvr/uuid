@@ -1,3 +1,4 @@
+{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ViewPatterns #-}
 import Control.Monad (replicateM)
 import Data.Bits
@@ -81,6 +82,22 @@ test_v5 = H.TestList [
     ]
     where name = map (fromIntegral . ord) "www.widgets.com" :: [Word8]
           uV5 = fromJust $ U.fromString "21f7f8de-8051-5b89-8680-0195ef798b6a"
+
+
+-- | Test fromByteString with a fixed-input.
+test_fromByteString :: H.Test
+test_fromByteString =
+    "UUID fromByteString" ~:
+        Just inputUUID @=? U.fromByteString "\165\202\133f\217\197H5\153\200\225\241>s\181\226"
+
+-- | Test fromWords with a fixed-input
+test_fromWords :: H.Test
+test_fromWords =
+    "UUID fromWords" ~:
+        inputUUID @=? U.fromWords 2781513062 3653584949 2580079089 1047770594
+
+inputUUID :: U.UUID
+inputUUID = read "a5ca8566-d9c5-4835-99c8-e1f13e73b5e2"
 
 prop_stringRoundTrip :: Test
 prop_stringRoundTrip = testProperty "String round trip" stringRoundTrip
@@ -201,7 +218,9 @@ main = do
         test_conv,
         test_v1 v1s,
         test_v3,
-        test_v5
+        test_v5,
+        test_fromByteString,
+        test_fromWords
         ]
      , [ prop_stringRoundTrip,
          prop_readShowRoundTrip,
