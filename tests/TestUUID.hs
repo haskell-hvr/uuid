@@ -1,8 +1,8 @@
-{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ViewPatterns #-}
 import Control.Monad (replicateM)
 import Data.Bits
 import qualified Data.ByteString.Lazy as BL
+import qualified Data.ByteString.Lazy.Char8 as BL8
 import qualified Data.ByteString.Char8 as BC8
 import Data.Char (ord)
 import Data.Functor ((<$>))
@@ -88,7 +88,8 @@ test_v5 = H.TestList [
 test_fromByteString :: H.Test
 test_fromByteString =
     "UUID fromByteString" ~:
-        Just inputUUID @=? U.fromByteString "\165\202\133f\217\197H5\153\200\225\241>s\181\226"
+        Just inputUUID @=?
+             U.fromByteString (BL8.pack "\165\202\133f\217\197H5\153\200\225\241>s\181\226")
 
 -- | Test fromWords with a fixed-input
 test_fromWords :: H.Test
