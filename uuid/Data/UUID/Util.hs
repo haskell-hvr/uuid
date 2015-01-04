@@ -12,7 +12,7 @@ import Prelude hiding (null)
 import Data.Word
 import Data.Word.Util
 import Data.Bits
-import Data.UUID.Internal
+import Data.UUID.Types.Internal
 import Network.Info
 import Data.Int (Int64)
 

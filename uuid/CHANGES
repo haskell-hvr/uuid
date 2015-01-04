@@ -1,3 +1,8 @@
+1.3.9
+
+- Split definition of UUID data type into separate Cabal package to
+  enable 3rd party libraries to avoid some of the larger dependencies.
+
 1.3.8
 
 - Allow building against newer deepseq.

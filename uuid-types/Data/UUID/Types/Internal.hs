@@ -1,7 +1,7 @@
 {-# LANGUAGE DeriveDataTypeable, TypeFamilies, CPP #-}
 
 -- |
--- Module      : Data.UUID
+-- Module      : Data.UUID.Types.Internal
 -- Copyright   : (c) 2008-2009, 2012 Antoine Latter
 --               (c) 2009 Mark Lentczner
 --
@@ -11,7 +11,7 @@
 -- Stability   : experimental
 -- Portability : portable
 
-module Data.UUID.Internal
+module Data.UUID.Types.Internal
     (UUID(..)
     ,null
     ,nil
@@ -61,7 +61,7 @@ import qualified Data.ByteString.Internal as BI
 import qualified Data.ByteString.Lazy as BL
 import qualified Data.ByteString.Unsafe as BU
 
-import Data.UUID.Builder
+import Data.UUID.Types.Internal.Builder
 
 import System.Random
 
@@ -528,7 +528,7 @@ instance Data UUID where
     dataTypeOf _ = uuidType
 
 uuidType :: DataType
-uuidType =  mkNoRepType "Data.UUID.UUID"
+uuidType =  mkNoRepType "Data.UUID.Types.UUID"
 
 #if !(MIN_VERSION_base(4,2,0))
 mkNoRepType :: String -> DataType

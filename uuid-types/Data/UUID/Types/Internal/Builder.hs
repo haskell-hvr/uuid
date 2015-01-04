@@ -1,6 +1,6 @@
 {-# LANGUAGE TypeFamilies #-}
 
--- Module      : Data.UUID.Builder
+-- Module      : Data.UUID.Types.Internal.Builder
 -- Copyright   : (c) 2009 Mark Lentczner
 --
 -- License     : BSD-style
@@ -28,7 +28,7 @@
 -- code was ungainly. Using this module makes the code very
 -- concise, and turns out to optimize to just as fast, or faster!
 
-module Data.UUID.Builder
+module Data.UUID.Types.Internal.Builder
     (ByteSource(..)
     ,ByteSink
     ,Takes1Byte

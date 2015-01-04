@@ -33,7 +33,7 @@ module Data.UUID.V3
 
 import Data.Word
 
-import Data.UUID.Internal
+import Data.UUID.Types.Internal
 import qualified Data.UUID.Named as Shared
 import qualified Crypto.Hash.MD5 as MD5
 

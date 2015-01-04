@@ -23,7 +23,6 @@ MAC address and current system time in "Data.UUID.V1".
 * For name-based generation of UUIDs using SHA-1 hashing see
 "Data.UUID.V5".
 -}
-
 module Data.UUID(UUID
                 ,toString
                 ,fromString
@@ -40,8 +39,9 @@ module Data.UUID(UUID
                 ) where
 
 import Prelude () -- we need to hide Prelude.null
-import Data.UUID.Internal
+import Data.UUID.Types
 
--- Everything is really implemented in Data.UUID.Internal,
--- but I don't want to export the constructors out of the
--- package.
+-- We use explicit re-exports of everything from Data.UUID.Types in
+-- preference to just re-exporting the whole module. This is to avoid
+-- unforeseen transitive API breakage if the Data.UUID.Types module
+-- should change.
