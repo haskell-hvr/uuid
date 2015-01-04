@@ -26,4 +26,3 @@ import qualified System.Random as R
 -- | Generate a random UUID. Introduced in version 1.2.6.
 nextRandom :: IO UUID
 nextRandom = R.randomIO
-

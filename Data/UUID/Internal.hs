@@ -142,13 +142,13 @@ unpack (UUID w0 w1 w2 w3) =
 
 pack :: UnpackedUUID -> UUID
 pack unpacked =
-  makeFromBytes /-/ (time_low unpacked) 
-                /-/ (time_mid unpacked) 
-                /-/ (time_hi_and_version unpacked) 
-                /-/ (clock_seq_hi_res unpacked) 
+  makeFromBytes /-/ (time_low unpacked)
+                /-/ (time_mid unpacked)
+                /-/ (time_hi_and_version unpacked)
+                /-/ (clock_seq_hi_res unpacked)
                 /-/ (clock_seq_low unpacked)
-                /-/ (node_0 unpacked) /-/ (node_1 unpacked) 
-                /-/ (node_2 unpacked) /-/ (node_3 unpacked) 
+                /-/ (node_0 unpacked) /-/ (node_1 unpacked)
+                /-/ (node_2 unpacked) /-/ (node_3 unpacked)
                 /-/ (node_4 unpacked) /-/ (node_5 unpacked)
 
 
@@ -509,7 +509,7 @@ instance Storable UUID where
 
 instance Binary UUID where
     put (UUID w0 w1 w2 w3) =
-        putWord32be w0 >> putWord32be w1 >> putWord32be w2 >> putWord32be w3 
+        putWord32be w0 >> putWord32be w1 >> putWord32be w2 >> putWord32be w3
     get = liftM4 UUID getWord32be getWord32be getWord32be getWord32be
 
 
@@ -527,4 +527,3 @@ uuidType =  mkNoRepType "Data.UUID.UUID"
 mkNoRepType :: String -> DataType
 mkNoRepType = mkNorepType
 #endif
-

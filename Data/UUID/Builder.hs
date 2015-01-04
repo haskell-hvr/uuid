@@ -10,14 +10,14 @@
 -- Portability : portable
 --
 -- This module provides a system that can call a function that takes
--- a sequence of some number of Word8 arguments. 
--- 
+-- a sequence of some number of Word8 arguments.
+--
 -- The twist is that the Word8 arguments can be supplied directly
 -- from Word8s, or from other sources that may provide more than
 -- one Word8 apiece. Examples are Word16 and Word32 that supply
 -- two and four Word8s respectively. Other ByteSource instances
 -- can be defined.
--- 
+--
 -- This module is admittedly overkill. There are only three places
 -- in the uuid package that need to call buildFromBytes with 16
 -- Word8 values, but each place uses Words of different lengths:

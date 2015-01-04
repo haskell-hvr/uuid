@@ -15,7 +15,7 @@ w8to32 w0s w1s w2s w3s =
     w3 = fromIntegral w3s
 
 w8to16 :: Word8 -> Word8 -> Word16
-w8to16 w0s w1s = 
+w8to16 w0s w1s =
     (w0 `shiftL` 8) .|. w1
   where
     w0 = fromIntegral w0s
