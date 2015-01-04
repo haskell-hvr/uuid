@@ -61,7 +61,7 @@ makeUUID time clock mac' =
     buildFromBytes 1 /-/ tLow /-/ tMid /-/ tHigh /-/ clock /-/ (MACSource mac')
     where tLow = (fromIntegral time) :: Word32
           tMid = (fromIntegral (time `shiftR` 32)) :: Word16
-          tHigh = (fromIntegral (time `shiftR` 48)) :: Word16  
+          tHigh = (fromIntegral (time `shiftR` 48)) :: Word16
 
 newtype MACSource = MACSource MAC
 instance ByteSource MACSource where
@@ -133,6 +133,3 @@ hundredsOfNanosSinceGregorianReform t = floor $ 10000000 * dt
  where
   gregorianReform = UTCTime (fromGregorian 1582 10 15) 0
   dt = t `diffUTCTime` gregorianReform
-
-
-

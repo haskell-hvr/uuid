@@ -42,4 +42,3 @@ generateNamed :: UUID    -- ^Namespace
               -> [Word8] -- ^Object
               -> UUID
 generateNamed = Shared.generateNamed SHA1.hash 5
-

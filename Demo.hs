@@ -13,4 +13,3 @@ main = sequence_ $ replicate count $ do
          x <- newUUID
          y <- newUUID
          seq (x == y) $ return ()
- 

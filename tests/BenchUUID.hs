@@ -74,7 +74,7 @@ main = do
                 bench "V5" $ nf   (U5.generateNamed U5.namespaceURL) n1
                 ],
             bench "set making" $ nf Set.fromList uuids,
-            
+
             bgroup "storable" [
                 bench "peek" $ nfIO (peek uuidPtr),
                 bench "poke" $ poke uuidPtr u1
@@ -83,7 +83,7 @@ main = do
 
 -- 50 uuids, so tests can be repeatable
 uuids :: [U.UUID]
-uuids 
+uuids
     = map (fromJust . U.fromString)
         [
          "35d42593-1fca-4465-b588-a2e78cb996ba",
@@ -137,4 +137,3 @@ uuids
          "8091837c-6456-42c3-a686-f4731a41d4f9",
          "2a0e2efb-a11c-4a44-81ee-3efc37379b48"
         ]
-

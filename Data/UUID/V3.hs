@@ -47,4 +47,3 @@ generateNamed :: UUID    -- ^Namespace
               -> [Word8] -- ^Object
               -> UUID
 generateNamed = Shared.generateNamed MD5.hash 3
-
