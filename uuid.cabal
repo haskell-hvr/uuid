@@ -99,4 +99,3 @@ benchmark benchbytestring
                    , criterion            >= 0.8
                    , random               >= 1.0
                    , QuickCheck           >= 2
-
