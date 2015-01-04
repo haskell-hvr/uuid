@@ -91,7 +91,7 @@ data UUID
 -}
 
 -- | Covert a 'UUID' into a sequence of 'Word32' values.
--- Usefull for when you need to serialize a UUID and
+-- Useful for when you need to serialize a UUID and
 -- neither 'Storable' nor 'Binary' are appropriate.
 -- Introduced in version 1.2.2.
 toWords :: UUID -> (Word32, Word32, Word32, Word32)
