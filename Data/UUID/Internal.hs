@@ -62,7 +62,6 @@ import qualified Data.ByteString.Lazy as BL
 import qualified Data.ByteString.Unsafe as BU
 
 import Data.UUID.Builder
-import Data.Word.Util
 
 import System.Random
 
@@ -166,6 +165,14 @@ word a b c d =  (fromIntegral a `shiftL` 24)
 -- |Extract a Word8 from a Word32. Bytes, high to low, are numbered from 3 to 0,
 byte :: Int -> Word32 -> Word8
 byte i w = fromIntegral (w `shiftR` (i * 8))
+
+-- |Build a Word16 from two Word8 values, presented in big-endian order.
+w8to16 :: Word8 -> Word8 -> Word16
+w8to16 w0s w1s =
+    (w0 `shiftL` 8) .|. w1
+  where
+    w0 = fromIntegral w0s
+    w1 = fromIntegral w1s
 
 
 -- |Make a UUID from sixteen Word8 values
