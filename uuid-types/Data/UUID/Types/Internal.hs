@@ -1,4 +1,5 @@
 {-# LANGUAGE DeriveDataTypeable, TypeFamilies, CPP #-}
+{-# OPTIONS_HADDOCK hide #-}
 
 -- |
 -- Module      : Data.UUID.Types.Internal

@@ -1,4 +1,5 @@
 {-# LANGUAGE TypeFamilies #-}
+{-# OPTIONS_HADDOCK hide #-}
 
 -- Module      : Data.UUID.Types.Internal.Builder
 -- Copyright   : (c) 2009 Mark Lentczner
