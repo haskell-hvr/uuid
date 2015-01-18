@@ -1,7 +1,7 @@
 {-# LANGUAGE DeriveDataTypeable, TypeFamilies, CPP #-}
 
 -- |
--- Module      : Data.UUID
+-- Module      : Data.UUID.Types.Internal
 -- Copyright   : (c) 2008-2009, 2012 Antoine Latter
 --               (c) 2009 Mark Lentczner
 --
@@ -11,7 +11,7 @@
 -- Stability   : experimental
 -- Portability : portable
 
-module Data.UUID.Internal
+module Data.UUID.Types.Internal
     (UUID(..)
     ,null
     ,nil
@@ -61,8 +61,7 @@ import qualified Data.ByteString.Internal as BI
 import qualified Data.ByteString.Lazy as BL
 import qualified Data.ByteString.Unsafe as BU
 
-import Data.UUID.Builder
-import Data.Word.Util
+import Data.UUID.Types.Internal.Builder
 
 import System.Random
 
@@ -166,6 +165,14 @@ word a b c d =  (fromIntegral a `shiftL` 24)
 -- |Extract a Word8 from a Word32. Bytes, high to low, are numbered from 3 to 0,
 byte :: Int -> Word32 -> Word8
 byte i w = fromIntegral (w `shiftR` (i * 8))
+
+-- |Build a Word16 from two Word8 values, presented in big-endian order.
+w8to16 :: Word8 -> Word8 -> Word16
+w8to16 w0s w1s =
+    (w0 `shiftL` 8) .|. w1
+  where
+    w0 = fromIntegral w0s
+    w1 = fromIntegral w1s
 
 
 -- |Make a UUID from sixteen Word8 values
@@ -521,7 +528,7 @@ instance Data UUID where
     dataTypeOf _ = uuidType
 
 uuidType :: DataType
-uuidType =  mkNoRepType "Data.UUID.UUID"
+uuidType =  mkNoRepType "Data.UUID.Types.UUID"
 
 #if !(MIN_VERSION_base(4,2,0))
 mkNoRepType :: String -> DataType

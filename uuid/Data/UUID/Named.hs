@@ -26,7 +26,7 @@ module Data.UUID.Named
     ,namespaceX500
     ) where
 
-import Data.UUID.Internal
+import Data.UUID.Types.Internal
 
 import Control.Applicative ((<*>),(<$>))
 import Data.Binary.Get (runGet, getWord32be)

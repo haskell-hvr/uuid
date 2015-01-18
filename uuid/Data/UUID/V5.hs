@@ -28,7 +28,7 @@ module Data.UUID.V5
 
 import Data.Word
 
-import Data.UUID.Internal
+import Data.UUID.Types.Internal
 import qualified Data.UUID.Named as Shared
 import qualified Crypto.Hash.SHA1 as SHA1
 

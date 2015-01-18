@@ -9,7 +9,7 @@ import           Test.QuickCheck
 import           Criterion
 import           Criterion.Main
 
-import           Data.UUID
+import           Data.UUID.Types
 
 instance Arbitrary UUID where
     arbitrary =

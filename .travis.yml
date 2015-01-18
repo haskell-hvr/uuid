@@ -5,3 +5,7 @@ ghc:
   - 7.4
 
 sudo: false
+install:
+  - ./travis-scripts/install.sh
+script:
+  - ./travis-scripts/build.sh

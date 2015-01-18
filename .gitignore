@@ -1,9 +1,9 @@
 
 # Sandboxing
-/.cabal-sandbox/
-/cabal.sandbox.config
+.cabal-sandbox/
+cabal.sandbox.config
 
 # Cabal stuff
-/dist/
-/cabal.config
+dist/
+cabal.config
 

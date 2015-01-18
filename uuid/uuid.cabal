@@ -1,5 +1,5 @@
 Name: uuid
-Version: 1.3.8
+Version: 1.3.9
 Copyright: (c) 2008-2014 Antoine Latter
 Author: Antoine Latter
 Maintainer: aslatter@gmail.com
@@ -30,11 +30,10 @@ Library
                 binary >= 0.4 && < 0.8,
                 bytestring >= 0.9 && < 1.1,
                 cryptohash >= 0.7 && < 0.12,
-                deepseq >= 1.3 && < 1.5,
-                hashable (>= 1.1.1.0 && < 1.2.0) || (>= 1.2.1 && < 1.3),
                 network-info == 0.2.*,
                 random >= 1.0.1 && < 1.2,
-                time >= 1.1 && < 1.6
+                time >= 1.1 && < 1.6,
+                uuid-types >= 1.0 && < 2
 
  Exposed-Modules:
    Data.UUID
@@ -45,8 +44,6 @@ Library
    Data.UUID.V5
 
  Other-Modules:
-   Data.UUID.Builder
-   Data.UUID.Internal
    Data.UUID.Named
    Data.Word.Util
 
@@ -81,21 +78,6 @@ benchmark benchmark
     Ghc-Options:       -Wall -fno-warn-orphans
     Build-depends:     base == 4.*,
                        uuid,
-                       bytestring >= 0.9 && < 1.1,
-                       containers >= 0.4 && < 0.6,
                        criterion >= 0.4 && < 0.9,
-                       deepseq >= 1.1 && < 1.4,
                        mersenne-random-pure64,
                        random >= 1.0.1 && < 1.2
-
-benchmark benchbytestring
-  Type:              exitcode-stdio-1.0
-  Hs-Source-Dirs:    tests
-  Main-Is:           BenchByteString.hs
-  Ghc-Options:       -threaded -rtsopts -Wall -O2 -fno-warn-orphans
-  Build-Depends:     base                 >= 4       && < 5
-                   , uuid
-                   , bytestring           >= 0.10
-                   , criterion            >= 0.8
-                   , random               >= 1.0
-                   , QuickCheck           >= 2

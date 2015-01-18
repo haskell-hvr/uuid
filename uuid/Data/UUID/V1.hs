@@ -39,8 +39,8 @@ import qualified System.Random as R
 
 import Network.Info
 
-import Data.UUID.Builder
-import Data.UUID.Internal
+import Data.UUID.Types.Internal.Builder
+import Data.UUID.Types.Internal
 
 -- | Returns a new UUID derived from the local hardware MAC
 -- address and the current system time.

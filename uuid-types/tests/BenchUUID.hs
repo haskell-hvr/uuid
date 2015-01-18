@@ -6,19 +6,12 @@ import Control.DeepSeq
 import qualified Data.ByteString.Lazy.Internal as BL
 #endif
 import Criterion.Main
-import Data.Char (ord)
-import Data.IORef
 import Data.Maybe (fromJust)
-import Data.Word
 import qualified Data.Set as Set
 import qualified Data.ByteString.Lazy as BL
-import qualified Data.UUID as U
-import qualified Data.UUID.V1 as U
-import qualified Data.UUID.V3 as U3
-import qualified Data.UUID.V5 as U5
+import qualified Data.UUID.Types as U
 import Foreign (alloca, peek, poke)
 import System.Random
-import System.Random.Mersenne.Pure64
 
 #if !(MIN_VERSION_bytestring(0,10,0))
 instance NFData BL.ByteString where
@@ -31,7 +24,6 @@ main = do
         u1 <- randomIO
         let s1 = U.toString u1
             b1 = U.toByteString u1
-            n1 = (map (fromIntegral . ord) "http://www.haskell.org/") :: [Word8]
             nil2 = fromJust $
                         U.fromString "00000000-0000-0000-0000-000000000000"
             u2a = fromJust $ U.fromString "169a5a43-c051-4a16-98f4-08447ddd5dc0"
@@ -39,14 +31,6 @@ main = do
                         BL.pack [0x16, 0x9a, 0x5a, 0x43, 0xc0, 0x51, 0x4a, 0x16,
                                  0x98, 0xf4, 0x08, 0x44, 0x7d, 0xdd, 0x5d, 0xc0]
             u3  = fromJust $ U.fromString "dea6f619-1038-438b-b4af-f1cdec1e6e23"
-
-        -- setup for random generation
-        randomState <- newPureMT >>= newIORef
-        let randomUUID = do
-              state <- readIORef randomState
-              let (uuid, state') = random state
-              writeIORef randomState state'
-              return uuid
 
         -- setup for Storable benchmark
         alloca $ \ uuidPtr -> do
@@ -66,12 +50,6 @@ main = do
                 bench "fromString"     $ nf U.fromString s1,
                 bench "toByteString"   $ nf U.toByteString u1,
                 bench "fromByteString" $ nf U.fromByteString b1
-                ],
-            bgroup "generation" [
-                bench "V1" $ nfIO U.nextUUID,
-                bench "V4" $ nfIO (randomUUID :: IO U.UUID),
-                bench "V3" $ nf   (U3.generateNamed U3.namespaceURL) n1,
-                bench "V5" $ nf   (U5.generateNamed U5.namespaceURL) n1
                 ],
             bench "set making" $ nf Set.fromList uuids,
 
