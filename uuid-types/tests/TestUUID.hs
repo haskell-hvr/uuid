@@ -1,4 +1,5 @@
 {-# LANGUAGE ViewPatterns #-}
+
 import qualified Data.ByteString.Lazy as BL
 import qualified Data.ByteString.Lazy.Char8 as BL8
 import qualified Data.ByteString.Char8 as BC8
@@ -9,11 +10,11 @@ import qualified Data.UUID.Types as U
 import Foreign (alloca, peek, poke)
 import System.IO.Unsafe (unsafePerformIO)
 
-import Test.QuickCheck hiding ((.&.))
+import Test.QuickCheck ( Arbitrary(arbitrary), choose )
 
 import Test.Tasty ( defaultMain, TestTree, testGroup )
-import Test.Tasty.HUnit
-import Test.Tasty.QuickCheck
+import Test.Tasty.HUnit ( assertBool, (@?=), (@=?), testCase )
+import Test.Tasty.QuickCheck ( testProperty )
 
 
 instance Arbitrary U.UUID where
