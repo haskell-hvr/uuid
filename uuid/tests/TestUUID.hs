@@ -1,4 +1,5 @@
 {-# LANGUAGE ViewPatterns #-}
+
 import Control.Monad (replicateM)
 import Data.Bits
 import qualified Data.ByteString.Lazy as BL
@@ -10,13 +11,14 @@ import qualified Data.UUID as U
 import qualified Data.UUID.V1 as U
 import qualified Data.UUID.V3 as U3
 import qualified Data.UUID.V5 as U5
-import qualified Test.HUnit as H
-import Test.HUnit hiding (Test)
-import Test.QuickCheck hiding ((.&.))
-import Test.Framework (defaultMain, Test)
-import Test.Framework.Providers.HUnit (hUnitTestToTests)
-import Test.Framework.Providers.QuickCheck2 (testProperty)
 
+import Test.QuickCheck ( Arbitrary(arbitrary), choose )
+import Test.Tasty ( TestTree, testGroup, defaultMain )
+import Test.Tasty.HUnit
+      ( Assertable(assert), assertBool, (@?=), testCase )
+import Test.Tasty.QuickCheck ( testProperty )
+
+type Test = TestTree
 
 isValidVersion :: Int -> U.UUID -> Bool
 isValidVersion v u = lenOK && variantOK && versionOK
@@ -31,33 +33,35 @@ instance Arbitrary U.UUID where
     arbitrary = choose (U.nil, U.nil)
 
 
-test_null :: H.Test
-test_null = H.TestList [
-    "namespaceDNS is not null" ~: assertBool "" (not $ U.null U3.namespaceDNS)
-    ]
+test_null :: Test
+test_null =
+  testCase "namespaceDNS is not null" $
+  assertBool "" (not $ U.null U3.namespaceDNS)
 
-test_v1 :: [Maybe U.UUID] -> H.Test
-test_v1 v1s = H.TestList [
-    "V1 unique" ~: nub (v1s \\ nub v1s) @?= [],
-    "V1 not null" ~: H.TestList $ map (testUUID (not . U.null))  v1s,
-    "V1 valid"    ~: H.TestList $ map (testUUID (isValidVersion 1)) v1s
+test_v1 :: [Maybe U.UUID] -> Test
+test_v1 v1s = testGroup "version 1" [
+    testCase  "V1 unique"   $ nub (v1s \\ nub v1s) @?= [],
+    testGroup "V1 not null" $ map (testUUID (not . U.null))  v1s,
+    testGroup "V1 valid"    $ map (testUUID (isValidVersion 1)) v1s
     ]
-    where testUUID :: (U.UUID -> Bool) -> Maybe U.UUID -> H.Test
-          testUUID p u = maybe False p u ~? show u
+    where testUUID :: (U.UUID -> Bool) -> Maybe U.UUID -> Test
+          testUUID p u =
+            testCase (show u) $
+            assert $ maybe False p u
 
-test_v3 :: H.Test
-test_v3 = H.TestList [
-    "V3 computation" ~:
+test_v3 :: Test
+test_v3 =
+    testCase "V3 computation" $
           U3.generateNamed U3.namespaceDNS name @?= uV3
-    ]
-    where name = map (fromIntegral . ord) "www.widgets.com" :: [Word8]
-          uV3 = fromJust $ U.fromString "3d813cbb-47fb-32ba-91df-831e1593ac29"
 
-test_v5 :: H.Test
-test_v5 = H.TestList [
-    "V5 computation" ~:
+  where name = map (fromIntegral . ord) "www.widgets.com" :: [Word8]
+        uV3 = fromJust $ U.fromString "3d813cbb-47fb-32ba-91df-831e1593ac29"
+
+test_v5 :: Test
+test_v5 =
+    testCase "V5 computation" $
           U5.generateNamed U5.namespaceDNS name @?= uV5
-    ]
+
     where name = map (fromIntegral . ord) "www.widgets.com" :: [Word8]
           uV5 = fromJust $ U.fromString "21f7f8de-8051-5b89-8680-0195ef798b6a"
 
@@ -91,8 +95,9 @@ main :: IO ()
 main = do
     v1s <- replicateM 100 U.nextUUID
     defaultMain $
+     testGroup "tests" $
      concat $
-     [ hUnitTestToTests $ H.TestList [
+     [ [
         test_null,
         test_v1 v1s,
         test_v3,
