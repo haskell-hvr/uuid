@@ -1,4 +1,5 @@
 {-# LANGUAGE ViewPatterns #-}
+
 import qualified Data.ByteString.Lazy as BL
 import qualified Data.ByteString.Lazy.Char8 as BL8
 import qualified Data.ByteString.Char8 as BC8
@@ -8,51 +9,52 @@ import Data.Word
 import qualified Data.UUID.Types as U
 import Foreign (alloca, peek, poke)
 import System.IO.Unsafe (unsafePerformIO)
-import qualified Test.HUnit as H
-import Test.HUnit hiding (Test)
-import Test.QuickCheck hiding ((.&.))
-import Test.Framework (defaultMain, Test)
-import Test.Framework.Providers.HUnit (hUnitTestToTests)
-import Test.Framework.Providers.QuickCheck2 (testProperty)
+
+import Test.QuickCheck ( Arbitrary(arbitrary), choose )
+
+import Test.Tasty ( defaultMain, TestTree, testGroup )
+import Test.Tasty.HUnit ( assertBool, (@?=), (@=?), testCase )
+import Test.Tasty.QuickCheck ( testProperty )
 
 
 instance Arbitrary U.UUID where
     -- the UUID random instance ignores bounds
     arbitrary = choose (U.nil, U.nil)
 
+type Test = TestTree
 
-test_null :: H.Test
-test_null = H.TestList [
-    "nil is null"              ~: assertBool "" (U.null U.nil)
+test_null :: Test
+test_null =
+  testCase "nil is null" $
+  assertBool "" (U.null U.nil)
+
+test_nil :: Test
+test_nil = testGroup "nil" [
+    testCase "nil string" $ U.toString U.nil @?= "00000000-0000-0000-0000-000000000000",
+    testCase "nil bytes"  $ U.toByteString U.nil @?= BL.pack (replicate 16 0)
     ]
 
-test_nil :: H.Test
-test_nil = H.TestList [
-    "nil string" ~: U.toString U.nil @?= "00000000-0000-0000-0000-000000000000",
-    "nil bytes"  ~: U.toByteString U.nil @?= BL.pack (replicate 16 0)
-    ]
-
-test_conv :: H.Test
-test_conv = H.TestList [
-    "conv bytes to string" ~:
+test_conv :: Test
+test_conv = testGroup "conversions" [
+    testCase "conv bytes to string" $
         maybe "" (U.toString) (U.fromByteString b16) @?= s16,
-    "conv string to bytes" ~:
+    testCase "conv string to bytes" $
         maybe BL.empty (U.toByteString) (U.fromString s16) @?= b16
     ]
     where b16 = BL.pack [1..16]
           s16 = "01020304-0506-0708-090a-0b0c0d0e0f10"
 
 -- | Test fromByteString with a fixed-input.
-test_fromByteString :: H.Test
+test_fromByteString :: Test
 test_fromByteString =
-    "UUID fromByteString" ~:
+    testCase "UUID fromByteString" $
         Just inputUUID @=?
              U.fromByteString (BL8.pack "\165\202\133f\217\197H5\153\200\225\241>s\181\226")
 
 -- | Test fromWords with a fixed-input
-test_fromWords :: H.Test
+test_fromWords :: Test
 test_fromWords =
-    "UUID fromWords" ~:
+    testCase "UUID fromWords" $
         inputUUID @=? U.fromWords 2781513062 3653584949 2580079089 1047770594
 
 inputUUID :: U.UUID
@@ -144,8 +146,9 @@ prop_storableRoundTrip =
 main :: IO ()
 main = do
     defaultMain $
+     testGroup "tests" $
      concat $
-     [ hUnitTestToTests $ H.TestList [
+     [ [
         test_null,
         test_nil,
         test_conv,

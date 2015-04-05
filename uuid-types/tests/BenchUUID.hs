@@ -55,7 +55,7 @@ main = do
 
             bgroup "storable" [
                 bench "peek" $ nfIO (peek uuidPtr),
-                bench "poke" $ poke uuidPtr u1
+                bench "poke" $ whnfIO $ poke uuidPtr u1
                 ]
             ]
 
