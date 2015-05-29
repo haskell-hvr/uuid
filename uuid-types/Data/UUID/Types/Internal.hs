@@ -20,6 +20,8 @@ module Data.UUID.Types.Internal
     ,toByteString
     ,fromString
     ,toString
+    ,fromText
+    ,toText
     ,fromWords
     ,toWords
     ,toList
@@ -61,6 +63,8 @@ import qualified Data.ByteString as B
 import qualified Data.ByteString.Internal as BI
 import qualified Data.ByteString.Lazy as BL
 import qualified Data.ByteString.Unsafe as BU
+import           Data.Text (Text)
+import qualified Data.Text as T
 
 import Data.UUID.Types.Internal.Builder
 
@@ -306,6 +310,12 @@ toString (UUID w0 w1 w2 w3) = hexw w0 $ hexw' w1 $ hexw' w2 $ hexw w3 ""
 
           hexn :: Word32 -> Int -> Char
           hexn w r = intToDigit $ fromIntegral ((w `shiftR` r) .&. 0xf)
+
+fromText :: Text -> Maybe UUID
+fromText = fromString . T.unpack
+
+toText :: UUID -> Text
+toText = T.pack . toString
 
 -- | Convert a UUID into a hyphentated string using lower-case letters, packed
 --   as ASCII bytes into `B.ByteString`.
