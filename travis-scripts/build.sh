@@ -1,27 +1,17 @@
-#!/usr/bin/env sh
-echo "==========================================="
-echo "= Building and installing 'uuid-types'... ="
-echo "==========================================="
+#!/bin/sh
 
-# We install here because "uuid" is going to need it.
-(cd "uuid-types" && \
-        cabal configure --enable-tests && \
-        cabal build && \
-        cabal test && \
-        cabal install) || exit 1
+cd $1
 
-echo "========================================="
-echo "= Installing dependencies for 'uuid'... ="
-echo "========================================="
-
-(cd "uuid" && \
-        cabal install --dependencies-only --enable-tests) || exit 1
-
-echo "======================"
-echo "= Building 'uuid'... ="
-echo "======================"
-
-(cd "uuid" && \
-        cabal configure --enable-tests && \
-        cabal build && \
-        cabal test) || exit 1
+cabal configure --enable-tests --enable-benchmarks -v2
+cabal build
+cabal test
+cabal check
+cabal sdist
+export SRC_TGZ=$(cabal info . | awk '{print $2 ".tar.gz";exit}') ;
+cd dist/;
+if [ -f "$SRC_TGZ" ]; then
+  cabal install --force-reinstalls "$SRC_TGZ";
+else
+  echo "expected '$SRC_TGZ' not found";
+  exit 1;
+fi

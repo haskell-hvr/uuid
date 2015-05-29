@@ -26,6 +26,8 @@ MAC address and current system time in "Data.UUID.V1".
 module Data.UUID(UUID
                 ,toString
                 ,fromString
+                ,toText
+                ,fromText
                 ,toASCIIBytes
                 ,fromASCIIBytes
                 ,toLazyASCIIBytes

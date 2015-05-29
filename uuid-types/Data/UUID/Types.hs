@@ -18,6 +18,8 @@ See <http://tools.ietf.org/html/rfc4122> for the specification.
 module Data.UUID.Types(UUID
                 ,toString
                 ,fromString
+                ,toText
+                ,fromText
                 ,toASCIIBytes
                 ,fromASCIIBytes
                 ,toLazyASCIIBytes
