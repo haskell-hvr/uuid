@@ -1,3 +1,7 @@
+1.3.11
+
+- Add toText/fromText
+
 1.3.10
 
 - Update dependencies in tests and benchmarks.
