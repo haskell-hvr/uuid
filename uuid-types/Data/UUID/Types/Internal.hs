@@ -311,9 +311,12 @@ toString (UUID w0 w1 w2 w3) = hexw w0 $ hexw' w1 $ hexw' w2 $ hexw w3 ""
           hexn :: Word32 -> Int -> Char
           hexn w r = intToDigit $ fromIntegral ((w `shiftR` r) .&. 0xf)
 
+-- | If the passed in `Text` can be parsed as an ASCII representation of
+--   a `UUID`, it will be. The hyphens may not be omitted.
 fromText :: Text -> Maybe UUID
 fromText = fromString . T.unpack
 
+-- | Convert a UUID into a hyphentated string using lower-case letters.
 toText :: UUID -> Text
 toText = T.pack . toString
 
