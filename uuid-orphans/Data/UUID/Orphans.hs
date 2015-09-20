@@ -3,7 +3,7 @@ module Data.UUID.Orphans () where
 
 import Data.SafeCopy (base, deriveSafeCopy)
 import Data.Text as T (pack, unpack)
-import Data.UUID (UUID, toString, fromString)
+import Data.UUID.Types (UUID, toString, fromString)
 import Web.Routes.PathInfo
 
 $(deriveSafeCopy 0 'base ''UUID)
