@@ -1,5 +1,5 @@
 name:               uuid-orphans
-version:            1.3.11
+version:            1.3.11.1
 cabal-version:      >= 1.10
 build-type:         Simple
 license:            BSD3
@@ -8,7 +8,7 @@ category:           Template Haskell
 author:             David Fox
 copyright:          (c) David Fox
 maintainer:         David Fox <dsf@seereason.com>
-bug-reports:        https://github.com/seereason/uuid-orphans
+bug-reports:        https://github.com/seereason/uuid
 stability:          experimental
 tested-with:        GHC == 7.10.2
 synopsis:           Orphan instances for the UUID datatype
@@ -29,4 +29,4 @@ library
 
 source-repository head
   type:     git
-  location: git://github.com/ddssff/uuid-orphans.git
+  location: git://github.com/seereason/uuid.git
