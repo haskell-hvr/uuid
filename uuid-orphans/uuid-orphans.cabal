@@ -4,7 +4,7 @@ cabal-version:      >= 1.10
 build-type:         Simple
 license:            BSD3
 license-file:       LICENSE
-category:           Template Haskell
+category:           Data, Web
 author:             David Fox
 copyright:          (c) David Fox
 maintainer:         David Fox <dsf@seereason.com>
