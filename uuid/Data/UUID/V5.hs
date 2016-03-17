@@ -30,7 +30,7 @@ import Data.Word
 
 import Data.UUID.Types.Internal
 import qualified Data.UUID.Named as Shared
-import qualified Crypto.Hash.SHA1 as SHA1
+import qualified Crypto.Hash as H
 
 
 -- |Generate a 'UUID' within the specified namespace out of the given
@@ -41,4 +41,4 @@ import qualified Crypto.Hash.SHA1 as SHA1
 generateNamed :: UUID    -- ^Namespace
               -> [Word8] -- ^Object
               -> UUID
-generateNamed = Shared.generateNamed SHA1.hash 5
+generateNamed = Shared.generateNamed (H.hashWith H.SHA1) 5
