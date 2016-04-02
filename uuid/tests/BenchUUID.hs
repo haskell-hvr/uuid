@@ -6,6 +6,7 @@ import Data.IORef
 import Data.Word
 import qualified Data.UUID as U
 import qualified Data.UUID.V1 as U
+import qualified Data.UUID.V4 as U
 import qualified Data.UUID.V3 as U3
 import qualified Data.UUID.V5 as U5
 import System.Random
@@ -27,7 +28,8 @@ main = do
         defaultMain [
             bgroup "generation" [
                 bench "V1" $ nfIO U.nextUUID,
-                bench "V4" $ nfIO (randomUUID :: IO U.UUID),
+                bench "V4-stock" $ nfIO (U.nextRandom :: IO U.UUID),
+                bench "V4-mersenne" $ nfIO (randomUUID :: IO U.UUID),
                 bench "V3" $ nf   (U3.generateNamed U3.namespaceURL) n1,
                 bench "V5" $ nf   (U5.generateNamed U5.namespaceURL) n1
                 ]
