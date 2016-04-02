@@ -1,3 +1,13 @@
+1.3.12
+
+- Update package dependencies
+- Use `cryptonite` for crypto
+- The function `V4.nextRandom` is now implemented with functions from
+  `Crypto.Random` in package `cryptonite`. This does slow-down random
+  UUID generation but provides for far greater randomness. The
+  `Random` instance for `UUID` can be used to re-gain the old
+  behavior.
+
 1.3.11
 
 - Add toText/fromText
