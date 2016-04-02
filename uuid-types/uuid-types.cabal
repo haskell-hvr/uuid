@@ -23,12 +23,11 @@ Bug-Reports: https://github.com/aslatter/uuid/issues
 
 Extra-Source-Files:
      CHANGES
-     CONTRIBUTORS
 
 
 Library
  Build-Depends: base >=3 && < 5,
-                binary >= 0.4 && < 0.8,
+                binary >= 0.4 && < 0.9,
                 bytestring >= 0.9 && < 0.11,
                 deepseq >= 1.3 && < 1.5,
                 hashable (>= 1.1.1.0 && < 1.2.0) || (>= 1.2.1 && < 1.3),
