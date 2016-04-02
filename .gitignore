@@ -7,3 +7,5 @@ cabal.sandbox.config
 dist/
 cabal.config
 
+# Emacs
+*~
