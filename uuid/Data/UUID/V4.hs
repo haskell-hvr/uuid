@@ -1,6 +1,6 @@
 {- |
    Module      : Data.UUID.V4
-   Copyright   : (c) 2012 Antoine Latter
+   Copyright   : (c) 2012-2016 Antoine Latter
 
    License     : BSD-style
 
@@ -21,8 +21,14 @@
 module Data.UUID.V4 (nextRandom) where
 
 import Data.UUID
-import qualified System.Random as R
+import Data.UUID.Types.Internal ( buildFromBytes )
+
+import Crypto.Random.Entropy ( getEntropy )
+import Data.ByteString ( unpack )
 
 -- | Generate a random UUID. Introduced in version 1.2.6.
 nextRandom :: IO UUID
-nextRandom = R.randomIO
+nextRandom = do
+  [b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, ba, bb, bc, bd, be, bf]
+    <- unpack `fmap` getEntropy 16
+  return $ buildFromBytes 4 b0 b1 b2 b3 b4 b5 b6 b7 b8 b9 ba bb bc bd be bf
