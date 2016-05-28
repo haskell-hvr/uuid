@@ -27,7 +27,7 @@ Extra-Source-Files:
 Library
  Build-Depends: base >=3 && < 5,
                 binary >= 0.4 && < 0.9,
-                bytestring >= 0.9 && < 0.11,
+                bytestring >= 0.10 && < 0.11,
                 cryptonite,
                 memory,
                 network-info == 0.2.*,
