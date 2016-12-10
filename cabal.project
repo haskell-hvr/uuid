@@ -1,0 +1,17 @@
+-- see http://cabal.readthedocs.io/en/latest/nix-local-build.html
+-- for more details
+
+packages: uuid-types/
+          uuid/
+
+package uuid-types
+  tests: True
+  benchmarks: True
+  -- profiling: True
+  -- profiling-detail: toplevel-functions
+
+package uuid
+  tests: True
+  benchmarks: True
+  -- profiling: True
+  -- profiling-detail: toplevel-functions
