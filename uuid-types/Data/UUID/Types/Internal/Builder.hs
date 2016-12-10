@@ -47,6 +47,7 @@ type Takes1Byte  g = Word8 -> g
 type Takes2Bytes g = Word8 -> Word8 -> g
 type Takes3Bytes g = Word8 -> Word8 -> Word8 -> g
 type Takes4Bytes g = Word8 -> Word8 -> Word8 -> Word8 -> g
+type Takes8Bytes g = Word8 -> Word8 -> Word8 -> Word8 -> Word8 -> Word8 -> Word8 -> Word8 -> g
 
 -- | Type of function that a given ByteSource needs.
 -- This function must take as many Word8 arguments as the ByteSource provides
@@ -54,6 +55,7 @@ type family ByteSink w g
 type instance ByteSink Word8  g = Takes1Byte g
 type instance ByteSink Word16 g = Takes2Bytes g
 type instance ByteSink Word32 g = Takes4Bytes g
+type instance ByteSink Word64 g = Takes8Bytes g
 type instance ByteSink Int    g = Takes4Bytes g
 
 
@@ -80,6 +82,17 @@ instance ByteSource Word32 where
               b2 = fromIntegral (w `shiftR` 16)
               b3 = fromIntegral (w `shiftR` 8)
               b4 = fromIntegral w
+
+instance ByteSource Word64 where
+    f /-/ w = f b1 b2 b3 b4 b5 b6 b7 b8
+        where b1 = fromIntegral (w `shiftR` 56)
+              b2 = fromIntegral (w `shiftR` 48)
+              b3 = fromIntegral (w `shiftR` 40)
+              b4 = fromIntegral (w `shiftR` 32)
+              b5 = fromIntegral (w `shiftR` 24)
+              b6 = fromIntegral (w `shiftR` 16)
+              b7 = fromIntegral (w `shiftR` 8)
+              b8 = fromIntegral w
 
 instance ByteSource Int where
     f /-/ w = f b1 b2 b3 b4
