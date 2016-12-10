@@ -1,5 +1,3 @@
-{-# LANGUAGE CPP #-}
-
 import Criterion.Main
 import Data.Char (ord)
 import Data.IORef
