@@ -32,6 +32,8 @@ Library
     Build-Depends:     base         >= 3     && < 5,
                        binary       >= 0.4   && < 0.9,
                        bytestring   >= 0.10  && < 0.11,
+                       cryptohash-sha1 >= 0.11.100 && < 0.12,
+                       cryptohash-md5 >= 0.11.100 && < 0.12,
                        cryptonite   >= 0.1   && < 0.21,
                        memory       >= 0.2   && < 0.14,
                        network-info == 0.2.*,

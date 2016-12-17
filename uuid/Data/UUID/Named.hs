@@ -33,21 +33,19 @@ import Data.Binary.Get (runGet, getWord32be)
 import Data.Maybe
 import Data.Word (Word8)
 
-import qualified Data.ByteArray as BA
 import qualified Data.ByteString as B
 import qualified Data.ByteString.Lazy as BL
 
 -- |Generate a 'UUID' within the specified namespace out of the given
 -- object.
-generateNamed :: BA.ByteArrayAccess bs
-              => (B.ByteString -> bs) -- ^Hash
+generateNamed :: (B.ByteString -> B.ByteString) -- ^Hash
               -> Word8   -- ^Version
               ->  UUID   -- ^Namespace
               -> [Word8] -- ^Object
               -> UUID
 generateNamed hash version namespace object =
     let chunk = B.pack $ toList namespace ++ object
-        bytes = BL.fromStrict . BA.convert $ hash chunk
+        bytes = BL.fromChunks . (:[]) $ hash chunk
         w = getWord32be
         unpackBytes = runGet $
          buildFromWords version <$> w <*> w <*> w <*> w
