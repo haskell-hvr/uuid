@@ -21,7 +21,7 @@ Homepage: https://github.com/hvr/uuid
 Bug-Reports: https://github.com/hvr/uuid/issues
 
 Extra-Source-Files:
-    ChangeLog.md
+    CHANGES.md
 
 Source-Repository head
     Type:              git
