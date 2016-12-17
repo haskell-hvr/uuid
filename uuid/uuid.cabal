@@ -7,7 +7,7 @@ License: BSD3
 License-file: LICENSE
 Category: Data
 Build-Type: Simple
-Cabal-Version: >= 1.8
+Cabal-Version: >= 1.10
 Tested-With: GHC==8.0.2, GHC==7.10.3, GHC==7.8.4, GHC==7.6.3, GHC==7.4.2
 
 Synopsis: For creating, comparing, parsing and printing Universally Unique Identifiers
@@ -29,17 +29,17 @@ Source-Repository head
     Subdir:            uuid
 
 Library
-    Build-Depends:     base         >= 3     && < 5,
-                       binary       >= 0.4   && < 0.9,
-                       bytestring   >= 0.10  && < 0.11,
+    Build-Depends:     base            >= 4.3      && < 5,
+                       binary          >= 0.4      && < 0.9,
+                       bytestring      >= 0.10     && < 0.11,
                        cryptohash-sha1 >= 0.11.100 && < 0.12,
-                       cryptohash-md5 >= 0.11.100 && < 0.12,
-                       entropy      >= 0.3.7 && < 0.4,
-                       network-info == 0.2.*,
-                       random       >= 1.0.1 && < 1.2,
-                       time         >= 1.1   && < 1.8,
-                       text         >= 1     && < 1.3,
-                       uuid-types   >= 1.0.2 && < 2
+                       cryptohash-md5  >= 0.11.100 && < 0.12,
+                       entropy         >= 0.3.7    && < 0.4,
+                       network-info    == 0.2.*,
+                       random          >= 1.0.1    && < 1.2,
+                       time            >= 1.1      && < 1.8,
+                       text            >= 1        && < 1.3,
+                       uuid-types      >= 1.0.2    && < 2
 
     Exposed-Modules:
       Data.UUID
@@ -53,7 +53,8 @@ Library
       Data.UUID.Named
       Data.Word.Util
 
-    Extensions:        DeriveDataTypeable
+    Default-Language:  Haskell2010
+    Default-Extensions: DeriveDataTypeable
     Other-Extensions:  TypeFamilies
     Ghc-Options:       -Wall
 
@@ -61,11 +62,12 @@ Test-Suite testuuid
     Type:              exitcode-stdio-1.0
     Main-is:           TestUUID.hs
     Hs-source-dirs:    tests
-    Extensions:        DeriveDataTypeable
+    Default-Language:  Haskell2010
+    Default-Extensions: DeriveDataTypeable
     Other-Extensions:  ViewPatterns
     Ghc-Options:       -Wall -fno-warn-orphans
     Build-Depends:     uuid
-    Build-Depends:     base             >= 3     && < 5,
+    Build-Depends:     base             >= 4.3   && < 5,
                        bytestring       >= 0.9   && < 0.11,
                        HUnit            >= 1.2   && < 1.4,
                        QuickCheck       >= 2.4   && < 2.10,
@@ -78,10 +80,11 @@ benchmark benchmark
     Type:              exitcode-stdio-1.0
     Main-is:           BenchUUID.hs
     Hs-source-dirs:    tests
-    Extensions:        DeriveDataTypeable, CPP
+    Default-Language:  Haskell2010
+    Default-Extensions: DeriveDataTypeable, CPP
     Ghc-Options:       -Wall -fno-warn-orphans
     Build-Depends:     uuid
-    Build-Depends:     base                   == 4.*,
+    Build-Depends:     base                   >= 4.3 && < 5,
                        criterion              >= 0.4 && < 1.2,
                        mersenne-random-pure64 >= 0.2 && < 0.3,
                        random                 >= 1.0.1 && < 1.2

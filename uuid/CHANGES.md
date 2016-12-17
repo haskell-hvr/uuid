@@ -4,6 +4,7 @@
 - Optimize UUID V3 & V5 generation (~2x speed increase)
 - Use `cryptohash-md5`/`cryptohash-sha1`/`entropy` instead
   of `memory`/`cryptonite` for better performance and stability.
+- Update cabal-spec to version 1.10
 
 1.3.12
 
