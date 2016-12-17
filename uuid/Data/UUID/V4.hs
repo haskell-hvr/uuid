@@ -23,7 +23,7 @@ module Data.UUID.V4 (nextRandom) where
 import Data.UUID
 import Data.UUID.Types.Internal ( buildFromBytes )
 
-import Crypto.Random.Entropy ( getEntropy )
+import System.Entropy ( getEntropy )
 import Data.ByteString ( unpack )
 
 -- | Generate a random UUID. Introduced in version 1.2.6.
