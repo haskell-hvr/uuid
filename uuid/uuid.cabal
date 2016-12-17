@@ -1,5 +1,5 @@
 Name: uuid
-Version: 1.3.12
+Version: 1.3.13
 Copyright: (c) 2008-2014 Antoine Latter
 Author: Antoine Latter
 Maintainer: hvr@gnu.org
@@ -21,7 +21,7 @@ Homepage: https://github.com/hvr/uuid
 Bug-Reports: https://github.com/hvr/uuid/issues
 
 Extra-Source-Files:
-    CHANGES
+    ChangeLog.md
 
 Source-Repository head
     Type:              git

@@ -1,3 +1,10 @@
+1.3.13
+
+- Optimize `V4.nextRandom` (~3x speed increase)
+- Optimize UUID V3 & V5 generation (~2x speed increase)
+- Use `cryptohash-md5`/`cryptohash-sha1`/`entropy` instead
+  of `memory`/`cryptonite` for better performance and stability.
+
 1.3.12
 
 - Update package dependencies
@@ -10,7 +17,7 @@
 
 1.3.11
 
-- Add toText/fromText
+- Add `toText`/`fromText`
 
 1.3.10
 
@@ -23,11 +30,11 @@
 
 1.3.8
 
-- Allow building against newer deepseq.
+- Allow building against newer `deepseq`.
 
 1.3.7
 
-- Allow building against newer time.
+- Allow building against newer `time`.
 
 1.3.6
 
@@ -35,58 +42,58 @@
 
 1.3.5
 
-- Allow building against newer random.
+- Allow building against newer `random`.
 
 1.3.4
 
-- Allow building against newer QuickCheck.
+- Allow building against newer `QuickCheck`.
 
 1.3.3
 
-- More complex version constrainsts on hashable, to avoid building against
+- More complex version constraints on `hashable`, to avoid building against
   versions less than 1.1.1.0 or equal to 1.2.0.*.
 
 1.3.2
 
-- Fix for building against bytestring 0.9.*
+- Fix for building against `bytestring` 0.9.*
 
 1.3.1
 
-- Allow building against 'hashable' 1.1.* in addition to 1.2.*
+- Allow building against `hashable` 1.1.* in addition to 1.2.*
 
 1.3.0
 
 - New functions for parsing and printing UUIDs to and from ASCII BytesStrings
-- New module Data.UUID.Util. This module includes the type 'UnpackedUUID',
+- New module `Data.UUID.Util`. This module includes the type `UnpackedUUID`,
   whose fields correspond to the UUID fields described in RFC 4122.
-- The Storable instance now stores a UUID in host byte-order instead of
+- The `Storable` instance now stores a UUID in host byte-order instead of
   big endian.
-- There is now an instance for 'Hashable UUID'.
+- There is now an instance for `Hashable UUID`.
 
 1.2.13
 
 Benchmark only changes:
 
-- Allow criterion 0.8.*
+- Allow `criterion` 0.8.*
 
 1.2.12
 
 Test only changes:
 
-- Allow QuickCheck 2.6.*
+- Allow `QuickCheck` 2.6.*
 
 1.2.11
 
-- Allow binary 0.7.*
+- Allow `binary` 0.7.*
 
 1.2.10
 
-- Allow cryptohash version 0.9.*
+- Allow `cryptohash` version 0.9.*
 - Cleanup tests
 
 1.2.9
 
-- Bumped dependency on 'cryptohash'.
+- Bumped dependency on `cryptohash`.
 
 1.2.8
 
@@ -94,13 +101,13 @@ Test only changes:
 
 1.2.7
 
-- Added stricter constraints on 'random' package.
+- Added stricter constraints on `random` package.
 
 1.2.6
 
-- Add module 'V4' to direct attention to our Random instance
+- Add module `V4` to direct attention to our Random instance
 
-- In module 'V1' seed the generator with a random number
+- In module `V1` seed the generator with a random number
   if the hardware MAC address could not be discovered.
 
 - Fix and cleanup various haddocks.
@@ -110,7 +117,7 @@ Test only changes:
 
 1.2.5
 
-- Use 'cryptohash' package for MD5 and SHA1 instead of 'Crypto'
+- Use `cryptohash` package for MD5 and SHA1 instead of `Crypto`
 
 1.2.4
 
@@ -143,7 +150,7 @@ and a test case)
   (Contributors: Antoine Latter & Mark Lentczner)
 
 - added functions toByteString and fromByteString
-- added 'nil' UUID
+- added `nil` UUID
 - added unit tests and benchmarks, built when configured -ftest
 - major speed up of to/from functions (as well as in general)
 - added version-3 generation (deterministic based on MD5)
@@ -159,6 +166,6 @@ and a test case)
 
 1.1.1
 
-- no longer exporting 'null' from the prelude
-- add 'null' predicate on UUIDs
+- no longer exporting `null` from the prelude
+- add `null` predicate on UUIDs
 - documentation fix (thanks Mark Lentczner)
