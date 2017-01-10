@@ -1,4 +1,4 @@
-{-# LANGUAGE DeriveDataTypeable, TypeFamilies, CPP #-}
+{-# LANGUAGE DeriveDataTypeable, TypeFamilies, CPP, DeriveGeneric #-}
 {-# OPTIONS_HADDOCK hide #-}
 
 -- |
@@ -47,6 +47,7 @@ import Data.Bits
 import Data.Hashable
 import Data.List (elemIndices)
 import Foreign.Ptr (Ptr)
+import GHC.Generics (Generic)
 
 #if MIN_VERSION_base(4,0,0)
 import Data.Data
@@ -81,7 +82,8 @@ data UUID
          {-# UNPACK #-} !Word32
          {-# UNPACK #-} !Word32
          {-# UNPACK #-} !Word32
-    deriving (Eq, Ord, Typeable)
+    deriving (Eq, Generic, Ord, Typeable)
+
 {-
     Other representations that we tried are:
          Mimic V1 structure:     !Word32 !Word16 !Word16 !Word16
