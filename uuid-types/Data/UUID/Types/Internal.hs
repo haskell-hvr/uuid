@@ -47,6 +47,8 @@ import Data.Bits
 import Data.Hashable
 import Data.List (elemIndices)
 import Foreign.Ptr (Ptr)
+import Test.QuickCheck.Arbitrary (Arbitrary (..))
+import Test.QuickCheck.Gen (choose)
 
 #if MIN_VERSION_base(4,0,0)
 import Data.Data
@@ -540,6 +542,9 @@ instance Data UUID where
     toConstr uu  = mkConstr uuidType (show uu) [] (error "fixity")
     gunfold _ _  = error "gunfold"
     dataTypeOf _ = uuidType
+
+instance Arbitrary UUID where
+    arbitrary = choose (nil, nil)
 
 uuidType :: DataType
 uuidType =  mkNoRepType "Data.UUID.Types.UUID"

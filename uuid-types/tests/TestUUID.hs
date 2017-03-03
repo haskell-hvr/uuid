@@ -10,16 +10,11 @@ import qualified Data.UUID.Types as U
 import Foreign (alloca, peek, poke)
 import System.IO.Unsafe (unsafePerformIO)
 
-import Test.QuickCheck ( Arbitrary(arbitrary), choose )
-
 import Test.Tasty ( defaultMain, TestTree, testGroup )
 import Test.Tasty.HUnit ( assertBool, (@?=), (@=?), testCase )
 import Test.Tasty.QuickCheck ( testProperty )
 
 
-instance Arbitrary U.UUID where
-    -- the UUID random instance ignores bounds
-    arbitrary = choose (U.nil, U.nil)
 
 type Test = TestTree
 

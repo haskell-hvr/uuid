@@ -1,5 +1,5 @@
 Name: uuid
-Version: 1.3.13
+Version: 1.4.0
 Copyright: (c) 2008-2014 Antoine Latter
 Author: Antoine Latter
 Maintainer: hvr@gnu.org
@@ -39,7 +39,7 @@ Library
                        random          >= 1.0.1    && < 1.2,
                        time            >= 1.1      && < 1.8,
                        text            >= 1        && < 1.3,
-                       uuid-types      >= 1.0.2    && < 2
+                       uuid-types      >= 1.1.0    && < 2
 
     Exposed-Modules:
       Data.UUID

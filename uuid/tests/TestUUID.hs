@@ -12,7 +12,6 @@ import qualified Data.UUID.V1 as U
 import qualified Data.UUID.V3 as U3
 import qualified Data.UUID.V5 as U5
 
-import Test.QuickCheck ( Arbitrary(arbitrary), choose )
 import Test.Tasty ( TestTree, testGroup, defaultMain )
 import Test.Tasty.HUnit
       ( Assertable(assert), assertBool, (@?=), testCase )
@@ -26,11 +25,6 @@ isValidVersion v u = lenOK && variantOK && versionOK
           lenOK = BL.length bs == 16
           variantOK = (BL.index bs 8) .&. 0xc0 == 0x80
           versionOK = (BL.index bs 6) .&. 0xf0 == fromIntegral (v `shiftL` 4)
-
-
-instance Arbitrary U.UUID where
-    -- the UUID random instance ignores bounds
-    arbitrary = choose (U.nil, U.nil)
 
 
 test_null :: Test
