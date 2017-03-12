@@ -58,10 +58,10 @@ install:
  - shopt -s globstar
  
  - cd uuid-types/
- - cabal new-build -w ${HC} --dep -j2
+ - cabal new-build -w ${HC} --dep -j2 all
  - cd ..
  - cd uuid/
- - cabal new-build -w ${HC} --dep -j2
+ - cabal new-build -w ${HC} --dep -j2 all
  - cd ..
 
 # Here starts the actual work to be performed for the package under test;
@@ -69,13 +69,13 @@ install:
 script:
  - cd uuid-types/
  - cabal sdist
- - cabal new-build -w ${HC} -j1
+ - cabal new-build -w ${HC} -j1 all
  - cd ..
  - ./dist-newstyle/build/**/uuid-types-[0-9]*/c/**/build/testuuid/testuuid
  
  - cd uuid/
  - cabal sdist
- - cabal new-build -w ${HC} -j1
+ - cabal new-build -w ${HC} -j1 all
  - cd ..
  - ./dist-newstyle/build/**/uuid-[0-9]*/c/**/build/testuuid/testuuid
 
