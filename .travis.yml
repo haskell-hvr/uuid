@@ -6,6 +6,7 @@
 #
 language: c
 sudo: false
+dist: trusty
 
 git:
   submodules: false  # whether to recursively clone submodules
