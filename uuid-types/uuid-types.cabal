@@ -1,5 +1,5 @@
 Name: uuid-types
-Version: 1.0.3
+Version: 1.1.0
 Copyright: (c) 2008-2014 Antoine Latter
 Author: Antoine Latter
 Maintainer: hvr@gnu.org
@@ -35,7 +35,8 @@ Library
                        deepseq    >= 1.3     && < 1.5,
                        hashable  (>= 1.1.1.0 && < 1.2) || (>= 1.2.1 && < 1.3),
                        random     >= 1.0.1   && < 1.2,
-                       text       >= 1       && < 1.3
+                       text       >= 1       && < 1.3,
+                       QuickCheck >= 2.4     && < 3
 
     Exposed-Modules:
       Data.UUID.Types
