@@ -72,9 +72,9 @@ import System.Random
 
 
 -- |The UUID type.  A 'Random' instance is provided which produces
--- version 4 UUIDs as specified in RFC 4122.  The 'Storable' and
--- 'Binary' instances are compatible with RFC 4122, storing the fields
--- in network order as 16 bytes.
+-- insecure version 4 UUIDs as specified in RFC 4122.  The 'Storable' and
+-- 'Binary' instances are compatible with RFC 4122, storing the fields in
+-- network order as 16 bytes.
 data UUID
     = UUID
          {-# UNPACK #-} !Word32

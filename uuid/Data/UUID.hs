@@ -14,8 +14,9 @@ printing Universally Unique Identifiers.
 See <http://en.wikipedia.org/wiki/UUID> for the general idea.
 See <http://tools.ietf.org/html/rfc4122> for the specification.
 
-* Random UUIDs may be generated using 'Data.UUID.V4.nextRandom' or
-your favorite instance of 'System.Random.Random'.
+* Use 'Data.UUID.V4.nextRandom' to generate secure random UUIDs, and your
+favorite instance of 'System.Random.Random' for faster but insecure
+generation of UUIDs.
 
 * We have an implementation of generating a UUID from the hardware
 MAC address and current system time in "Data.UUID.V1".
