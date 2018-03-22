@@ -15,7 +15,7 @@ import qualified Data.UUID.V5 as U5
 import Test.QuickCheck ( Arbitrary(arbitrary), choose )
 import Test.Tasty ( TestTree, testGroup, defaultMain )
 import Test.Tasty.HUnit
-      ( Assertable(assert), assertBool, (@?=), testCase )
+      ( assertBool, (@?=), testCase )
 import Test.Tasty.QuickCheck ( testProperty )
 
 type Test = TestTree
@@ -47,7 +47,7 @@ test_v1 v1s = testGroup "version 1" [
     where testUUID :: (U.UUID -> Bool) -> Maybe U.UUID -> Test
           testUUID p u =
             testCase (show u) $
-            assert $ maybe False p u
+            assertBool "" $ maybe False p u
 
 test_v3 :: Test
 test_v3 =
