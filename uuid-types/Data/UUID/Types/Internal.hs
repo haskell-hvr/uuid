@@ -48,16 +48,11 @@ import           Control.DeepSeq                  (NFData (..))
 import           Control.Monad                    (guard, liftM2)
 import           Data.Bits
 import           Data.Char
+import           Data.Data
 import           Data.Functor                     ((<$>))
 import           Data.Hashable
 import           Data.List                        (elemIndices)
 import           Foreign.Ptr                      (Ptr)
-
-#if MIN_VERSION_base(4,0,0)
-import           Data.Data
-#else
-import           Data.Generics.Basics
-#endif
 
 import           Foreign.Storable
 
@@ -574,11 +569,6 @@ instance Data UUID where
 
 uuidType :: DataType
 uuidType =  mkNoRepType "Data.UUID.Types.UUID"
-
-#if !(MIN_VERSION_base(4,2,0))
-mkNoRepType :: String -> DataType
-mkNoRepType = mkNorepType
-#endif
 
 #if !MIN_VERSION_base(4,5,0)
 unsafeShiftR, unsafeShiftL :: Word64 -> Int -> Word64
