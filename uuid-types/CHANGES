@@ -1,3 +1,9 @@
+1.0.4
+
+- Use more compact heap object representation
+  which saves 16 bytes on 64bit platforms.
+- Add toWords64/fromWords64
+
 1.0.3
 
 - Bump package dependencies

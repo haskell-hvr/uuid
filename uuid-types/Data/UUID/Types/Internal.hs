@@ -27,6 +27,8 @@ module Data.UUID.Types.Internal
     , toText
     , fromWords
     , toWords
+    , fromWords64
+    , toWords64
     , toList
     , buildFromBytes
     , buildFromWords
@@ -94,10 +96,15 @@ data UUID = UUID {-# UNPACK #-} !Word64 {-# UNPACK #-} !Word64
     None was as fast, overall, as the representation used here.
 -}
 
--- | Covert a 'UUID' into a sequence of 'Word32' values.
+-- | Convert a 'UUID' into a sequence of 'Word32' values.
 -- Useful for when you need to serialize a UUID and
 -- neither 'Storable' nor 'Binary' are appropriate.
--- Introduced in version 1.2.2.
+--
+-- See also 'toWords64'.
+--
+-- /Since: @uuid-1.2.2@/
+--
+-- @since 1.0.0
 toWords :: UUID -> (Word32, Word32, Word32, Word32)
 toWords (UUID w12 w34) = (w1, w2, w3, w4)
   where
@@ -107,11 +114,32 @@ toWords (UUID w12 w34) = (w1, w2, w3, w4)
     w4 = fromIntegral w34
 
 -- | Create a 'UUID' from a sequence of 'Word32'. The
--- opposite of 'toWords'. Useful when you need a total
+-- inverse of 'toWords'. Useful when you need a total
 -- function for constructing 'UUID' values.
--- Introduced in version 1.2.2.
+--
+-- See also 'fromWords64'.
+--
+-- /Since: @uuid-1.2.2@/
+--
+-- @since 1.0.0
 fromWords :: Word32 -> Word32 -> Word32 -> Word32 -> UUID
 fromWords w1 w2 w3 w4 = UUID (w32to64 w1 w2) (w32to64 w3 w4)
+
+-- | Convert a 'UUID' into a pair of 'Word64's.
+--
+-- See also 'toWords'.
+--
+-- @since 1.0.4
+toWords64 :: UUID -> (Word64, Word64)
+toWords64 (UUID w12 w34) = (w12,w34)
+
+-- | Create a 'UUID' from a pair of 'Word64's.
+--
+-- Inverse of 'toWords64'. See also 'fromWords'.
+--
+-- @since 1.0.4
+fromWords64 :: Word64 -> Word64 -> UUID
+fromWords64 = UUID
 
 data UnpackedUUID =
     UnpackedUUID {

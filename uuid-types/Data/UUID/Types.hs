@@ -1,6 +1,7 @@
 {- |
 Module      : Data.UUID.Types
-Copyright   : (c) 2008,2012 Antoine Latter
+Copyright   : (c) 2017-2018 Herbert Valerio Riedel
+              (c) 2008,2012 Antoine Latter
 
 License     : BSD-style
 
@@ -28,6 +29,8 @@ module Data.UUID.Types(UUID
                 ,fromByteString
                 ,toWords
                 ,fromWords
+                ,toWords64
+                ,fromWords64
                 ,null
                 ,nil
                 ) where
