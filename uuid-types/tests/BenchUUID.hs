@@ -1,20 +1,22 @@
 {-# LANGUAGE CPP #-}
 
 #if !(MIN_VERSION_bytestring(0,10,0))
+{-# OPTIONS_GHC -fno-warn-orphans #-}
 -- Needed for NFData instance
-import Control.DeepSeq
+import           Control.DeepSeq
 import qualified Data.ByteString.Lazy.Internal as BL
 #endif
-import Criterion.Main
-import Data.Maybe (fromJust)
-import qualified Data.Set as Set
-import qualified Data.HashSet as HashSet
-import qualified Data.ByteString.Lazy as BL
-import qualified Data.UUID.Types as U
-import Foreign (alloca, peek, poke)
-import System.Random
+import           Criterion.Main
+import qualified Data.ByteString.Lazy          as BL
+import qualified Data.HashSet                  as HashSet
+import           Data.Maybe                    (fromJust)
+import qualified Data.Set                      as Set
+import qualified Data.UUID.Types               as U
+import           Foreign                       (alloca, peek, poke)
+import           System.Random
 
 #if !(MIN_VERSION_bytestring(0,10,0))
+-- orphan
 instance NFData BL.ByteString where
     rnf BL.Empty        = ()
     rnf (BL.Chunk _ ts) = rnf ts
@@ -22,56 +24,56 @@ instance NFData BL.ByteString where
 
 main :: IO ()
 main = do
-        u1 <- randomIO
-        let s1 = U.toString u1
-            b1 = U.toByteString u1
-            a1 = U.toASCIIBytes u1
-            t1 = U.toText u1
-            (w1a,w1b,w1c,w1d) = U.toWords u1
-            nil2 = fromJust $
-                        U.fromString "00000000-0000-0000-0000-000000000000"
-            u2a = fromJust $ U.fromString "169a5a43-c051-4a16-98f4-08447ddd5dc0"
-            u2b = fromJust $ U.fromByteString $
-                        BL.pack [0x16, 0x9a, 0x5a, 0x43, 0xc0, 0x51, 0x4a, 0x16,
-                                 0x98, 0xf4, 0x08, 0x44, 0x7d, 0xdd, 0x5d, 0xc0]
-            u3  = fromJust $ U.fromString "dea6f619-1038-438b-b4af-f1cdec1e6e23"
+  u1 <- randomIO
+  let s1 = U.toString u1
+      b1 = U.toByteString u1
+      a1 = U.toASCIIBytes u1
+      t1 = U.toText u1
+      (w1a,w1b,w1c,w1d) = U.toWords u1
+      nil2 = fromJust $
+                  U.fromString "00000000-0000-0000-0000-000000000000"
+      u2a = fromJust $ U.fromString "169a5a43-c051-4a16-98f4-08447ddd5dc0"
+      u2b = fromJust $ U.fromByteString $
+                  BL.pack [0x16, 0x9a, 0x5a, 0x43, 0xc0, 0x51, 0x4a, 0x16,
+                           0x98, 0xf4, 0x08, 0x44, 0x7d, 0xdd, 0x5d, 0xc0]
+      u3  = fromJust $ U.fromString "dea6f619-1038-438b-b4af-f1cdec1e6e23"
 
-        -- setup for Storable benchmark
-        alloca $ \ uuidPtr -> do
+  -- setup for Storable benchmark
+  alloca $ \ uuidPtr -> do
 
-        poke uuidPtr u1
+    poke uuidPtr u1
 
-        defaultMain [
-            bgroup "testing" [
-                bench "null non-nil"   $ whnf U.null u1,
-                bench "null nil"       $ whnf U.null U.nil,
-                bench "null nil2"      $ whnf U.null nil2,
-                bench "eq same"        $ whnf (==u2a) u2b,
-                bench "eq differ"      $ whnf (==u2a) u3,
-                bench "compare same"   $ whnf (compare u2a) u2b,
-                bench "compare differ" $ whnf (compare u2a) u3
-                ],
-            bgroup "conversion" [
-                bench "toString"       $ nf U.toString u1,
-                bench "fromString"     $ nf U.fromString s1,
-                bench "toByteString"   $ nf U.toByteString u1,
-                bench "fromByteString" $ nf U.fromByteString b1,
-                bench "toASCIIBytes"   $ nf U.toASCIIBytes u1,
-                bench "fromASCIIBytes" $ nf U.fromASCIIBytes a1,
-                bench "toWords"        $ nf U.toWords u1,
-                bench "fromWords"      $ nf (U.fromWords w1a w1b w1c) w1d,
-                bench "toText"         $ nf U.toText u1,
-                bench "fromText"       $ nf U.fromText t1
-                ],
+    defaultMain [
+        bgroup "testing" [
+            bench "null non-nil"   $ whnf U.null u1,
+            bench "null nil"       $ whnf U.null U.nil,
+            bench "null nil2"      $ whnf U.null nil2,
+            bench "eq same"        $ whnf (==u2a) u2b,
+            bench "eq differ"      $ whnf (==u2a) u3,
+            bench "compare same"   $ whnf (compare u2a) u2b,
+            bench "compare differ" $ whnf (compare u2a) u3
+            ],
+        bgroup "conversion" [
+            bench "toString"       $ nf U.toString u1,
+            bench "fromString"     $ nf U.fromString s1,
+            bench "toByteString"   $ nf U.toByteString u1,
+            bench "fromByteString" $ nf U.fromByteString b1,
+            bench "toASCIIBytes"   $ nf U.toASCIIBytes u1,
+            bench "fromASCIIBytes" $ nf U.fromASCIIBytes a1,
+            bench "toWords"        $ nf U.toWords u1,
+            bench "fromWords"      $ nf (U.fromWords w1a w1b w1c) w1d,
+            bench "toText"         $ nf U.toText u1,
+            bench "fromText"       $ nf U.fromText t1
+            ],
 
-            bench "Set making" $ nf Set.fromList uuids,
-            bench "HashSet making" $ nf HashSet.fromList uuids,
+        bench "Set making" $ nf Set.fromList uuids,
+        bench "HashSet making" $ nf HashSet.fromList uuids,
 
-            bgroup "storable" [
-                bench "peek" $ nfIO (peek uuidPtr),
-                bench "poke" $ whnfIO $ poke uuidPtr u1
-                ]
+        bgroup "storable" [
+            bench "peek" $ nfIO (peek uuidPtr),
+            bench "poke" $ whnfIO $ poke uuidPtr u1
             ]
+        ]
 
 -- 50 uuids, so tests can be repeatable
 uuids :: [U.UUID]
