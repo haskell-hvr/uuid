@@ -1,6 +1,6 @@
 cabal-version: 1.12
 name: uuid-types
-version: 1.0.4
+version: 1.0.4.0
 
 copyright: (c) 2017-2018 Herbert Valerio Riedel
            (c) 2008-2014 Antoine Latter
@@ -27,7 +27,7 @@ homepage: https://github.com/hvr/uuid
 bug-reports: https://github.com/hvr/uuid/issues
 
 extra-source-files:
-    CHANGES
+    ChangeLog.md
 
 source-repository head
     type:              git
