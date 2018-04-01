@@ -188,10 +188,10 @@ pack unpacked =
 
 -- |Build a Word32 from four Word8 values, presented in big-endian order
 word :: Word8 -> Word8 -> Word8 -> Word8 -> Word32
-word a b c d =  (fromIntegral a `shiftL` 24)
-            .|. (fromIntegral b `shiftL` 16)
-            .|. (fromIntegral c `shiftL`  8)
-            .|. (fromIntegral d            )
+word a b c d =  (fromIntegral a `unsafeShiftL` 24)
+            .|. (fromIntegral b `unsafeShiftL` 16)
+            .|. (fromIntegral c `unsafeShiftL`  8)
+            .|. (fromIntegral d                  )
 
 -- |Extract a Word8 from a Word64. Bytes, high to low, are numbered from 7 to 0,
 byte :: Int -> Word64 -> Word8
@@ -200,7 +200,7 @@ byte i w = fromIntegral (w `shiftR` (i * 8))
 -- |Build a Word16 from two Word8 values, presented in big-endian order.
 w8to16 :: Word8 -> Word8 -> Word16
 w8to16 w0s w1s =
-    (w0 `shiftL` 8) .|. w1
+    (w0 `unsafeShiftL` 8) .|. w1
   where
     w0 = fromIntegral w0s
     w1 = fromIntegral w1s
@@ -490,8 +490,8 @@ type instance ByteSink ThreeByte g = Takes3Bytes g
 newtype ThreeByte = ThreeByte Int
 instance ByteSource ThreeByte where
     f /-/ (ThreeByte w) = f b1 b2 b3
-        where b1 = fromIntegral (w `shiftR` 16)
-              b2 = fromIntegral (w `shiftR` 8)
+        where b1 = fromIntegral (w `unsafeShiftR` 16)
+              b2 = fromIntegral (w `unsafeShiftR` 8)
               b3 = fromIntegral w
 
 instance NFData UUID where
@@ -571,7 +571,9 @@ uuidType :: DataType
 uuidType =  mkNoRepType "Data.UUID.Types.UUID"
 
 #if !MIN_VERSION_base(4,5,0)
-unsafeShiftR, unsafeShiftL :: Word64 -> Int -> Word64
+unsafeShiftR, unsafeShiftL :: Bits w => w -> Int -> w
+{-# INLINE unsafeShiftR #-}
 unsafeShiftR = shiftR
+{-# INLINE unsafeShiftL #-}
 unsafeShiftL = shiftL
 #endif
