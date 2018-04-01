@@ -5,8 +5,9 @@ cabal.sandbox.config
 # Cabal stuff
 dist/
 cabal.config
-/dist-newstyle/
+dist-newstyle/
 /cabal.project.local
+.ghc.environment.*
 
 # Emacs
 *~
