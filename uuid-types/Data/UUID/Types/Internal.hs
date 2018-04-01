@@ -68,7 +68,7 @@ import qualified Data.ByteString.Internal         as BI
 import qualified Data.ByteString.Lazy             as BL
 import qualified Data.ByteString.Unsafe           as BU
 import           Data.Text                        (Text)
-import qualified Data.Text                        as T
+import qualified Data.Text.Encoding               as T
 
 import           Data.UUID.Types.Internal.Builder
 
@@ -351,11 +351,11 @@ toString uuid = hexw w0 $ hexw' w1 $ hexw' w2 $ hexw w3 ""
 -- | If the passed in `Text` can be parsed as an ASCII representation of
 --   a `UUID`, it will be. The hyphens may not be omitted.
 fromText :: Text -> Maybe UUID
-fromText = fromString . T.unpack
+fromText = fromASCIIBytes . T.encodeUtf8
 
 -- | Convert a UUID into a hyphentated string using lower-case letters.
 toText :: UUID -> Text
-toText = T.pack . toString
+toText = T.decodeLatin1 . toASCIIBytes
 
 -- | Convert a UUID into a hyphentated string using lower-case letters, packed
 --   as ASCII bytes into `B.ByteString`.
