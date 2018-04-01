@@ -71,12 +71,10 @@ import           Data.UUID.Types.Internal.Builder
 import           System.Random
 
 
--- |The UUID type.  A 'Random' instance is provided which produces
--- insecure version 4 UUIDs as specified in <http://tools.ietf.org/html/rfc4122 RFC 4122>.  The 'Storable' and
--- 'Binary' instances are compatible with <http://tools.ietf.org/html/rfc4122 RFC 4122>, storing the fields in
--- network order as 16 bytes.
+-- | Type representing <https://en.wikipedia.org/wiki/UUID Universally Unique Identifiers (UUID)> as specified in
+--  <http://tools.ietf.org/html/rfc4122 RFC 4122>.
 data UUID = UUID {-# UNPACK #-} !Word64 {-# UNPACK #-} !Word64
-    deriving (Eq, Ord, Typeable)
+          deriving (Eq, Ord, Typeable)
 {-
     Prior to uuid-types-1.0.4:
          !Word32 !Word32 !Word32 !Word32
@@ -94,6 +92,9 @@ data UUID = UUID {-# UNPACK #-} !Word64 {-# UNPACK #-} !Word64
 -- | Convert a 'UUID' into a sequence of 'Word32' values.
 -- Useful for when you need to serialize a UUID and
 -- neither 'Storable' nor 'Binary' are appropriate.
+--
+-- >>> toWords <$> fromString "550e8400-e29b-41d4-a716-446655440000"
+-- Just (1427014656,3801825748,2803254374,1430519808)
 --
 -- See also 'toWords64'.
 --
@@ -121,6 +122,9 @@ fromWords :: Word32 -> Word32 -> Word32 -> Word32 -> UUID
 fromWords w1 w2 w3 w4 = UUID (w32to64 w1 w2) (w32to64 w3 w4)
 
 -- | Convert a 'UUID' into a pair of 'Word64's.
+--
+-- >>> toWords64 <$> fromString "550e8400-e29b-41d4-a716-446655440000"
+-- Just (6128981282234515924,12039885860129472512)
 --
 -- See also 'toWords'.
 --
@@ -234,7 +238,7 @@ buildFromBytes v b0 b1 b2 b3 b4 b5 b6 b7 b8 b9 ba bb bc bd be bf =
     where b6' = b6 .&. 0x0f .|. (v `shiftL` 4)
           b8' = b8 .&. 0x3f .|. 0x80
 
--- |Build a UUID of a given version from Word32 values.
+-- |Build a UUID of a given version from 'Word32' values.
 buildFromWords :: Word8 -> Word32 -> Word32 -> Word32 -> Word32 -> UUID
 buildFromWords v w0 w1 w2 w3 = fromWords w0 w1' w2' w3
     where w1' = w1 .&. 0xffff0fff .|. ((fromIntegral v) `shiftL` 12)
@@ -268,8 +272,8 @@ null = (== nil)
     --      null (UUID 0 0 0 0) = True
     --      null _              = False
 
--- |The nil UUID, as defined in <http://tools.ietf.org/html/rfc4122 RFC 4122>.
--- It is a UUID of all zeros. @'null' u@ iff @'u' == 'nil'@.
+-- |The 'nil' UUID, as defined in <http://tools.ietf.org/html/rfc4122 RFC 4122>.
+-- It is a UUID of all zeros. @'null' u@ /iff/ @'u' == 'nil'@.
 nil :: UUID
 nil = UUID 0 0
 
@@ -279,6 +283,8 @@ fromByteString :: BL.ByteString -> Maybe UUID
 fromByteString = fromList . BL.unpack
 
 -- |Encode a UUID into a 'ByteString' in network order.
+--
+-- This uses the same encoding as the 'Binary' instance.
 toByteString :: UUID -> BL.ByteString
 toByteString = BL.pack . toList
 
@@ -286,9 +292,8 @@ toByteString = BL.pack . toList
 -- The hyphens may not be omitted.
 -- Example:
 --
--- @
---  fromString \"c2cc10e1-57d6-4b6f-9899-38d972112d8c\"
--- @
+-- >>> fromString "c2cc10e1-57d6-4b6f-9899-38d972112d8c"
+-- Just c2cc10e1-57d6-4b6f-9899-38d972112d8c
 --
 -- Hex digits may be upper or lower-case.
 fromString :: String -> Maybe UUID
@@ -320,9 +325,10 @@ fromString' s0 = do
 -- | Convert a UUID into a hypenated string using lower-case letters.
 -- Example:
 --
--- @
---  toString \<$\> fromString \"550e8400-e29b-41d4-a716-446655440000\"
--- @
+-- >>> toString <$> fromString "550e8400-e29b-41d4-a716-446655440000"
+-- Just "550e8400-e29b-41d4-a716-446655440000"
+--
+--
 toString :: UUID -> String
 toString uuid = hexw w0 $ hexw' w1 $ hexw' w2 $ hexw w3 ""
     where hexw :: Word32 -> String -> String
@@ -462,6 +468,8 @@ fromLazyASCIIBytes bs =
 -- Class Instances
 --
 
+-- | This 'Random' instance produces __insecure__ version 4 UUIDs as
+-- specified in <http://tools.ietf.org/html/rfc4122 RFC 4122>.
 instance Random UUID where
     random g = (fromGenNext w0 w1 w2 w3 w4, g4)
         where (w0, g0) = next g
@@ -508,6 +516,11 @@ instance Hashable UUID where
           `hashWithSalt` w2
           `hashWithSalt` w3
 
+-- | Pretty prints a 'UUID' (without quotation marks). See also 'toString'.
+--
+-- >>> show nil
+-- "00000000-0000-0000-0000-000000000000"
+--
 instance Show UUID where
     show = toString
 
@@ -518,7 +531,7 @@ instance Read UUID where
           Nothing -> []
           Just u  -> [(u,drop 36 noSpaces)]
 
-
+-- | This 'Storable' instance uses the memory layout as described in <http://tools.ietf.org/html/rfc4122 RFC 4122>, but in contrast to the 'Binary' instance, __the fields are stored in host byte order__.
 instance Storable UUID where
     sizeOf _ = 16
     alignment _ = 4
@@ -555,6 +568,7 @@ instance Storable UUID where
                 pokeByteOff p (off+14) x9
                 pokeByteOff p (off+15) x10
 
+-- | This 'Binary' instance is compatible with <http://tools.ietf.org/html/rfc4122 RFC 4122>, storing the fields in network order as 16 bytes.
 instance Binary UUID where
     put (UUID w0 w1) = putWord64be w0 >> putWord64be w1
     get = liftM2 UUID getWord64be getWord64be

@@ -9,13 +9,17 @@ Maintainer  : hvr@gnu.org
 Portability : portable
 
 This library is useful for comparing, parsing and
-printing Universally Unique Identifiers.
-See <http://en.wikipedia.org/wiki/UUID> for the general idea.
+printing <http://en.wikipedia.org/wiki/UUID Universally Unique Identifiers (UUID)>.
 See <http://tools.ietf.org/html/rfc4122 RFC 4122> for the specification.
 
 -}
 module Data.UUID.Types
-    ( UUID
+    ( -- * The 'UUID' Type
+      UUID
+      -- * Nil UUID
+    , nil
+    , null
+      -- * Textual Representation
     , toString
     , fromString
     , toText
@@ -24,14 +28,14 @@ module Data.UUID.Types
     , fromASCIIBytes
     , toLazyASCIIBytes
     , fromLazyASCIIBytes
+      -- * Binary Representation
     , toByteString
     , fromByteString
+      -- * Integer Representation
     , toWords
     , fromWords
     , toWords64
     , fromWords64
-    , null
-    , nil
     ) where
 
 import           Data.UUID.Types.Internal
