@@ -5,15 +5,13 @@ Copyright   : (c) 2017-2018 Herbert Valerio Riedel
 
 License     : BSD-style
 
-Maintainer  : aslatter@gmail.com
-Stability   : experimental
+Maintainer  : hvr@gnu.org
 Portability : portable
-
 
 This library is useful for comparing, parsing and
 printing Universally Unique Identifiers.
 See <http://en.wikipedia.org/wiki/UUID> for the general idea.
-See <http://tools.ietf.org/html/rfc4122> for the specification.
+See <http://tools.ietf.org/html/rfc4122 RFC 4122> for the specification.
 
 -}
 module Data.UUID.Types(UUID
@@ -35,8 +33,8 @@ module Data.UUID.Types(UUID
                 ,nil
                 ) where
 
-import Prelude () -- we need to hide Prelude.null
-import Data.UUID.Types.Internal
+import           Data.UUID.Types.Internal
+import           Prelude                  ()
 
 -- Everything is really implemented in Data.UUID.Types.Internal, but I
 -- don't want to export the constructors out of the package.

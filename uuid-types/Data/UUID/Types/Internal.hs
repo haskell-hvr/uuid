@@ -6,13 +6,13 @@
 
 -- |
 -- Module      : Data.UUID.Types.Internal
--- Copyright   : (c) 2008-2009, 2012 Antoine Latter
+-- Copyright   : (c) 2017-2018 Herbert Valerio Riedel
+--               (c) 2008-2009, 2012 Antoine Latter
 --               (c) 2009 Mark Lentczner
 --
 -- License     : BSD-style
 --
--- Maintainer  : aslatter@gmail.com
--- Stability   : experimental
+-- Maintainer  : hvr@gnu.org
 -- Portability : portable
 
 module Data.UUID.Types.Internal
@@ -77,8 +77,8 @@ import           System.Random
 
 
 -- |The UUID type.  A 'Random' instance is provided which produces
--- insecure version 4 UUIDs as specified in RFC 4122.  The 'Storable' and
--- 'Binary' instances are compatible with RFC 4122, storing the fields in
+-- insecure version 4 UUIDs as specified in <http://tools.ietf.org/html/rfc4122 RFC 4122>.  The 'Storable' and
+-- 'Binary' instances are compatible with <http://tools.ietf.org/html/rfc4122 RFC 4122>, storing the fields in
 -- network order as 16 bytes.
 data UUID = UUID {-# UNPACK #-} !Word64 {-# UNPACK #-} !Word64
     deriving (Eq, Ord, Typeable)
@@ -273,7 +273,7 @@ null = (== nil)
     --      null (UUID 0 0 0 0) = True
     --      null _              = False
 
--- |The nil UUID, as defined in RFC 4122.
+-- |The nil UUID, as defined in <http://tools.ietf.org/html/rfc4122 RFC 4122>.
 -- It is a UUID of all zeros. @'null' u@ iff @'u' == 'nil'@.
 nil :: UUID
 nil = UUID 0 0
