@@ -2,6 +2,10 @@
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE TypeFamilies       #-}
 {-# LANGUAGE ViewPatterns       #-}
+#if __GLASGOW_HASKELL__ >= 704
+{-# LANGUAGE Unsafe             #-}
+#endif
+
 {-# OPTIONS_HADDOCK hide #-}
 
 -- |

@@ -1,5 +1,6 @@
 1.0.4
 
+- Declare Data.UUID.Types module "Trustworthy" with respect to SafeHaskell
 - Use more compact heap object representation
   which saves 16 bytes on 64bit platforms.
 - Add toWords64/fromWords64

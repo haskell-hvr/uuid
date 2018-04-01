@@ -1,7 +1,12 @@
+{-# LANGUAGE CPP          #-}
 {-# LANGUAGE TypeFamilies #-}
+#if __GLASGOW_HASKELL__ >= 704
+{-# LANGUAGE Unsafe       #-}
+#endif
+
 {-# OPTIONS_HADDOCK hide #-}
 
--- Module      : Data.UUID.Types.Internal.Builder
+-- | Module      : Data.UUID.Types.Internal.Builder
 -- Copyright   : (c) 2009 Mark Lentczner
 --
 -- License     : BSD-style
