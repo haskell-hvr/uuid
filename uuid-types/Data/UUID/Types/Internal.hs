@@ -1,4 +1,7 @@
-{-# LANGUAGE DeriveDataTypeable, TypeFamilies, CPP, ViewPatterns #-}
+{-# LANGUAGE CPP                #-}
+{-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE TypeFamilies       #-}
+{-# LANGUAGE ViewPatterns       #-}
 {-# OPTIONS_HADDOCK hide #-}
 
 -- |
@@ -13,72 +16,69 @@
 -- Portability : portable
 
 module Data.UUID.Types.Internal
-    (UUID(..)
-    ,null
-    ,nil
-    ,fromByteString
-    ,toByteString
-    ,fromString
-    ,toString
-    ,fromText
-    ,toText
-    ,fromWords
-    ,toWords
-    ,toList
-    ,buildFromBytes
-    ,buildFromWords
-    ,fromASCIIBytes
-    ,toASCIIBytes
-    ,fromLazyASCIIBytes
-    ,toLazyASCIIBytes
-    ,UnpackedUUID(..)
-    ,pack
-    ,unpack
+    ( UUID(..)
+    , null
+    , nil
+    , fromByteString
+    , toByteString
+    , fromString
+    , toString
+    , fromText
+    , toText
+    , fromWords
+    , toWords
+    , toList
+    , buildFromBytes
+    , buildFromWords
+    , fromASCIIBytes
+    , toASCIIBytes
+    , fromLazyASCIIBytes
+    , toLazyASCIIBytes
+    , UnpackedUUID(..)
+    , pack
+    , unpack
     ) where
 
-import Prelude hiding (null)
+import           Prelude                          hiding (null)
 
-import Control.Applicative ((<*>))
-import Control.DeepSeq (NFData(..))
-import Control.Monad (liftM2, guard)
-import Data.Functor ((<$>))
-import Data.Char
-import Data.Bits
-import Data.Hashable
-import Data.List (elemIndices)
-import Foreign.Ptr (Ptr)
+import           Control.Applicative              ((<*>))
+import           Control.DeepSeq                  (NFData (..))
+import           Control.Monad                    (guard, liftM2)
+import           Data.Bits
+import           Data.Char
+import           Data.Functor                     ((<$>))
+import           Data.Hashable
+import           Data.List                        (elemIndices)
+import           Foreign.Ptr                      (Ptr)
 
 #if MIN_VERSION_base(4,0,0)
-import Data.Data
+import           Data.Data
 #else
-import Data.Generics.Basics
+import           Data.Generics.Basics
 #endif
 
-import Foreign.Storable
+import           Foreign.Storable
 
-import Data.Binary
-import Data.Binary.Put
-import Data.Binary.Get
-import qualified Data.ByteString as B
-import qualified Data.ByteString.Internal as BI
-import qualified Data.ByteString.Lazy as BL
-import qualified Data.ByteString.Unsafe as BU
-import           Data.Text (Text)
-import qualified Data.Text as T
+import           Data.Binary
+import           Data.Binary.Get
+import           Data.Binary.Put
+import qualified Data.ByteString                  as B
+import qualified Data.ByteString.Internal         as BI
+import qualified Data.ByteString.Lazy             as BL
+import qualified Data.ByteString.Unsafe           as BU
+import           Data.Text                        (Text)
+import qualified Data.Text                        as T
 
-import Data.UUID.Types.Internal.Builder
+import           Data.UUID.Types.Internal.Builder
 
-import System.Random
+import           System.Random
 
 
 -- |The UUID type.  A 'Random' instance is provided which produces
 -- insecure version 4 UUIDs as specified in RFC 4122.  The 'Storable' and
 -- 'Binary' instances are compatible with RFC 4122, storing the fields in
 -- network order as 16 bytes.
-data UUID
-    = UUID
-         {-# UNPACK #-} !Word64
-         {-# UNPACK #-} !Word64
+data UUID = UUID {-# UNPACK #-} !Word64 {-# UNPACK #-} !Word64
     deriving (Eq, Ord, Typeable)
 {-
     Prior to uuid-types-1.0.4:
@@ -115,17 +115,17 @@ fromWords w1 w2 w3 w4 = UUID (w32to64 w1 w2) (w32to64 w3 w4)
 
 data UnpackedUUID =
     UnpackedUUID {
-        time_low :: Word32 -- 0-3
-      , time_mid :: Word16 -- 4-5
+        time_low            :: Word32 -- 0-3
+      , time_mid            :: Word16 -- 4-5
       , time_hi_and_version :: Word16 -- 6-7
-      , clock_seq_hi_res :: Word8 -- 8
-      , clock_seq_low :: Word8 -- 9
-      , node_0 :: Word8
-      , node_1 :: Word8
-      , node_2 :: Word8
-      , node_3 :: Word8
-      , node_4 :: Word8
-      , node_5 :: Word8
+      , clock_seq_hi_res    :: Word8 -- 8
+      , clock_seq_low       :: Word8 -- 9
+      , node_0              :: Word8
+      , node_1              :: Word8
+      , node_2              :: Word8
+      , node_3              :: Word8
+      , node_4              :: Word8
+      , node_5              :: Word8
       }
     deriving (Read, Show, Eq, Ord)
 
