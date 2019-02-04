@@ -44,7 +44,7 @@ import Data.UUID.Types.Internal
 
 -- | Returns a new UUID derived from the local hardware MAC
 -- address and the current system time.
--- Is generated according to the Version 1 UUID sepcified in
+-- Is generated according to the Version 1 UUID specified in
 -- RFC 4122.
 --
 -- Returns 'Nothing' if you request UUIDs too quickly.
