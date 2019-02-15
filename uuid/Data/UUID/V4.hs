@@ -11,12 +11,9 @@
    This module implements Version 4 UUIDs as specified
    in RFC 4122.
 
-   These UUIDs are generated from a psuedo-random generator.
-   We use the System.Random 'R.StdGen' as our random source.
-
-   All of the logic is encapsulated in the 'R.Random' instance
-   for the UUID type, so you are also free to use the random generator
-   of your choice.
+   These UUIDs are generated from a pseddo-random generator.
+   We use 'getEntropy' method from <https://hackage.haskell.org/package/entropy entropy> package,
+   which should provide cryptographically secure random data.
 -}
 module Data.UUID.V4 (nextRandom) where
 
