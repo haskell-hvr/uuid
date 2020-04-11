@@ -91,5 +91,5 @@ benchmark benchmark
                      , base
                      , random
                        -- deps w/o inherited constraints
-                     , criterion              == 1.4.*
+                     , gauge                  == 0.2.*
                      , mersenne-random-pure64 == 0.2.*

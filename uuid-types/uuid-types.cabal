@@ -90,5 +90,5 @@ benchmark benchmark
                      , random
                        -- deps w/o inherited constraints
                      , containers >= 0.4   && < 0.6
-                     , criterion  == 1.4.*
+                     , gauge      == 0.2.*
                      , unordered-containers >= 0.2.7 && < 0.3

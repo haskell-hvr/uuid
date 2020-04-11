@@ -1,4 +1,4 @@
-import Criterion.Main
+import Gauge.Main
 import Data.Char (ord)
 import Data.IORef
 import Data.Word
