@@ -12,6 +12,7 @@ import qualified Data.UUID.Types            as U
 import           Data.Word
 import           Foreign                    (alloca, castPtr, peek, poke,
                                              sizeOf)
+import           GHC.ByteOrder              (ByteOrder(..), targetByteOrder)
 import           System.IO.Unsafe           (unsafePerformIO)
 
 import           Test.QuickCheck            (Arbitrary (arbitrary), choose)
@@ -20,7 +21,6 @@ import           Test.Tasty                 (TestTree, defaultMain, testGroup)
 import           Test.Tasty.HUnit           (assertBool, testCase, (@=?), (@?=))
 import           Test.Tasty.QuickCheck      (testProperty)
 
-import           ByteOrder
 
 -- orphan
 instance Arbitrary U.UUID where

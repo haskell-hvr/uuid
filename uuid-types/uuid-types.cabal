@@ -58,7 +58,6 @@ Library
 test-suite testuuid
     type:              exitcode-stdio-1.0
     main-is:           TestUUID.hs
-    other-modules:     ByteOrder
     hs-source-dirs:    tests
     default-language:  Haskell2010
     other-extensions:  ViewPatterns
@@ -71,6 +70,7 @@ test-suite testuuid
                      , bytestring
                        -- deps w/o inherited constraints
                      , QuickCheck       == 2.11.*
+                     , ghc-byteorder    == 4.11.*
                      , tasty            == 1.0.*
                      , tasty-hunit      == 0.10.*
                      , tasty-quickcheck == 0.10.*
