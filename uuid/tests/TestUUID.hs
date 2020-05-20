@@ -1,3 +1,4 @@
+{-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE ViewPatterns #-}
 
 import Control.Monad (replicateM)
@@ -8,6 +9,7 @@ import Data.List (nub, (\\))
 import Data.Maybe
 import Data.Word
 import qualified Data.UUID as U
+import Data.UUID.Quasi (uuid)
 import qualified Data.UUID.V1 as U
 import qualified Data.UUID.V3 as U3
 import qualified Data.UUID.V5 as U5
@@ -65,6 +67,13 @@ test_v5 =
     where name = map (fromIntegral . ord) "www.widgets.com" :: [Word8]
           uV5 = fromJust $ U.fromString "21f7f8de-8051-5b89-8680-0195ef798b6a"
 
+test_qq :: Test
+test_qq =
+    testCase "Quasiquoter" $
+        [uuid|123e4567-e89b-12d3-a456-426655440000|] @?= expected
+
+    where
+        expected = fromJust $ U.fromString "123e4567-e89b-12d3-a456-426655440000"
 
 prop_randomsValid :: Test
 prop_randomsValid = testProperty "Random valid" randomsValid
@@ -101,7 +110,8 @@ main = do
         test_null,
         test_v1 v1s,
         test_v3,
-        test_v5
+        test_v5,
+        test_qq
         ]
      , [ prop_randomsValid,
          prop_v3NotNull,
