@@ -6,7 +6,7 @@
 import           Control.DeepSeq
 import qualified Data.ByteString.Lazy.Internal as BL
 #endif
-import           Criterion.Main
+import           Gauge.Main
 import qualified Data.ByteString.Lazy          as BL
 import qualified Data.HashSet                  as HashSet
 import           Data.Maybe                    (fromJust)
