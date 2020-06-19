@@ -75,8 +75,8 @@ Test-Suite testuuid
                        -- deps w/o inherited constraints
                      , QuickCheck       >= 2.11 && < 2.16
                      , tasty            >= 1.0 && < 1.4
-                     , tasty-hunit      >= 0.10
-                     , tasty-quickcheck >= 0.10
+                     , tasty-hunit      == 0.10.*
+                     , tasty-quickcheck == 0.10.*
 
 
 benchmark benchmark
@@ -89,7 +89,7 @@ benchmark benchmark
     build-depends:     uuid
                        -- inherited constraints
                      , base
-                     , random >= 1.2
+                     , random
                        -- deps w/o inherited constraints
-                     , gauge
+                     , gauge                  >= 0.1   && < 0.3
                      , mersenne-random-pure64 == 0.2.*
