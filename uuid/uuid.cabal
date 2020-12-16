@@ -32,7 +32,7 @@ Source-Repository head
 Library
     Build-Depends:     base            >= 4.3      && < 5
                      , binary          >= 0.4      && < 0.9
-                     , bytestring      >= 0.10     && < 0.11
+                     , bytestring      >= 0.10     && < 0.12
                      , cryptohash-sha1 >= 0.11.100 && < 0.12
                      , cryptohash-md5  >= 0.11.100 && < 0.12
                      , entropy         >= 0.3.7    && < 0.5
