@@ -41,7 +41,7 @@ Library
                      , deepseq    >= 1.3     && < 1.5
                      , hashable  (>= 1.1.1.0 && < 1.2)
                               || (>= 1.2.1   && < 1.3)
-                     , random     >= 1.0.1   && < 1.2
+                     , random     >= 1.0.1   && < 1.3
                      , text       >= 1.2.3   && < 1.3
 
     exposed-modules:
@@ -69,7 +69,7 @@ test-suite testuuid
                      , binary
                      , bytestring
                        -- deps w/o inherited constraints
-                     , QuickCheck       == 2.11.*
+                     , QuickCheck       >= 2.11 && < 2.15
                      , ghc-byteorder    == 4.11.*
                      , tasty            == 1.0.*
                      , tasty-hunit      == 0.10.*
