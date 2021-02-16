@@ -6,12 +6,12 @@ packages: uuid-types/
 
 package uuid-types
   tests: True
-  benchmarks: True
+  benchmarks: False
   -- profiling: True
   -- profiling-detail: toplevel-functions
 
 package uuid
   tests: True
-  benchmarks: True
+  benchmarks: False
   -- profiling: True
   -- profiling-detail: toplevel-functions
