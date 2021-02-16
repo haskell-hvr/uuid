@@ -10,7 +10,7 @@ license: BSD3
 license-file: LICENSE
 category: Data
 build-type: Simple
-tested-with: GHC==8.4.1, GHC==8.2.2, GHC==8.0.2, GHC==7.10.3, GHC==7.8.4, GHC==7.6.3, GHC==7.4.2
+tested-with: GHC==8.10.3, GHC==8.8.4, GHC==8.6.4, GHC==8.4.4, GHC==8.2.2, GHC==8.0.2, GHC==7.10.3, GHC==7.8.4, GHC==7.6.3, GHC==7.4.2
 
 synopsis: Type definitions for Universally Unique Identifiers
 description:
@@ -39,8 +39,7 @@ Library
                      , binary     >= 0.4     && < 0.9
                      , bytestring >= 0.9     && < 0.11
                      , deepseq    >= 1.3     && < 1.5
-                     , hashable  (>= 1.1.1.0 && < 1.2)
-                              || (>= 1.2.1   && < 1.3)
+                     , hashable   >= 1.2.7.0 && < 1.4
                      , random     >= 1.0.1   && < 1.2
                      , text       >= 1.2.3   && < 1.3
 
@@ -69,9 +68,9 @@ test-suite testuuid
                      , binary
                      , bytestring
                        -- deps w/o inherited constraints
-                     , QuickCheck       == 2.11.*
+                     , QuickCheck       == 2.14.*
                      , ghc-byteorder    == 4.11.*
-                     , tasty            == 1.0.*
+                     , tasty            >= 1.4.0.1 && <1.5
                      , tasty-hunit      == 0.10.*
                      , tasty-quickcheck == 0.10.*
 
@@ -89,6 +88,6 @@ benchmark benchmark
                      , bytestring
                      , random
                        -- deps w/o inherited constraints
-                     , containers >= 0.4   && < 0.6
-                     , criterion  == 1.4.*
+                     , containers >= 0.4   && < 0.7
+                     , criterion  == 1.5.*
                      , unordered-containers >= 0.2.7 && < 0.3
