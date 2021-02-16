@@ -334,19 +334,25 @@ fromString' s0 = do
 --
 --
 toString :: UUID -> String
-toString uuid = hexw w0 $ hexw' w1 $ hexw' w2 $ hexw w3 ""
-    where hexw :: Word32 -> String -> String
-          hexw  w s = hexn w 28 : hexn w 24 : hexn w 20 : hexn w 16
-                    : hexn w 12 : hexn w  8 : hexn w  4 : hexn w  0 : s
+toString uuid = hexw0 w0 $ hexw1 w1 ""
+    where hexw0 :: Word64 -> String -> String
+          hexw0 w s =       hexn w 60 : hexn w 56 : hexn w 52 : hexn w 48
+                          : hexn w 44 : hexn w 40 : hexn w 36 : hexn w 32
+                    : '-' : hexn w 28 : hexn w 24 : hexn w 20 : hexn w 16
+                    : '-' : hexn w 12 : hexn w  8 : hexn w  4 : hexn w  0
+                          : s
 
-          hexw' :: Word32 -> String -> String
-          hexw' w s = '-' : hexn w 28 : hexn w 24 : hexn w 20 : hexn w 16
-                    : '-' : hexn w 12 : hexn w  8 : hexn w  4 : hexn w  0 : s
+          hexw1 :: Word64 -> String -> String
+          hexw1 w s = '-' : hexn w 60 : hexn w 56 : hexn w 52 : hexn w 48
+                    : '-' : hexn w 44 : hexn w 40 : hexn w 36 : hexn w 32
+                          : hexn w 28 : hexn w 24 : hexn w 20 : hexn w 16
+                          : hexn w 12 : hexn w  8 : hexn w  4 : hexn w  0
+                          : s
 
-          hexn :: Word32 -> Int -> Char
+          hexn :: Word64 -> Int -> Char
           hexn w r = intToDigit $ fromIntegral ((w `shiftR` r) .&. 0xf)
 
-          (w0,w1,w2,w3) = toWords uuid
+          (w0,w1) = toWords64 uuid
 
 -- | If the passed in `Text` can be parsed as an ASCII representation of
 --   a `UUID`, it will be. The hyphens may not be omitted.
