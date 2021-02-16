@@ -1,18 +1,29 @@
-cabal-version: 1.12
-name: uuid-types
-version: 1.0.4.0
+cabal-version:      1.12
+name:               uuid-types
+version:            1.0.4.0
+copyright:
+  (c) 2017-2018 Herbert Valerio Riedel
+  (c) 2008-2014 Antoine Latter
 
-copyright: (c) 2017-2018 Herbert Valerio Riedel
-           (c) 2008-2014 Antoine Latter
-author: Antoine Latter
-maintainer: hvr@gnu.org
-license: BSD3
-license-file: LICENSE
-category: Data
-build-type: Simple
-tested-with: GHC==8.10.3, GHC==8.8.4, GHC==8.6.4, GHC==8.4.4, GHC==8.2.2, GHC==8.0.2, GHC==7.10.3, GHC==7.8.4, GHC==7.6.3, GHC==7.4.2
+author:             Antoine Latter
+maintainer:         hvr@gnu.org
+license:            BSD3
+license-file:       LICENSE
+category:           Data
+build-type:         Simple
+tested-with:
+  GHC ==7.4.2
+   || ==7.6.3
+   || ==7.8.4
+   || ==7.10.3
+   || ==8.0.2
+   || ==8.2.2
+   || ==8.4.4
+   || ==8.6.4
+   || ==8.8.4
+   || ==8.10.3
 
-synopsis: Type definitions for Universally Unique Identifiers
+synopsis:           Type definitions for Universally Unique Identifiers
 description:
   This library contains type definitions for
   <https://en.wikipedia.org/wiki/UUID Universally Unique Identifiers (UUID)>
@@ -23,71 +34,77 @@ description:
   See also the <https://hackage.haskell.org/package/uuid 'uuid' package>
   providing a high-level API for managing the different UUID versions.
 
-homepage: https://github.com/hvr/uuid
-bug-reports: https://github.com/hvr/uuid/issues
-
-extra-source-files:
-    ChangeLog.md
+homepage:           https://github.com/hvr/uuid
+bug-reports:        https://github.com/hvr/uuid/issues
+extra-source-files: ChangeLog.md
 
 source-repository head
-    type:              git
-    location:          https://github.com/hvr/uuid.git
-    subdir:            uuid-types
+  type:     git
+  location: https://github.com/hvr/uuid.git
+  subdir:   uuid-types
 
-Library
-    build-depends:     base       >= 4.3     && < 5
-                     , binary     >= 0.4     && < 0.9
-                     , bytestring >= 0.9     && < 0.11
-                     , deepseq    >= 1.3     && < 1.5
-                     , hashable   >= 1.2.7.0 && < 1.4
-                     , random     >= 1.0.1   && < 1.2
-                     , text       >= 1.2.3   && < 1.3
+library
+  build-depends:
+      base        >=4.3     && <5
+    , binary      >=0.4     && <0.9
+    , bytestring  >=0.9     && <0.11
+    , deepseq     >=1.3     && <1.5
+    , hashable    >=1.2.7.0 && <1.4
+    , random      >=1.0.1   && <1.2
+    , text        >=1.2.3   && <1.3
 
-    exposed-modules:
-      Data.UUID.Types
-      -- Exposed for companion projects; *NOT* part of the official API:
-      Data.UUID.Types.Internal.Builder
-      Data.UUID.Types.Internal
+  exposed-modules:  Data.UUID.Types
 
-    default-language:  Haskell2010
-    other-extensions:  TypeFamilies
-                       DeriveDataTypeable
-    ghc-options:       -Wall
+  -- Exposed for companion projects; *NOT* part of the official API:
+  exposed-modules:
+    Data.UUID.Types.Internal
+    Data.UUID.Types.Internal.Builder
+
+  default-language: Haskell2010
+  other-extensions:
+    DeriveDataTypeable
+    TypeFamilies
+
+  ghc-options:      -Wall
 
 test-suite testuuid
-    type:              exitcode-stdio-1.0
-    main-is:           TestUUID.hs
-    hs-source-dirs:    tests
-    default-language:  Haskell2010
-    other-extensions:  ViewPatterns
-    ghc-options:       -Wall
+  type:             exitcode-stdio-1.0
+  main-is:          TestUUID.hs
+  hs-source-dirs:   tests
+  default-language: Haskell2010
+  other-extensions: ViewPatterns
+  ghc-options:      -Wall
 
-    build-depends:     uuid-types
-                       -- inherited constraints
-                     , base
-                     , binary
-                     , bytestring
-                       -- deps w/o inherited constraints
-                     , QuickCheck       == 2.14.*
-                     , ghc-byteorder    == 4.11.*
-                     , tasty            >= 1.4.0.1 && <1.5
-                     , tasty-hunit      == 0.10.*
-                     , tasty-quickcheck == 0.10.*
+  -- inherited constraints
+  build-depends:
+      base
+    , binary
+    , bytestring
+    , uuid-types
+
+  -- deps w/o inherited constraints
+  build-depends:
+      ghc-byteorder     >=4.11    && <4.12
+    , QuickCheck        >=2.14    && <2.15
+    , tasty             >=1.4.0.1 && <1.5
+    , tasty-hunit       >=0.10    && <0.11
+    , tasty-quickcheck  >=0.10    && <0.11
 
 benchmark benchmark
-    type:              exitcode-stdio-1.0
-    main-is:           BenchUUID.hs
-    hs-source-dirs:    tests
-    default-language:  Haskell2010
-    other-extensions:  CPP
-    ghc-options:       -Wall
+  type:             exitcode-stdio-1.0
+  main-is:          BenchUUID.hs
+  hs-source-dirs:   tests
+  default-language: Haskell2010
+  other-extensions: CPP
+  ghc-options:      -Wall
+  build-depends:
+      base
+    , bytestring
+    , containers            >=0.4   && <0.7
+    , criterion             >=1.5   && <1.6
+    , random
+    , unordered-containers  >=0.2.7 && <0.3
+    , uuid-types
 
-    build-depends:     uuid-types
-                       -- inherited constraints
-                     , base
-                     , bytestring
-                     , random
-                       -- deps w/o inherited constraints
-                     , containers >= 0.4   && < 0.7
-                     , criterion  == 1.5.*
-                     , unordered-containers >= 0.2.7 && < 0.3
+-- inherited constraints
+-- deps w/o inherited constraints
