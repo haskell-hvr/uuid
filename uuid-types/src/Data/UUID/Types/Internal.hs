@@ -72,7 +72,12 @@ import qualified Data.Text.Encoding               as T
 
 import           Data.UUID.Types.Internal.Builder
 
-import           System.Random
+#if MIN_VERSION_random(1,2,0)
+import           System.Random (Random (..), uniform)
+import           System.Random.Stateful (Uniform (..), uniformWord64)
+#else
+import           System.Random (Random (..), next)
+#endif
 
 
 -- | Type representing <https://en.wikipedia.org/wiki/UUID Universally Unique Identifiers (UUID)> as specified in
@@ -480,6 +485,18 @@ fromLazyASCIIBytes bs =
 
 -- | This 'Random' instance produces __insecure__ version 4 UUIDs as
 -- specified in <http://tools.ietf.org/html/rfc4122 RFC 4122>.
+#if MIN_VERSION_random(1,2,0)
+instance Random UUID where
+    random = uniform
+    randomR _ = random -- range is ignored
+
+-- @since 1.0.4
+instance Uniform UUID where
+    uniformM gen = do
+        w0 <- uniformWord64 gen
+        w1 <- uniformWord64 gen
+        pure $ buildFromBytes 4 /-/ w0 /-/ w1
+#else
 instance Random UUID where
     random g = (fromGenNext w0 w1 w2 w3 w4, g4)
         where (w0, g0) = next g
@@ -501,6 +518,7 @@ fromGenNext w0 w1 w2 w3 w4 =
                                -- field will "cover" the upper, non-random bits
                      /-/ (ThreeByte w3)
                      /-/ (ThreeByte w4)
+#endif
 
 -- |A ByteSource to extract only three bytes from an Int, since next on StdGet
 -- only returns 31 bits of randomness.

@@ -1,1 +1,8 @@
 branches: master
+
+constraint-set random-1.1
+  constraints: random==1.1.*
+
+constraint-set random-1.2
+  ghc: >=7.10
+  constraints: random==1.2.*
