@@ -3,7 +3,8 @@
 - Optimize `V4.nextRandom` (~3x speed increase)
 - Optimize UUID V3 & V5 generation (~2x speed increase)
 - Use `cryptohash-md5`/`cryptohash-sha1`/`entropy` instead
-  of `memory`/`cryptonite` for better performance and stability.
+  of `memory`/`cryptonite` for better performance and stability,
+  but GHCJS is now no longer supported.
 - Update cabal-spec to version 1.10
 
 1.3.12
