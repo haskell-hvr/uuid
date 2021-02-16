@@ -68,6 +68,7 @@ library
   default-extensions: DeriveDataTypeable
   other-extensions:   TypeFamilies
   ghc-options:        -Wall
+  hs-source-dirs:     src
 
 test-suite testuuid
   type:               exitcode-stdio-1.0
