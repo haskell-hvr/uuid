@@ -1,0 +1,119 @@
+cabal-version: 1.12
+name:          uuid-bench
+version:       0
+copyright:
+  (c) 2017-2018 Herbert Valerio Riedel
+  (c) 2008-2014 Antoine Latter
+
+author:        Antoine Latter
+maintainer:    Oleg Grenrus <oleg.grenrus@iki.fi>
+license:       BSD3
+license-file:  LICENSE
+category:      Data
+build-type:    Simple
+
+-- Benchmarking with older GHCs is not meaningful
+tested-with:
+  GHC ==8.0.2 || ==8.2.2 || ==8.4.4 || ==8.6.4 || ==8.8.4 || ==8.10.3
+
+synopsis:      UUID benchmarks
+description:
+  UUID benchmarks.
+  This package is combined uuid and uuid-types, renamed so we do not
+  cause benchmark tools to be build against local package.
+
+homepage:      https://github.com/haskell-hvr/uuid
+bug-reports:   https://github.com/haskell-hvr/uuid/issues
+
+source-repository head
+  type:     git
+  location: https://github.com/haskell-hvr/uuid.git
+  subdir:   uuid-bench
+
+library
+  build-depends:
+      base             >=4.9      && <5
+    , binary           >=0.4      && <0.9
+    , bytestring       >=0.9      && <0.11
+    , cryptohash-md5   >=0.11.100 && <0.12
+    , cryptohash-sha1  >=0.11.100 && <0.12
+    , deepseq          >=1.3      && <1.5
+    , entropy          >=0.3.7    && <0.5
+    , hashable         >=1.2.7.0  && <1.4
+    , network-info     >=0.2      && <0.3
+    , random           >=1.0.1    && <1.2
+    , text             >=1.2.3    && <1.3
+    , time             >=1.1      && <1.12
+    , uuid-types       >=1.0.2    && <2
+
+  -- uuid modules
+  exposed-modules:
+    Data.UUID
+    Data.UUID.Util
+    Data.UUID.V1
+    Data.UUID.V3
+    Data.UUID.V4
+    Data.UUID.V5
+
+  other-modules:
+    Data.UUID.Named
+    Data.Word.Util
+
+  -- uuid-types modules
+  exposed-modules:  Data.UUID.Types
+
+  -- Exposed for companion projects; *NOT* part of the official API:
+  exposed-modules:
+    Data.UUID.Types.Internal
+    Data.UUID.Types.Internal.Builder
+
+  default-language: Haskell2010
+  other-extensions:
+    DeriveDataTypeable
+    TypeFamilies
+
+  ghc-options:      -Wall
+  hs-source-dirs:   src-uuid-types src-uuid
+
+benchmark uuid-types-benchmark
+  type:             exitcode-stdio-1.0
+  main-is:          uuid-types-benchmark.hs
+  hs-source-dirs:   bench
+  default-language: Haskell2010
+  other-extensions: CPP
+  ghc-options:      -Wall
+
+  -- inherited constraints
+  build-depends:
+      base
+    , bytestring
+    , random
+    , uuid-bench
+
+  -- deps w/o inherited constraints
+  build-depends:
+      containers            >=0.5   && <0.7
+    , criterion             >=1.5   && <1.6
+    , unordered-containers  >=0.2.7 && <0.3
+
+benchmark uuid-benchmark
+  type:               exitcode-stdio-1.0
+  main-is:            uuid-benchmark.hs 
+  hs-source-dirs:     bench
+  default-language:   Haskell2010
+  default-extensions:
+    CPP
+    DeriveDataTypeable
+
+  ghc-options:        -Wall -fno-warn-orphans
+
+  -- inherited constraints
+  build-depends:
+      base
+    , random
+    , uuid
+
+  -- deps w/o inherited constraints
+  build-depends:
+      criterion               >=1.5 && <1.6
+    , mersenne-random-pure64  >=0.2 && <0.3

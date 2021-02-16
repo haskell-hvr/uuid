@@ -47,7 +47,7 @@ library
     , cryptohash-sha1  >=0.11.100 && <0.12
     , entropy          >=0.3.7    && <0.5
     , network-info     >=0.2      && <0.3
-    , random           >=1.0.1    && <1.2
+    , random           >=1.1      && <1.2
     , text             >=1.2.3    && <1.3
     , time             >=1.1      && <1.12
     , uuid-types       >=1.0.2    && <2
@@ -86,29 +86,9 @@ test-suite testuuid
     , random
     , uuid
 
+  -- deps w/o inherited constraints
   build-depends:
-      QuickCheck        >=2.14    && <2.15
+      QuickCheck        >=2.14.2  && <2.15
     , tasty             >=1.4.0.1 && <1.5
     , tasty-hunit       >=0.10    && <0.11
     , tasty-quickcheck  >=0.10    && <0.11
-
--- deps w/o inherited constraints
-benchmark benchmark
-  type:               exitcode-stdio-1.0
-  main-is:            BenchUUID.hs
-  hs-source-dirs:     tests
-  default-language:   Haskell2010
-  default-extensions:
-    CPP
-    DeriveDataTypeable
-
-  ghc-options:        -Wall -fno-warn-orphans
-  build-depends:
-      base
-    , criterion               >=1.5 && <1.6
-    , mersenne-random-pure64  >=0.2 && <0.3
-    , random
-    , uuid
-
--- inherited constraints
--- deps w/o inherited constraints

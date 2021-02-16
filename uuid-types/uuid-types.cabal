@@ -50,7 +50,7 @@ library
     , bytestring  >=0.9     && <0.11
     , deepseq     >=1.3     && <1.5
     , hashable    >=1.2.7.0 && <1.4
-    , random      >=1.0.1   && <1.2
+    , random      >=1.1     && <1.2
     , text        >=1.2.3   && <1.3
 
   exposed-modules:  Data.UUID.Types
@@ -66,7 +66,7 @@ library
     TypeFamilies
 
   ghc-options:      -Wall
-  hs-source-dirs:     src
+  hs-source-dirs:   src
 
 test-suite testuuid
   type:             exitcode-stdio-1.0
@@ -86,26 +86,7 @@ test-suite testuuid
   -- deps w/o inherited constraints
   build-depends:
       ghc-byteorder     >=4.11    && <4.12
-    , QuickCheck        >=2.14    && <2.15
+    , QuickCheck        >=2.14.2  && <2.15
     , tasty             >=1.4.0.1 && <1.5
     , tasty-hunit       >=0.10    && <0.11
     , tasty-quickcheck  >=0.10    && <0.11
-
-benchmark benchmark
-  type:             exitcode-stdio-1.0
-  main-is:          BenchUUID.hs
-  hs-source-dirs:   tests
-  default-language: Haskell2010
-  other-extensions: CPP
-  ghc-options:      -Wall
-  build-depends:
-      base
-    , bytestring
-    , containers            >=0.4   && <0.7
-    , criterion             >=1.5   && <1.6
-    , random
-    , unordered-containers  >=0.2.7 && <0.3
-    , uuid-types
-
--- inherited constraints
--- deps w/o inherited constraints
