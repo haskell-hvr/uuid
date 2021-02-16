@@ -6,7 +6,7 @@ copyright:
   (c) 2008-2014 Antoine Latter
 
 author:             Antoine Latter
-maintainer:         hvr@gnu.org
+maintainer:         Oleg Grenrus <oleg.grenrus@iki.fi>
 license:            BSD3
 license-file:       LICENSE
 category:           Data
@@ -34,13 +34,13 @@ description:
   See also the <https://hackage.haskell.org/package/uuid 'uuid' package>
   providing a high-level API for managing the different UUID versions.
 
-homepage:           https://github.com/hvr/uuid
-bug-reports:        https://github.com/hvr/uuid/issues
+homepage:           https://github.com/haskell-hvr/uuid
+bug-reports:        https://github.com/haskell-hvr/uuid/issues
 extra-source-files: ChangeLog.md
 
 source-repository head
   type:     git
-  location: https://github.com/hvr/uuid.git
+  location: https://github.com/haskell-hvr/uuid.git
   subdir:   uuid-types
 
 library
