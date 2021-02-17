@@ -4,6 +4,7 @@
 - Use more compact heap object representation which saves 16 bytes on 64bit platforms.
 - Add `toWords64`/`fromWords64` functions
 - Drop support for GHC < 7.
+- Add support for `random-1.2`, i.e. idiomatic `Random` and added `Uniform` instances.
 
 ## 1.0.3
 
