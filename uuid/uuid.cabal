@@ -1,6 +1,6 @@
 cabal-version:      1.12
 name:               uuid
-version:            1.3.13
+version:            1.3.14
 copyright:          (c) 2008-2014 Antoine Latter
 author:             Antoine Latter
 maintainer:         Oleg Grenrus <oleg.grenrus@iki.fi>
@@ -50,7 +50,11 @@ library
     , random           >=1.1      && <1.3
     , text             >=1.2.3.0  && <1.3
     , time             >=1.4      && <1.12
-    , uuid-types       >=1.0.2    && <2
+
+  -- strict dependency on uuid-types,
+  -- as we re-rexport datatype, thus leak instances etc.
+  build-depends:
+    uuid-types       >=1.0.4    && <1.0.5
 
   exposed-modules:
     Data.UUID

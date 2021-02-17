@@ -1,3 +1,8 @@
+1.3.14
+
+- Use more compact heap object representation which saves 16 bytes on 64bit platforms.
+- Add `toWords64`/`fromWords64` functions
+
 1.3.13
 
 - Optimize `V4.nextRandom` (~3x speed increase)

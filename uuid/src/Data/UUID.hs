@@ -37,6 +37,8 @@ module Data.UUID(UUID
                 ,fromByteString
                 ,toWords
                 ,fromWords
+                ,toWords64
+                ,fromWords64
                 ,null
                 ,nil
                 ) where
