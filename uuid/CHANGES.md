@@ -1,3 +1,7 @@
+1.3.15
+
+- Add (Template Haskell) `Lift UUID` instance
+
 1.3.14
 
 - Use more compact heap object representation which saves 16 bytes on 64bit platforms.

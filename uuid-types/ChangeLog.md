@@ -1,3 +1,7 @@
+## 1.0.5 (2021-05-03)
+
+- Add (Template Haskell) `Lift UUID` instance
+
 ## 1.0.4.0
 
 - Declare `Data.UUID.Types` module "`Trustworthy`" with respect to SafeHaskell.

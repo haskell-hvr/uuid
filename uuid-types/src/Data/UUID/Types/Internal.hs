@@ -5,6 +5,10 @@
 #if __GLASGOW_HASKELL__ >= 704
 {-# LANGUAGE Unsafe             #-}
 #endif
+#if __GLASGOW_HASKELL__ >=800
+{-# LANGUAGE DeriveLift         #-}
+{-# LANGUAGE StandaloneDeriving #-}
+#endif
 
 {-# OPTIONS_HADDOCK hide #-}
 
@@ -79,6 +83,12 @@ import           System.Random.Stateful (Uniform (..), uniformWord64)
 import           System.Random (Random (..), next)
 #endif
 
+#if __GLASGOW_HASKELL__ >=800
+import Language.Haskell.TH.Syntax (Lift)
+#else
+import Language.Haskell.TH (appE, varE)
+import Language.Haskell.TH.Syntax (Lift (..), mkNameG_v, Lit (IntegerL), Exp (LitE))
+#endif
 
 -- | Type representing <https://en.wikipedia.org/wiki/UUID Universally Unique Identifiers (UUID)> as specified in
 --  <http://tools.ietf.org/html/rfc4122 RFC 4122>.
@@ -618,4 +628,21 @@ unsafeShiftR, unsafeShiftL :: Bits w => w -> Int -> w
 unsafeShiftR = shiftR
 {-# INLINE unsafeShiftL #-}
 unsafeShiftL = shiftL
+#endif
+
+#if __GLASGOW_HASKELL__ >=800
+deriving instance Lift UUID
+#else
+instance Lift UUID where
+    lift (UUID w1 w2) = varE fromWords64Name `appE` liftW64 w1 `appE` liftW64 w2
+      where
+        fromWords64Name = mkNameG_v currentPackageKey "Data.UUID.Types.Internal" "fromWords64"
+        liftW64 x = return (LitE (IntegerL (fromIntegral x)))
+
+currentPackageKey :: String
+#ifdef CURRENT_PACKAGE_KEY
+currentPackageKey = CURRENT_PACKAGE_KEY
+#else
+currentPackageKey = "uuid-types-1.0.5"
+#endif
 #endif
