@@ -1,4 +1,5 @@
 {-# LANGUAGE ViewPatterns #-}
+{-# LANGUAGE TemplateHaskell #-}
 
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
@@ -39,6 +40,11 @@ test_nil = testGroup "nil" [
     testCase "nil string" $ U.toString U.nil @?= "00000000-0000-0000-0000-000000000000",
     testCase "nil bytes"  $ U.toByteString U.nil @?= BL.pack (replicate 16 0)
     ]
+
+test_lift :: Test
+test_lift = testCase "TH.Lift" $ do
+    let uuid = U.fromWords64 123456789 987654321
+    uuid @?= $( [| uuid |] )
 
 test_conv :: Test
 test_conv = testGroup "conversions" [
@@ -176,6 +182,7 @@ main = do
      [ [
         test_null,
         test_nil,
+        test_lift,
         test_conv,
         test_fromByteString,
         test_fromWords,
