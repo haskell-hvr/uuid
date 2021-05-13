@@ -11,8 +11,8 @@
    This module implements Version 4 UUIDs as specified
    in RFC 4122.
 
-   These UUIDs are generated from a pseddo-random generator.
-   We use 'getEntropy' method from <https://hackage.haskell.org/package/entropy entropy> package,
+   These UUIDs are generated from a pseudo-random generator.
+   We use the 'getEntropy' method from the <https://hackage.haskell.org/package/entropy entropy> package,
    which should provide cryptographically secure random data.
 -}
 module Data.UUID.V4 (nextRandom) where
@@ -23,8 +23,9 @@ import Data.UUID.Types.Internal ( buildFromBytes )
 import System.Entropy ( getEntropy )
 import Data.ByteString ( unpack )
 
--- | Generate a crytographically secure, random UUID. Introduced in version
--- 1.2.6.
+-- | Generate a crytographically secure, random UUID.
+--
+-- @since 1.2.6
 nextRandom :: IO UUID
 nextRandom = do
   [b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, ba, bb, bc, bd, be, bf]

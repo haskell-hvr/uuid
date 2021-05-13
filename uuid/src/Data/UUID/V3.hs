@@ -8,7 +8,7 @@ Maintainer  : aslatter@gmail.com
 Stability   : experimental
 Portability : portable
 
-NOTE: This module uses MD5 hashing. Unless you know
+NOTE\: This module uses MD5 hashing. Unless you know
 you need to use this module, you should probably be
 using "Data.UUID.V5", which offers the same sort of
 functionality as this module except implemented with
