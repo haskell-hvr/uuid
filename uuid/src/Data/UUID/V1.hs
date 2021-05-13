@@ -19,7 +19,7 @@ The generated UUID is based on the hardware MAC
 address and the system clock.
 
 If we cannot lookup the MAC address we seed the
-generator with a psuedo-random number.
+generator with a pseudo-random number.
 -}
 
 module Data.UUID.V1(nextUUID)
