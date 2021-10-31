@@ -2,7 +2,7 @@
 -- for more details
 
 packages: uuid-types/
-          uuid/
+packages: uuid/
 
 package uuid-types
   tests: True

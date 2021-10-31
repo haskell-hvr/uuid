@@ -1,4 +1,5 @@
 branches: master
+jobs-selection: any
 
 constraint-set random-1.1
   constraints: random==1.1.*
