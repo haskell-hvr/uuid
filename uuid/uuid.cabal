@@ -20,7 +20,7 @@ tested-with:
    || ==8.6.4
    || ==8.8.4
    || ==8.10.7
-   || ==9.0.1
+   || ==9.0.2
 
 synopsis:
   For creating, comparing, parsing and printing Universally Unique Identifiers
