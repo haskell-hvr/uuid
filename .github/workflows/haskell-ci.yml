@@ -8,9 +8,9 @@
 #
 # For more information, see https://github.com/haskell-CI/haskell-ci
 #
-# version: 0.15.20220808
+# version: 0.15.20220826
 #
-# REGENDATA ("0.15.20220808",["github","cabal.project"])
+# REGENDATA ("0.15.20220826",["github","cabal.project"])
 #
 name: Haskell-CI
 on:
@@ -32,9 +32,9 @@ jobs:
     strategy:
       matrix:
         include:
-          - compiler: ghc-9.4.1
+          - compiler: ghc-9.4.2
             compilerKind: ghc
-            compilerVersion: 9.4.1
+            compilerVersion: 9.4.2
             setup-method: ghcup
             allow-failure: false
           - compiler: ghc-9.2.4
@@ -206,7 +206,7 @@ jobs:
         run: |
           touch cabal.project
           echo "packages: $GITHUB_WORKSPACE/source/uuid-types" >> cabal.project
-          if [ $((HCNUMVER < 90200)) -ne 0 ] ; then echo "packages: $GITHUB_WORKSPACE/source/uuid" >> cabal.project ; fi
+          echo "packages: $GITHUB_WORKSPACE/source/uuid" >> cabal.project
           cat cabal.project
       - name: sdist
         run: |
@@ -226,11 +226,11 @@ jobs:
           touch cabal.project
           touch cabal.project.local
           echo "packages: ${PKGDIR_uuid_types}" >> cabal.project
-          if [ $((HCNUMVER < 90200)) -ne 0 ] ; then echo "packages: ${PKGDIR_uuid}" >> cabal.project ; fi
+          echo "packages: ${PKGDIR_uuid}" >> cabal.project
           if [ $((HCNUMVER >= 80200)) -ne 0 ] ; then echo "package uuid-types" >> cabal.project ; fi
           if [ $((HCNUMVER >= 80200)) -ne 0 ] ; then echo "    ghc-options: -Werror=missing-methods" >> cabal.project ; fi
-          if [ $((HCNUMVER >= 80200 && HCNUMVER < 90200)) -ne 0 ] ; then echo "package uuid" >> cabal.project ; fi
-          if [ $((HCNUMVER >= 80200 && HCNUMVER < 90200)) -ne 0 ] ; then echo "    ghc-options: -Werror=missing-methods" >> cabal.project ; fi
+          if [ $((HCNUMVER >= 80200)) -ne 0 ] ; then echo "package uuid" >> cabal.project ; fi
+          if [ $((HCNUMVER >= 80200)) -ne 0 ] ; then echo "    ghc-options: -Werror=missing-methods" >> cabal.project ; fi
           cat >> cabal.project <<EOF
           EOF
           $HCPKG list --simple-output --names-only | perl -ne 'for (split /\s+/) { print "constraints: $_ installed\n" unless /^(uuid|uuid-types)$/; }' >> cabal.project.local
@@ -263,8 +263,8 @@ jobs:
         run: |
           cd ${PKGDIR_uuid_types} || false
           ${CABAL} -vnormal check
-          if [ $((HCNUMVER < 90200)) -ne 0 ] ; then cd ${PKGDIR_uuid} || false ; fi
-          if [ $((HCNUMVER < 90200)) -ne 0 ] ; then ${CABAL} -vnormal check ; fi
+          cd ${PKGDIR_uuid} || false
+          ${CABAL} -vnormal check
       - name: haddock
         run: |
           $CABAL v2-haddock --haddock-all $ARG_COMPILER --with-haddock $HADDOCK $ARG_TESTS $ARG_BENCH all
