@@ -1,7 +1,7 @@
 cabal-version:      1.12
 name:               uuid
 version:            1.3.15
-x-revision:         1
+x-revision:         2
 copyright:          (c) 2008-2014 Antoine Latter
 author:             Antoine Latter
 maintainer:         Oleg Grenrus <oleg.grenrus@iki.fi>
@@ -21,6 +21,8 @@ tested-with:
    || ==8.8.4
    || ==8.10.7
    || ==9.0.2
+   || ==9.2.4
+   || ==9.4.2
 
 synopsis:
   For creating, comparing, parsing and printing Universally Unique Identifiers
@@ -51,7 +53,7 @@ library
     , network-info     >=0.2      && <0.3
     , random           >=1.1      && <1.3
     , text             >=1.2.3.0  && <1.3 || >=2.0 && <2.1
-    , time             >=1.4      && <1.12
+    , time             >=1.4      && <1.13
 
   -- strict dependency on uuid-types,
   -- as we re-rexport datatype, thus leak instances etc.
