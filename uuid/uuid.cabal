@@ -52,7 +52,7 @@ library
     , entropy          >=0.3.7    && <0.5
     , network-info     >=0.2      && <0.3
     , random           >=1.1      && <1.3
-    , text             >=1.2.3.0  && <1.3 || >=2.0 && <2.1
+    , text             >=1.2.3.0  && <1.3 || >=2.0 && <2.2
     , time             >=1.4      && <1.13
 
   -- strict dependency on uuid-types,
