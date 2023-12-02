@@ -1,11 +1,5 @@
 {-# LANGUAGE CPP #-}
 
-#if !(MIN_VERSION_bytestring(0,10,0))
-{-# OPTIONS_GHC -fno-warn-orphans #-}
--- Needed for NFData instance
-import           Control.DeepSeq
-import qualified Data.ByteString.Lazy.Internal as BL
-#endif
 import           Criterion.Main
 import qualified Data.ByteString.Lazy          as BL
 import qualified Data.HashSet                  as HashSet
@@ -14,13 +8,6 @@ import qualified Data.Set                      as Set
 import qualified Data.UUID.Types               as U
 import           Foreign                       (alloca, peek, poke)
 import           System.Random
-
-#if !(MIN_VERSION_bytestring(0,10,0))
--- orphan
-instance NFData BL.ByteString where
-    rnf BL.Empty        = ()
-    rnf (BL.Chunk _ ts) = rnf ts
-#endif
 
 main :: IO ()
 main = do

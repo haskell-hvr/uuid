@@ -60,7 +60,6 @@ import           Data.Data
 import           Data.Functor                     ((<$>))
 import           Data.Hashable
 import           Data.List                        (elemIndices)
-import           Foreign.Ptr                      (Ptr)
 
 import           Foreign.Storable
 
@@ -68,7 +67,8 @@ import           Data.Binary
 import           Data.Binary.Get
 import           Data.Binary.Put
 import qualified Data.ByteString                  as B
-import qualified Data.ByteString.Internal         as BI
+import qualified Data.ByteString.Builder.Extra    as BB
+import qualified Data.ByteString.Builder.Prim     as BBP
 import qualified Data.ByteString.Lazy             as BL
 import qualified Data.ByteString.Unsafe           as BU
 import           Data.Text                        (Text)
@@ -374,60 +374,34 @@ toString uuid = hexw0 w0 $ hexw1 w1 ""
 fromText :: Text -> Maybe UUID
 fromText = fromASCIIBytes . T.encodeUtf8
 
--- | Convert a UUID into a hyphentated string using lower-case letters.
+-- | Convert a UUID into a hyphenated string using lower-case letters.
 toText :: UUID -> Text
 toText = T.decodeLatin1 . toASCIIBytes
 
--- | Convert a UUID into a hyphentated string using lower-case letters, packed
+-- | Convert a UUID into a hyphenated string using lower-case letters, packed
 --   as ASCII bytes into `B.ByteString`.
 --
 --   This should be equivalent to `toString` with `Data.ByteString.Char8.pack`.
 toASCIIBytes :: UUID -> B.ByteString
-toASCIIBytes uuid = BI.unsafeCreate 36 (pokeASCII uuid)
+toASCIIBytes uuid = BL.toStrict $ toLazyASCIIBytes uuid
 
--- | Helper function for `toASCIIBytes`
-pokeASCII :: UUID -> Ptr Word8 -> IO ()
-pokeASCII uuid ptr = do
-    pokeDash 8
-    pokeDash 13
-    pokeDash 18
-    pokeDash 23
-    pokeSingle 0  w0
-    pokeDouble 9  w1
-    pokeDouble 19 w2
-    pokeSingle 28 w3
+hyphenatedUUIDFixedPrim :: BBP.FixedPrim UUID
+hyphenatedUUIDFixedPrim = uuidToByteTuples BBP.>$< wordFixedPrim
   where
-    (w0, w1, w2, w3) = toWords uuid
+    wordFixedPrim :: BBP.FixedPrim (Word32, (Word16, (Word16, (Word16, (Word16, Word32)))))
+    wordFixedPrim = BBP.word32HexFixed BBP.>*<
+        prependDash BBP.word16HexFixed BBP.>*<
+        prependDash BBP.word16HexFixed BBP.>*<
+        prependDash BBP.word16HexFixed BBP.>*<
+        prependDash (BBP.word16HexFixed BBP.>*< BBP.word32HexFixed)
 
-    -- ord '-' ==> 45
-    pokeDash ix = pokeElemOff ptr ix 45
+    uuidToByteTuples :: UUID -> (Word32, (Word16, (Word16, (Word16, (Word16, Word32)))))
+    uuidToByteTuples uuid =
+        let (w0, w1, w2, w3) = toWords uuid
+        in (w0, (fromIntegral $ w1 `shiftR` 16, (fromIntegral w1, (fromIntegral $ w2 `shiftR` 16, (fromIntegral w2, w3)))))
 
-    pokeSingle ix w = do
-        pokeWord ix       w 28
-        pokeWord (ix + 1) w 24
-        pokeWord (ix + 2) w 20
-        pokeWord (ix + 3) w 16
-        pokeWord (ix + 4) w 12
-        pokeWord (ix + 5) w 8
-        pokeWord (ix + 6) w 4
-        pokeWord (ix + 7) w 0
-
-    -- We skip the dash in the middle
-    pokeDouble ix w = do
-        pokeWord ix       w 28
-        pokeWord (ix + 1) w 24
-        pokeWord (ix + 2) w 20
-        pokeWord (ix + 3) w 16
-        pokeWord (ix + 5) w 12
-        pokeWord (ix + 6) w 8
-        pokeWord (ix + 7) w 4
-        pokeWord (ix + 8) w 0
-
-    pokeWord ix w r =
-        pokeElemOff ptr ix (fromIntegral (toDigit ((w `shiftR` r) .&. 0xf)))
-
-    toDigit :: Word32 -> Word32
-    toDigit w = if w < 10 then 48 + w else 97 + w - 10
+    prependDash :: BBP.FixedPrim a -> BBP.FixedPrim a
+    prependDash fixedPrim = (\x -> ('-', x)) BBP.>$< (BBP.char7 BBP.>*< fixedPrim)
 
 -- | If the passed in `B.ByteString` can be parsed as an ASCII representation of
 --   a `UUID`, it will be. The hyphens may not be omitted.
@@ -470,24 +444,14 @@ fromASCIIBytes bs = do
 
 -- | Similar to `toASCIIBytes` except we produce a lazy `BL.ByteString`.
 toLazyASCIIBytes :: UUID -> BL.ByteString
-toLazyASCIIBytes =
-#if MIN_VERSION_bytestring(0,10,0)
-    BL.fromStrict
-#else
-    BL.fromChunks . return
-#endif
-    . toASCIIBytes
+toLazyASCIIBytes uuid = BB.toLazyByteStringWith (BB.untrimmedStrategy 36 BB.defaultChunkSize) mempty builder
+  where
+    builder = BBP.primFixed hyphenatedUUIDFixedPrim uuid
 
 -- | Similar to `fromASCIIBytes` except parses from a lazy `BL.ByteString`.
 fromLazyASCIIBytes :: BL.ByteString -> Maybe UUID
 fromLazyASCIIBytes bs =
-    if BL.length bs == 36 then fromASCIIBytes (
-#if MIN_VERSION_bytestring(0,10,0)
-        BL.toStrict bs
-#else
-        B.concat $ BL.toChunks bs
-#endif
-        ) else Nothing
+    if BL.length bs == 36 then fromASCIIBytes (BL.toStrict bs) else Nothing
 
 --
 -- Class Instances
