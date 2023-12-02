@@ -216,10 +216,6 @@ word a b c d =  (fromIntegral a `unsafeShiftL` 24)
             .|. (fromIntegral c `unsafeShiftL`  8)
             .|. (fromIntegral d                  )
 
--- |Extract a Word8 from a Word64. Bytes, high to low, are numbered from 7 to 0,
-byte :: Int -> Word64 -> Word8
-byte i w = fromIntegral (w `shiftR` (i * 8))
-
 -- |Build a Word16 from two Word8 values, presented in big-endian order.
 w8to16 :: Word8 -> Word8 -> Word16
 w8to16 w0s w1s =
@@ -266,11 +262,7 @@ buildFromWords v w0 w1 w2 w3 = fromWords w0 w1' w2' w3
 
 -- |Return the bytes that make up the UUID
 toList :: UUID -> [Word8]
-toList (UUID w0 w1) =
-    [byte 7 w0, byte 6 w0, byte 5 w0, byte 4 w0,
-     byte 3 w0, byte 2 w0, byte 1 w0, byte 0 w0,
-     byte 7 w1, byte 6 w1, byte 5 w1, byte 4 w1,
-     byte 3 w1, byte 2 w1, byte 1 w1, byte 0 w1]
+toList = B.unpack . B.toStrict . toByteString
 
 -- |Construct a UUID from a list of Word8. Returns Nothing if the list isn't
 -- exactly sixteen bytes long
@@ -349,7 +341,7 @@ fromString' s0 = do
                     octet = fromIntegral (16 * digitToInt hi + digitToInt lo)
           hexByte _ = Nothing
 
--- | Convert a UUID into a hypenated string using lower-case letters.
+-- | Convert a UUID into a hyphenated string using lower-case letters.
 -- Example:
 --
 -- >>> toString <$> fromString "550e8400-e29b-41d4-a716-446655440000"
