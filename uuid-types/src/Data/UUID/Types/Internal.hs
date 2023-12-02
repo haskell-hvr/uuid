@@ -301,11 +301,19 @@ nil = UUID 0 0
 fromByteString :: BL.ByteString -> Maybe UUID
 fromByteString = fromList . BL.unpack
 
+networkOrderUUIDFixedPrim :: BBP.FixedPrim UUID
+networkOrderUUIDFixedPrim = toWords64 BBP.>$< wordFixedPrim
+  where
+    wordFixedPrim :: BBP.FixedPrim (Word64, Word64)
+    wordFixedPrim = BBP.word64BE BBP.>*< BBP.word64BE
+
 -- |Encode a UUID into a 'ByteString' in network order.
 --
 -- This uses the same encoding as the 'Binary' instance.
 toByteString :: UUID -> BL.ByteString
-toByteString = BL.pack . toList
+toByteString uuid = BB.toLazyByteStringWith (BB.untrimmedStrategy 16 BB.defaultChunkSize) mempty builder
+  where
+    builder = BBP.primFixed networkOrderUUIDFixedPrim uuid
 
 -- |If the passed in 'String' can be parsed as a 'UUID', it will be.
 -- The hyphens may not be omitted.
