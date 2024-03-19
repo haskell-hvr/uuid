@@ -1,3 +1,8 @@
+1.3.16
+
+- Optimize and refactor functions `toByteString` (3.7x speed increase) and
+  `toASCIIBytes` (20% speed increase).
+
 1.3.15
 
 - Add (Template Haskell) `Lift UUID` instance
