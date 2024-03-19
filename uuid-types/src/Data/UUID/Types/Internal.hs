@@ -49,30 +49,31 @@ module Data.UUID.Types.Internal
     , unpack
     ) where
 
-import           Prelude                          hiding (null)
+import           Prelude                               hiding (null)
 
-import           Control.Applicative              ((<*>))
-import           Control.DeepSeq                  (NFData (..))
-import           Control.Monad                    (guard, liftM2)
+import           Control.Applicative                   ((<*>))
+import           Control.DeepSeq                       (NFData (..))
+import           Control.Monad                         (guard, liftM2)
 import           Data.Bits
 import           Data.Char
 import           Data.Data
-import           Data.Functor                     ((<$>))
+import           Data.Functor                          ((<$>))
 import           Data.Hashable
-import           Data.List                        (elemIndices)
+import           Data.List                             (elemIndices)
 
 import           Foreign.Storable
 
 import           Data.Binary
 import           Data.Binary.Get
 import           Data.Binary.Put
-import qualified Data.ByteString                  as B
-import qualified Data.ByteString.Builder.Extra    as BB
-import qualified Data.ByteString.Builder.Prim     as BBP
-import qualified Data.ByteString.Lazy             as BL
-import qualified Data.ByteString.Unsafe           as BU
-import           Data.Text                        (Text)
-import qualified Data.Text.Encoding               as T
+import qualified Data.ByteString                       as B
+import qualified Data.ByteString.Internal              as BBI
+import qualified Data.ByteString.Builder.Prim          as BBP
+import qualified Data.ByteString.Builder.Prim.Internal as BBPI (runF)
+import qualified Data.ByteString.Lazy                  as BL
+import qualified Data.ByteString.Unsafe                as BU
+import           Data.Text                             (Text)
+import qualified Data.Text.Encoding                    as T
 
 import           Data.UUID.Types.Internal.Builder
 
@@ -89,6 +90,7 @@ import Language.Haskell.TH.Syntax (Lift)
 import Language.Haskell.TH (appE, varE)
 import Language.Haskell.TH.Syntax (Lift (..), mkNameG_v, Lit (IntegerL), Exp (LitE))
 #endif
+
 
 -- | Type representing <https://en.wikipedia.org/wiki/UUID Universally Unique Identifiers (UUID)> as specified in
 --  <http://tools.ietf.org/html/rfc4122 RFC 4122>.
@@ -262,7 +264,7 @@ buildFromWords v w0 w1 w2 w3 = fromWords w0 w1' w2' w3
 
 -- |Return the bytes that make up the UUID
 toList :: UUID -> [Word8]
-toList = B.unpack . B.toStrict . toByteString
+toList = B.unpack . toStrictByteString
 
 -- |Construct a UUID from a list of Word8. Returns Nothing if the list isn't
 -- exactly sixteen bytes long
@@ -303,9 +305,11 @@ networkOrderUUIDFixedPrim = toWords64 BBP.>$< wordFixedPrim
 --
 -- This uses the same encoding as the 'Binary' instance.
 toByteString :: UUID -> BL.ByteString
-toByteString uuid = BB.toLazyByteStringWith (BB.untrimmedStrategy 16 BB.defaultChunkSize) mempty builder
-  where
-    builder = BBP.primFixed networkOrderUUIDFixedPrim uuid
+toByteString = BL.fromStrict . toStrictByteString
+
+toStrictByteString :: UUID -> B.ByteString
+toStrictByteString uuid = BBI.unsafeCreate 16 $ BBPI.runF networkOrderUUIDFixedPrim uuid
+
 
 -- |If the passed in 'String' can be parsed as a 'UUID', it will be.
 -- The hyphens may not be omitted.
@@ -383,7 +387,7 @@ toText = T.decodeLatin1 . toASCIIBytes
 --
 --   This should be equivalent to `toString` with `Data.ByteString.Char8.pack`.
 toASCIIBytes :: UUID -> B.ByteString
-toASCIIBytes uuid = BL.toStrict $ toLazyASCIIBytes uuid
+toASCIIBytes uuid = BBI.unsafeCreate 36 (BBPI.runF hyphenatedUUIDFixedPrim uuid)
 
 hyphenatedUUIDFixedPrim :: BBP.FixedPrim UUID
 hyphenatedUUIDFixedPrim = uuidToByteTuples BBP.>$< wordFixedPrim
@@ -444,9 +448,7 @@ fromASCIIBytes bs = do
 
 -- | Similar to `toASCIIBytes` except we produce a lazy `BL.ByteString`.
 toLazyASCIIBytes :: UUID -> BL.ByteString
-toLazyASCIIBytes uuid = BB.toLazyByteStringWith (BB.untrimmedStrategy 36 BB.defaultChunkSize) mempty builder
-  where
-    builder = BBP.primFixed hyphenatedUUIDFixedPrim uuid
+toLazyASCIIBytes = BL.fromStrict . toASCIIBytes
 
 -- | Similar to `fromASCIIBytes` except parses from a lazy `BL.ByteString`.
 fromLazyASCIIBytes :: BL.ByteString -> Maybe UUID
