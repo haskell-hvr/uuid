@@ -22,9 +22,9 @@ tested-with:
    || ==8.10.7
    || ==9.0.2
    || ==9.2.8
-   || ==9.4.7
-   || ==9.6.3
-   || ==9.8.1
+   || ==9.4.8
+   || ==9.6.4
+   || ==9.8.2
 
 synopsis:
   For creating, comparing, parsing and printing Universally Unique Identifiers
