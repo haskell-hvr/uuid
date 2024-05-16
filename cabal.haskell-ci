@@ -2,10 +2,6 @@ branches: master
 jobs-selection: any
 head-hackage: False
 
-constraint-set random-1.1
-  ghc: <9.7
-  constraints: random==1.1.*
-
 constraint-set random-1.2
   ghc: >=7.10
   constraints: random==1.2.*
