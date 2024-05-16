@@ -1,3 +1,7 @@
+## 1.0.6 (2023-04-16)
+
+- Support GHC-8.6.5..GHC-9.10.1
+
 ## 1.0.5 (2021-05-03)
 
 - Add (Template Haskell) `Lift UUID` instance
