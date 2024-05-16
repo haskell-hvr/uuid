@@ -2,14 +2,9 @@
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE TypeFamilies       #-}
 {-# LANGUAGE ViewPatterns       #-}
-#if __GLASGOW_HASKELL__ >= 704
 {-# LANGUAGE Unsafe             #-}
-#endif
-#if __GLASGOW_HASKELL__ >=800
 {-# LANGUAGE DeriveLift         #-}
 {-# LANGUAGE StandaloneDeriving #-}
-#endif
-
 {-# OPTIONS_HADDOCK hide #-}
 
 -- |
@@ -76,19 +71,10 @@ import qualified Data.Text.Encoding               as T
 
 import           Data.UUID.Types.Internal.Builder
 
-#if MIN_VERSION_random(1,2,0)
 import           System.Random (Random (..), uniform)
 import           System.Random.Stateful (Uniform (..), uniformWord64)
-#else
-import           System.Random (Random (..), next)
-#endif
 
-#if __GLASGOW_HASKELL__ >=800
 import Language.Haskell.TH.Syntax (Lift)
-#else
-import Language.Haskell.TH (appE, varE)
-import Language.Haskell.TH.Syntax (Lift (..), mkNameG_v, Lit (IntegerL), Exp (LitE))
-#endif
 
 -- | Type representing <https://en.wikipedia.org/wiki/UUID Universally Unique Identifiers (UUID)> as specified in
 --  <http://tools.ietf.org/html/rfc4122 RFC 4122>.
@@ -471,23 +457,13 @@ fromASCIIBytes bs = do
 -- | Similar to `toASCIIBytes` except we produce a lazy `BL.ByteString`.
 toLazyASCIIBytes :: UUID -> BL.ByteString
 toLazyASCIIBytes =
-#if MIN_VERSION_bytestring(0,10,0)
     BL.fromStrict
-#else
-    BL.fromChunks . return
-#endif
     . toASCIIBytes
 
 -- | Similar to `fromASCIIBytes` except parses from a lazy `BL.ByteString`.
 fromLazyASCIIBytes :: BL.ByteString -> Maybe UUID
 fromLazyASCIIBytes bs =
-    if BL.length bs == 36 then fromASCIIBytes (
-#if MIN_VERSION_bytestring(0,10,0)
-        BL.toStrict bs
-#else
-        B.concat $ BL.toChunks bs
-#endif
-        ) else Nothing
+    if BL.length bs == 36 then fromASCIIBytes (BL.toStrict bs) else Nothing
 
 --
 -- Class Instances
@@ -495,7 +471,6 @@ fromLazyASCIIBytes bs =
 
 -- | This 'Random' instance produces __insecure__ version 4 UUIDs as
 -- specified in <http://tools.ietf.org/html/rfc4122 RFC 4122>.
-#if MIN_VERSION_random(1,2,0)
 instance Random UUID where
     random = uniform
     randomR _ = random -- range is ignored
@@ -506,29 +481,6 @@ instance Uniform UUID where
         w0 <- uniformWord64 gen
         w1 <- uniformWord64 gen
         pure $ buildFromBytes 4 /-/ w0 /-/ w1
-#else
-instance Random UUID where
-    random g = (fromGenNext w0 w1 w2 w3 w4, g4)
-        where (w0, g0) = next g
-              (w1, g1) = next g0
-              (w2, g2) = next g1
-              (w3, g3) = next g2
-              (w4, g4) = next g3
-    randomR _ = random -- range is ignored
-
--- |Build a UUID from the results of five calls to next on a StdGen.
--- While next on StdGet returns an Int, it doesn't provide 32 bits of
--- randomness. This code relies on at last 28 bits of randomness in the
--- and optimizes its use so as to make only five random values, not six.
-fromGenNext :: Int -> Int -> Int -> Int -> Int -> UUID
-fromGenNext w0 w1 w2 w3 w4 =
-    buildFromBytes 4 /-/ (ThreeByte w0)
-                     /-/ (ThreeByte w1)
-                     /-/ w2    -- use all 4 bytes because we know the version
-                               -- field will "cover" the upper, non-random bits
-                     /-/ (ThreeByte w3)
-                     /-/ (ThreeByte w4)
-#endif
 
 -- |A ByteSource to extract only three bytes from an Int, since next on StdGet
 -- only returns 31 bits of randomness.
@@ -622,27 +574,4 @@ instance Data UUID where
 uuidType :: DataType
 uuidType =  mkNoRepType "Data.UUID.Types.UUID"
 
-#if !MIN_VERSION_base(4,5,0)
-unsafeShiftR, unsafeShiftL :: Bits w => w -> Int -> w
-{-# INLINE unsafeShiftR #-}
-unsafeShiftR = shiftR
-{-# INLINE unsafeShiftL #-}
-unsafeShiftL = shiftL
-#endif
-
-#if __GLASGOW_HASKELL__ >=800
 deriving instance Lift UUID
-#else
-instance Lift UUID where
-    lift (UUID w1 w2) = varE fromWords64Name `appE` liftW64 w1 `appE` liftW64 w2
-      where
-        fromWords64Name = mkNameG_v currentPackageKey "Data.UUID.Types.Internal" "fromWords64"
-        liftW64 x = return (LitE (IntegerL (fromIntegral x)))
-
-currentPackageKey :: String
-#ifdef CURRENT_PACKAGE_KEY
-currentPackageKey = CURRENT_PACKAGE_KEY
-#else
-currentPackageKey = "uuid-types-1.0.5"
-#endif
-#endif
