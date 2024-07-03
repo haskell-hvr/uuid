@@ -1,5 +1,5 @@
 branches: master
-jobs-selection: any
+-- jobs-selection: any
 head-hackage: False
 
 constraint-set random-1.2
