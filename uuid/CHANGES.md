@@ -1,3 +1,7 @@
+1.3.16
+
+- Support GHC-8.6.5...9.10.1
+
 1.3.15
 
 - Add (Template Haskell) `Lift UUID` instance
