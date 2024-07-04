@@ -1,6 +1,7 @@
 cabal-version:      1.12
 name:               uuid-types
 version:            1.0.6
+x-revision:         1
 copyright:
   (c) 2017-2018 Herbert Valerio Riedel
   (c) 2008-2014 Antoine Latter
@@ -86,10 +87,10 @@ test-suite testuuid
 
   -- deps w/o inherited constraints
   build-depends:
-      QuickCheck        >=2.14.2  && <2.15
+      QuickCheck        >=2.14.2  && <2.16
     , tasty             >=1.4.0.1 && <1.6
     , tasty-hunit       >=0.10    && <0.11
-    , tasty-quickcheck  >=0.10    && <0.11
+    , tasty-quickcheck  >=0.10    && <0.12
 
   if !impl(ghc >=8.4)
     build-depends: ghc-byteorder >=4.11 && <4.12
