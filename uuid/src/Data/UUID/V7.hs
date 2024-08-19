@@ -16,7 +16,7 @@
 
 module Data.UUID.V7 ( generate, build ) where
 
-import qualified Data.Bits as Bits
+import Data.Bits ( (.&.), (.|.), shift )
 import qualified Data.ByteString as ByteString
 import qualified Data.Int as Int
 import qualified Data.Time.Clock.System as Time
@@ -37,7 +37,7 @@ generate = do
   b <- Entropy.getEntropy 10
   pure $
     let u8_u64 = fromIntegral :: Word.Word8 -> Word.Word64
-        f = Bits.shift . u8_u64 . ByteString.index b
+        f = shift . u8_u64 . ByteString.index b
         r = f 0 0 + f 1 8
         s = f 2 0 + f 3 8 + f 4 16 + f 5 24 + f 6 32 + f 7 40 + f 8 48 + f 9 56
      in build t r s
@@ -58,13 +58,13 @@ build t r s =
   let i64_u64 = fromIntegral :: Int.Int64 -> Word.Word64
       u32_u64 = fromIntegral :: Word.Word32 -> Word.Word64
       unix_ts_ms =
-        Bits.shift
+        shift
           ( (i64_u64 (Time.systemSeconds t) * 1000)
               + u32_u64 (div (Time.systemNanoseconds t) 1000000)
           )
           16
-      ver = Bits.shift 0x7 12 :: Word.Word64
-      rand_a = r Bits..&. 0x0fff -- 0x0fff = 2^12 - 1
-      var = Bits.shift 0x2 62 :: Word.Word64
-      rand_b = s Bits..&. 0x3fffffffffffffff -- 0x3fffffffffffffff = 2^62 - 1
-   in UUID.fromWords64 (unix_ts_ms + ver + rand_a) (var + rand_b)
+      ver = shift 0x7 12 :: Word.Word64
+      rand_a = r .&. 0x0fff -- 0x0fff = 2^12 - 1
+      var = shift 0x2 62 :: Word.Word64
+      rand_b = s .&. 0x3fffffffffffffff -- 0x3fffffffffffffff = 2^62 - 1
+   in UUID.fromWords64 (unix_ts_ms .|. ver .|. rand_a) (var .|. rand_b)
