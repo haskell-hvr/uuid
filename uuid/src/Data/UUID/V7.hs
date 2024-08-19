@@ -64,7 +64,7 @@ build t r s =
           )
           16
       ver = Bits.shift 0x7 12 :: Word.Word64
-      rand_a = r Bits..&. 0x0fff
+      rand_a = r Bits..&. 0x0fff -- 0x0fff = 2^12 - 1
       var = Bits.shift 0x2 62 :: Word.Word64
-      rand_b = s Bits..&. 0x3fffffffffffffff
+      rand_b = s Bits..&. 0x3fffffffffffffff -- 0x3fffffffffffffff = 2^62 - 1
    in UUID.fromWords64 (unix_ts_ms + ver + rand_a) (var + rand_b)
