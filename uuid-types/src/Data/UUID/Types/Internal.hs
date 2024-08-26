@@ -506,20 +506,21 @@ instance Hashable UUID where
           `hashWithSalt` w2
           `hashWithSalt` w3
 
--- | Pretty prints a 'UUID' (without quotation marks). See also 'toString'.
+-- | Pretty prints a 'UUID'. See also 'toString'.
 --
 -- >>> show nil
--- "00000000-0000-0000-0000-000000000000"
+-- "\"00000000-0000-0000-0000-000000000000\""
 --
 instance Show UUID where
-    show = toString
+    show = show . toString
 
 instance Read UUID where
-    readsPrec _ str =
-        let noSpaces = dropWhile isSpace str
-        in case fromString (take 36 noSpaces) of
-          Nothing -> []
-          Just u  -> [(u,drop 36 noSpaces)]
+    readsPrec p quotedStr = do
+      (str, rest) <- readsPrec p quotedStr
+      let noSpaces = dropWhile isSpace str
+      case fromString (take 36 noSpaces) of
+        Nothing -> []
+        Just u  -> [(u, rest)]
 
 -- | This 'Storable' instance uses the memory layout as described in <http://tools.ietf.org/html/rfc4122 RFC 4122>, but in contrast to the 'Binary' instance, __the fields are stored in host byte order__.
 instance Storable UUID where

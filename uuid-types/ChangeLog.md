@@ -1,3 +1,8 @@
+## 2.0.0
+
+- Return a quoted string from the `Show` instance, to avoid confusing
+  packages which try to parse stock-derived `show` output.
+
 ## 1.0.6 (2023-04-16)
 
 - Support GHC-8.6.5..GHC-9.10.1

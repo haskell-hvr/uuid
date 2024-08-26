@@ -1,6 +1,6 @@
 cabal-version:      1.12
 name:               uuid-types
-version:            1.0.6
+version:            2.0.0
 x-revision:         1
 copyright:
   (c) 2017-2018 Herbert Valerio Riedel
