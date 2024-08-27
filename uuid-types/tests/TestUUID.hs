@@ -89,7 +89,7 @@ test_Binary =
         (BL8.pack "\xa5\xca\x85\x66\xd9\xc5\x48\x35\x99\xc8\xe1\xf1\x3e\x73\xb5\xe2") @=? encode inputUUID
 
 inputUUID :: U.UUID
-inputUUID = read "a5ca8566-d9c5-4835-99c8-e1f13e73b5e2"
+inputUUID = read $ show "a5ca8566-d9c5-4835-99c8-e1f13e73b5e2"
 
 prop_stringRoundTrip :: Test
 prop_stringRoundTrip = testProperty "String round trip" stringRoundTrip
