@@ -62,6 +62,7 @@ library
     Data.UUID.V3
     Data.UUID.V4
     Data.UUID.V5
+    Data.UUID.V7
 
   other-modules:
     Data.UUID.Named
@@ -87,6 +88,7 @@ test-suite testuuid
       base
     , bytestring
     , random
+    , time
     , uuid
 
   -- deps w/o inherited constraints
