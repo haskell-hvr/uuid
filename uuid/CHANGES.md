@@ -1,3 +1,7 @@
+1.3.17
+
+- Added support for UUIDv7 in `Data.UUID.V7`.
+
 1.3.16
 
 - Support GHC-8.6.5...9.10.1
