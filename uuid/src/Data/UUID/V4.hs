@@ -9,7 +9,7 @@
    Portability : portable
 
    This module implements Version 4 UUIDs as specified
-   in RFC 4122.
+   in RFC 9562.
 
    These UUIDs are generated from a pseudo-random generator.
    We use the 'getEntropy' method from the <https://hackage.haskell.org/package/entropy entropy> package,

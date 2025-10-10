@@ -31,14 +31,27 @@ instance Arbitrary U.UUID where
 type Test = TestTree
 
 test_null :: Test
-test_null =
-  testCase "nil is null" $
-  assertBool "" (U.null U.nil)
+test_null = testGroup "null" [
+  testCase "nil is null" $ assertBool "" (U.null U.nil),
+  testCase "nil is not isMax" $ assertBool "" (not . U.isMax $ U.nil)
+  ]
 
 test_nil :: Test
 test_nil = testGroup "nil" [
     testCase "nil string" $ U.toString U.nil @?= "00000000-0000-0000-0000-000000000000",
     testCase "nil bytes"  $ U.toByteString U.nil @?= BL.pack (replicate 16 0)
+    ]
+
+test_isMax :: Test
+test_isMax = testGroup "isMax" [
+  testCase "max is isMax" $ assertBool "" (U.isMax U.max),
+  testCase "nil is not null" $ assertBool "" (not . U.null $ U.max)
+  ]
+
+test_max :: Test
+test_max = testGroup "max" [
+    testCase "max string" $ U.toString U.max @?= "ffffffff-ffff-ffff-ffff-ffffffffffff",
+    testCase "ones bytes"  $ U.toByteString U.max @?= BL.pack (replicate 16 0xFF)
     ]
 
 test_lift :: Test
@@ -122,6 +135,11 @@ prop_randomNotNull = testProperty "Random not null" randomNotNull
     where randomNotNull :: U.UUID -> Bool
           randomNotNull = not. U.null
 
+prop_randomNotMax :: Test
+prop_randomNotMax = testProperty "Random not max" randomNotMax
+    where randomNotMax :: U.UUID -> Bool
+          randomNotMax = not. U.isMax
+
 prop_readShowRoundTrip :: Test
 prop_readShowRoundTrip = testProperty "Read/Show round-trip" prop
     where -- we're using 'Maybe UUID' to add a bit of
@@ -182,6 +200,8 @@ main = do
      [ [
         test_null,
         test_nil,
+        test_isMax,
+        test_max,
         test_lift,
         test_conv,
         test_fromByteString,
@@ -196,7 +216,8 @@ main = do
          prop_stringLength,
          prop_byteStringLength,
          prop_randomsDiffer,
-         prop_randomNotNull
+         prop_randomNotNull,
+         prop_randomNotMax
          ]
      , [ testProperty "fromASCIIBytes_fromString1"  fromASCIIBytes_fromString1
        , testProperty "fromASCIIBytes_fromString2"  fromASCIIBytes_fromString2
