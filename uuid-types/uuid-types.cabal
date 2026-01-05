@@ -83,7 +83,6 @@ test-suite testuuid
       base
     , binary
     , bytestring
-    , template-haskell
     , uuid-types
 
   -- deps w/o inherited constraints
