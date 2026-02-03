@@ -1,7 +1,7 @@
 cabal-version:      1.12
 name:               uuid-types
 version:            1.0.6
-x-revision:         3
+x-revision:         4
 copyright:
   (c) 2017-2018 Herbert Valerio Riedel
   (c) 2008-2014 Antoine Latter
@@ -23,6 +23,7 @@ tested-with:
    || ==9.8.4
    || ==9.10.1
    || ==9.12.2
+   || ==9.14.1
 
 synopsis:           Type definitions for Universally Unique Identifiers
 description:
@@ -52,7 +53,7 @@ library
     , deepseq           >=1.4.4.0  && <1.6
     , hashable          >=1.4.4.0  && <1.6
     , random            >=1.2.1.2  && <1.4
-    , template-haskell  >=2.14.0.0 && <2.24
+    , template-haskell  >=2.14.0.0 && <=2.24.0.0
     , text              >=1.2.3.0  && <1.3  || >=2.0 && <2.2
 
   exposed-modules:  Data.UUID.Types
