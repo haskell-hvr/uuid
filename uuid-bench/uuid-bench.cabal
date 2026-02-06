@@ -102,7 +102,7 @@ benchmark uuid-types-benchmark
 
   -- deps w/o inherited constraints
   build-depends:
-      containers            >=0.5   && <0.8
+      containers            >=0.5   && <0.9
     , criterion             >=1.5   && <1.7
     , unordered-containers  >=0.2.7 && <0.3
 
