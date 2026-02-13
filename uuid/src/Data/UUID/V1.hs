@@ -31,7 +31,6 @@ import Data.Maybe
 import Data.Time
 import Data.Word
 
-import Control.Applicative ((<$>),(<*>))
 import Control.Concurrent.MVar
 import System.IO.Unsafe
 

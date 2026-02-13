@@ -28,7 +28,6 @@ module Data.UUID.Named
 
 import Data.UUID.Types.Internal
 
-import Control.Applicative ((<*>),(<$>))
 import Data.Binary.Get (runGet, getWord32be)
 import Data.Maybe
 import Data.Word (Word8)

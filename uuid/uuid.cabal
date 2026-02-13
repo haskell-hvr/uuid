@@ -50,7 +50,6 @@ library
     , entropy          >=0.3.7    && <0.5
     , network-info     >=0.2      && <0.3
     , random           >=1.2.1.2  && <1.4
-    , text             >=1.2.3.0  && <1.3  || >=2.0 && <2.2
     , time             >=1.4      && <1.16
 
   -- strict dependency on uuid-types,
@@ -87,7 +86,6 @@ test-suite testuuid
   build-depends:
       base
     , bytestring
-    , random
     , uuid
 
   -- deps w/o inherited constraints

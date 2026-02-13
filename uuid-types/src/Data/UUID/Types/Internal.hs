@@ -46,13 +46,11 @@ module Data.UUID.Types.Internal
 
 import           Prelude                          hiding (null)
 
-import           Control.Applicative              ((<*>))
 import           Control.DeepSeq                  (NFData (..))
 import           Control.Monad                    (guard, liftM2)
 import           Data.Bits
 import           Data.Char
 import           Data.Data
-import           Data.Functor                     ((<$>))
 import           Data.Hashable
 import           Data.List                        (elemIndices)
 import           Foreign.Ptr                      (Ptr)
