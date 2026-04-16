@@ -10,7 +10,7 @@
 --
 --
 -- This module implements Version 3/5 UUIDs as specified
--- in RFC 4122.
+-- in RFC 9562.
 --
 -- These UUIDs identify an object within a namespace,
 -- and are deterministic.

@@ -15,7 +15,7 @@ functionality as this module except implemented with
 SHA-1 hashing.
 
 This module implements Version 3 UUIDs as specified
-in RFC 4122.
+in RFC 9562.
 
 These UUIDs identify an object within a namespace,
 and are deterministic.

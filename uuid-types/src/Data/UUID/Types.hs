@@ -12,8 +12,7 @@ Portability : portable
 
 This library is useful for comparing, parsing and
 printing <http://en.wikipedia.org/wiki/UUID Universally Unique Identifiers (UUID)>.
-See <http://tools.ietf.org/html/rfc4122 RFC 4122> for the specification.
-
+See <http://datatracker.ietf.org/doc/html/rfc9562 RFC 9562> for the specification.
 -}
 module Data.UUID.Types
     ( -- * The 'UUID' Type
@@ -21,6 +20,9 @@ module Data.UUID.Types
       -- * Nil UUID
     , nil
     , null
+      -- * Max UUID
+    , max
+    , isMax
       -- * Textual Representation
     , toString
     , fromString

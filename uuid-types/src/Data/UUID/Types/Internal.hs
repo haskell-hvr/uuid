@@ -22,6 +22,8 @@ module Data.UUID.Types.Internal
     ( UUID(..)
     , null
     , nil
+    , isMax
+    , max
     , fromByteString
     , toByteString
     , fromString
@@ -44,7 +46,7 @@ module Data.UUID.Types.Internal
     , unpack
     ) where
 
-import           Prelude                          hiding (null)
+import           Prelude                          hiding (null, max)
 
 import           Control.Applicative              ((<*>))
 import           Control.DeepSeq                  (NFData (..))
@@ -77,7 +79,7 @@ import           System.Random.Stateful (Uniform (..), uniformWord64)
 import Language.Haskell.TH.Syntax (Lift)
 
 -- | Type representing <https://en.wikipedia.org/wiki/UUID Universally Unique Identifiers (UUID)> as specified in
---  <http://tools.ietf.org/html/rfc4122 RFC 4122>.
+--  <http://datatracker.ietf.org/doc/html/rfc9562 RFC 9562>.
 data UUID = UUID {-# UNPACK #-} !Word64 {-# UNPACK #-} !Word64
           deriving (Eq, Ord, Typeable)
 {-
@@ -277,10 +279,20 @@ null = (== nil)
     --      null (UUID 0 0 0 0) = True
     --      null _              = False
 
--- |The 'nil' UUID, as defined in <http://tools.ietf.org/html/rfc4122 RFC 4122>.
+-- |The 'nil' UUID, as defined in <http://datatracker.ietf.org/doc/html/rfc9562 RFC 9562>.
 -- It is a UUID of all zeros. @'null' u@ /iff/ @'u' == 'nil'@.
 nil :: UUID
 nil = UUID 0 0
+
+-- |Returns true if the passed-in UUID is the 'max' UUID.
+isMax :: UUID -> Bool
+isMax = (== max)
+
+-- |The 'max' UUID, as defined in <http://datatracker.ietf.org/doc/html/rfc9562 RFC 9562>.
+-- It is a UUID of all ones. @'isMax' u@ /iff/ @'u' == 'max'@.
+max :: UUID
+max = UUID allOnes allOnes
+  where allOnes = complement zeroBits
 
 -- |Extract a UUID from a 'ByteString' in network byte order.
 -- The argument must be 16 bytes long, otherwise 'Nothing' is returned.
@@ -470,7 +482,7 @@ fromLazyASCIIBytes bs =
 --
 
 -- | This 'Random' instance produces __insecure__ version 4 UUIDs as
--- specified in <http://tools.ietf.org/html/rfc4122 RFC 4122>.
+-- specified in <http://datatracker.ietf.org/doc/html/rfc9562 RFC 9562>.
 instance Random UUID where
     random = uniform
     randomR _ = random -- range is ignored
@@ -521,7 +533,7 @@ instance Read UUID where
           Nothing -> []
           Just u  -> [(u,drop 36 noSpaces)]
 
--- | This 'Storable' instance uses the memory layout as described in <http://tools.ietf.org/html/rfc4122 RFC 4122>, but in contrast to the 'Binary' instance, __the fields are stored in host byte order__.
+-- | This 'Storable' instance uses the memory layout as described in <http://datatracker.ietf.org/doc/html/rfc4122 RFC 4122>, but in contrast to the 'Binary' instance, __the fields are stored in host byte order__.
 instance Storable UUID where
     sizeOf _ = 16
     alignment _ = 4
@@ -558,7 +570,7 @@ instance Storable UUID where
                 pokeByteOff p (off+14) x9
                 pokeByteOff p (off+15) x10
 
--- | This 'Binary' instance is compatible with <http://tools.ietf.org/html/rfc4122 RFC 4122>, storing the fields in network order as 16 bytes.
+-- | This 'Binary' instance is compatible with <http://datatracker.ietf.org/doc/html/rfc4122 RFC 4122>, storing the fields in network order as 16 bytes.
 instance Binary UUID where
     put (UUID w0 w1) = putWord64be w0 >> putWord64be w1
     get = liftM2 UUID getWord64be getWord64be
