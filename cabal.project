@@ -6,10 +6,12 @@ packages: uuid/
 
 package uuid-types
   tests: True
+  -- ghc-options: -Wunused-packages
   -- profiling: True
   -- profiling-detail: toplevel-functions
 
 package uuid
   tests: True
+  -- ghc-options: -Wunused-packages
   -- profiling: True
   -- profiling-detail: toplevel-functions
